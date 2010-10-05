@@ -19,22 +19,26 @@ namespace ZHTTPD
             {
                 MAX_HEADER_SIZE = 10000
             };
-            API::size_t _parseRequest(API::IRequest* request) const;
-            void _parseLine(API::IRequest* request, std::string const& line) const;
-            void _parseMethod(API::IRequest* request, std::string const& line) const;
-            void _giveData(API::IRequest* request, API::IBuffer* buffer);
+
             ParserManager* _manager;
-            std::list<API::IBuffer*> _buffers;
             unsigned int _separator;
             bool _completed;
             API::size_t _content_length;
             API::size_t _received_length;
             API::size_t _header_length;
+            ZHTTPD::API::IRequest* _request;
+            std::list<API::IBuffer*> _buffers;
 
         public:
             Parser(API::IModuleManager* manager);
             ~Parser();
             bool processRequest(API::EVENT::Type event, API::IRequest* request, API::IBuffer* buffer);
+
+        private:
+            API::size_t _parseRequest(API::IRequest* request) const;
+            void _parseLine(API::IRequest* request, std::string const& line) const;
+            void _parseMethod(API::IRequest* request, std::string const& line) const;
+            void _giveData(API::IRequest* request, API::IBuffer* buffer);
         };
 
     }

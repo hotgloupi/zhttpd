@@ -23,7 +23,7 @@ namespace ZHTTPD
             std::string s(str);
             size_t start = s.find(" ZHTTPD::");
             if (start != std::string::npos && start < s.find_first_of('('))
-                start += 6;
+                start += 9;
             else
                 start = 0;
             size_t size = s.find('(') - start;

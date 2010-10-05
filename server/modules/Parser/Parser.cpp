@@ -23,12 +23,22 @@ Parser::Parser(API::IModuleManager* manager) :
     _completed(false),
     _content_length(0),
     _received_length(0),
-    _header_length(0)
+    _header_length(0),
+    _request(0)
 {
 }
 
 Parser::~Parser()
 {
+    if (this->_request != 0)
+    {
+        std::list<API::IBuffer*>::iterator it = this->_buffers.begin();
+        std::list<API::IBuffer*>::iterator it_end = this->_buffers.end();
+        for (; it != it_end; ++it)
+        {
+            this->_request->getBufferManager().release(*it);
+        }
+    }
 }
 
 void Parser::_parseLine(ZHTTPD::API::IRequest* request, std::string const& line) const
@@ -133,6 +143,9 @@ void Parser::_giveData(API::IRequest* request, API::IBuffer* buffer)
 
 bool Parser::processRequest(API::EVENT::Type event, API::IRequest* request, API::IBuffer* buffer)
 {
+    if (this->_request == 0)
+        this->_request = request;
+    assert(request == this->_request);
     if (event == API::EVENT::ON_REQUEST_DATA)
     {
         if (this->_completed)
