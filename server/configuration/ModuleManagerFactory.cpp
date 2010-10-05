@@ -65,7 +65,8 @@ void ModuleManagerFactory::findModules(std::string const& modules_directory)
                 this->_libraries[name] = lib;
                 this->_builders[name] = &ModuleManagerFactory::_createFromLibrary;
                 this->_available_modules[manager->getCategory()].push_back(name);
-                ZHTTPD_DELETE(manager);
+                //ZHTTPD_DELETE(manager);
+                delete manager;
             }
             catch (std::exception& err)
             {

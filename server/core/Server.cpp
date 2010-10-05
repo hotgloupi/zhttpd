@@ -128,8 +128,12 @@ int Server::run(std::string const& configuration_path)
         LOG_INFO("Wait for TaskManager...");
         task_manager.join();
 
-        this->_cleanListeners();
 
+        this->_cleanListeners();
+        TaskManager::delInstance();
+        RequestManager::delInstance();
+        SessionManager::delInstance();
+        ConfigurationManager::delInstance();
     }
     LOG_INFO("Server is down");
     return 0;
