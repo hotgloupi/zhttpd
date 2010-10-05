@@ -30,7 +30,7 @@ Parser::Parser(API::IModuleManager* manager) :
 
 Parser::~Parser()
 {
-    if (this->_request != 0)
+    if (this->_request != 0 && this->_completed == false)
     {
         std::list<API::IBuffer*>::iterator it = this->_buffers.begin();
         std::list<API::IBuffer*>::iterator it_end = this->_buffers.end();
