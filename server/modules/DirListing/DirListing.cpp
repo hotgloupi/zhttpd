@@ -1,12 +1,14 @@
+
 #include "api/constants.hpp"
 #include "api/IBuffer.hpp"
 #include "api/IRequest.hpp"
 #include "api/IModuleManager.hpp"
 #include "api/IModule.hpp"
-
-#include "DirListing.hpp"
 #include "utils/Path.hpp"
 #include "utils/Logger.hpp"
+#include "utils/macros.hpp"
+
+#include "DirListing.hpp"
 
 using namespace ZHTTPD;
 using namespace ZHTTPD::MOD;
@@ -54,6 +56,9 @@ bool DirListing::processRequest(API::EVENT::Type event, API::IRequest* request, 
 
         out +=      "</ul>\n"
                     "<hr />\n"
+                    "<p>"
+                        ZHTTPD_FULLNAME
+                    "</p>\n"
                 "</body>\n"
             "</html>";
         request->giveData(request->getBufferManager().allocate(out.data(), out.size()));

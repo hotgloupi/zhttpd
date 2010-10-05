@@ -39,7 +39,8 @@ UnixProcess::UnixProcess()
 
 UnixProcess::~UnixProcess()
 {
-
+    ::close(this->_write_pipe[1]);
+    ::close(this->_read_pipe[0]);
 }
 
 char* const* UnixProcess::_getArguments()
@@ -112,12 +113,12 @@ bool UnixProcess::_childProcessusHandler()
 {
     if (::dup2(this->_read_pipe[1], STDOUT_FILENO) < 0)
         throw std::runtime_error("Child CGI process: dup2() failed: " + std::string(::strerror(errno)));
-    ::setvbuf(stdout,(char*)NULL, _IONBF, 0);
+    //::setvbuf(stdout,(char*)NULL, _IONBF, 0);
     ::close(this->_read_pipe[1]);
     ::close(this->_read_pipe[0]);
     if (::dup2(this->_write_pipe[0], STDIN_FILENO) < 0)
         throw std::runtime_error("Child CGI process dup2() failed: " + std::string(::strerror(errno)));
-    ::setvbuf(stdin,(char*)NULL, _IOLBF, 0);
+    //::setvbuf(stdin,(char*)NULL, _IOLBF, 0);
     ::close(this->_write_pipe[0]);
     ::close(this->_write_pipe[1]);
     this->_execute();
@@ -155,10 +156,9 @@ ZHTTPD::API::size_t UnixProcess::write(char const* buffer, ZHTTPD::API::size_t s
                 throw std::runtime_error("CGI: write() failed: " + std::string(::strerror(errno)));
             return (nwrite);
         }
-        return (0);
     }
-    else
-        return (0);
+
+    return (0);
 }
 
 ZHTTPD::API::size_t UnixProcess::read(char* buffer, ZHTTPD::API::size_t size)

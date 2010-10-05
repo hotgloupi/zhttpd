@@ -114,7 +114,7 @@ API::size_t Parser::_parseRequest(API::IRequest* request) const
         }
         request->getBufferManager().release(*it);
     }
-    request->setResponseHeader("Server", "CHICKEN");
+    request->setResponseHeader("Server", ZHTTPD_FULLNAME);
     API::size_t len = 0;
     std::stringstream ss;
     ss << request->getRequestHeader("Content-Length");

@@ -2,6 +2,8 @@
 #ifndef __MACROS_HPP__
 # define __MACROS_HPP__
 
+# define ZHTTPD_FULLNAME "zhttp/0.1"
+
 # define ZHTTPD_DELETE(ptr) \
     do {\
         if (ptr != 0) {\

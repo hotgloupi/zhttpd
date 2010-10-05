@@ -1,7 +1,8 @@
 #!/bin/sh
-printf "Content-Type: text/html\r\n\r\n"
-date
-echo '<pre>'
-ps aux | grep ./bin/server | sed 's/</\&lt;/g'
-echo '</pre>'
+file=image.jpg
+printf "Content-Type: image/jpeg\r\n"
+printf "Content-Disposition: filename=pif.jpg\r\n"
+printf "Content-Length: `du -b $file | cut -f1`\r\n\r\n"
+
+cat $file
 

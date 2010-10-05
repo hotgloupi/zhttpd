@@ -38,6 +38,8 @@ namespace ZHTTPD
         {
             std::string buffer;
             buffer += "HTTP/1.1 ";
+            if (request->getResponseCode() == ZHTTPD::API::HTTP_CODE::UNDEFINED)
+                request->setResponseCode(ZHTTPD::API::HTTP_CODE::OK);
             my_putnbr_base(buffer, request->getResponseCode(), 10, "0123456789");
             buffer += " ";
             buffer += request->getResponseMessage();

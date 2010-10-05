@@ -123,9 +123,9 @@ bool            CGI::_processOnIdle(CGI::request_t* request, CGI::buffer_t*)
     ZHTTPD::API::size_t n_read = this->_process.read(read_buffer, CGI::BUFFER_SIZE);
     if (n_read > 0)
     {
-        LOG_DEBUG("#################################################");
-        write(1, read_buffer, n_read);
-        LOG_DEBUG("#################################################");
+ //       LOG_DEBUG("#################################################");
+ //       write(1, read_buffer, n_read);
+ //       LOG_DEBUG("#################################################");
 
         temp_buffer = request->getBufferManager().allocate(read_buffer, n_read);
         if (this->_headers == true)
@@ -295,7 +295,7 @@ CGI::buffer_t*      CGI::_extractHeaders(request_t* request, buffer_t* buffer)
             this->_headers = false;
             if (i + 1 < buffer->getSize())
             {
-                data = request->getBufferManager().allocate(buffer->getRawData() + i, buffer->getSize() - i);
+                data = request->getBufferManager().allocate(buffer->getRawData() + i + 1, buffer->getSize() - i - 1);
                 return (data);
             }
         }
