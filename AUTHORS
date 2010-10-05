@@ -1,0 +1,13 @@
+zhttpd/0.1 author list:
+
+Main author and maintainer
+ Raphaël Londeix <raphael.londeix@gmail.com>    (server/core, server/socket)
+
+Authors
+ Jérémy Virant <dre.jere@gmail.com>             (server/thread)
+ Martin Tapia <paps.owns@gmail.com>             (modules parser, filereader, dirlisting, lua, preoutputbuilder)
+ Pierre Bertran <bertran.pierre@gmail.com>      (server/parser, server/configuration)
+
+Contributors
+ David Garyga <plugzy@gmail.com>                (module ssl, uml)
+ Aurelien Lebrun <aurelien.lebrun@gmail.com>    (module cgi)
