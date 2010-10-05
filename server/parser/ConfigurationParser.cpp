@@ -56,17 +56,6 @@ ZHTTPD::Configuration* ConfigurationParser::parse()
             this->parseServer(config);
             this->parseBaseModules(config);
             this->parseVHosts(config);
-            if (config->getModuleManager("mod_error") == 0)
-            {
-                ModuleConfiguration* mod = new ModuleConfiguration("mod_error", true, *config);
-                config->addModuleConfiguration(*mod);
-            }
-
-            if (config->getModuleManager("mod_filereader") == 0)
-            {
-                ModuleConfiguration* mod = new ModuleConfiguration("mod_filereader", true, *config);
-                config->addModuleConfiguration(*mod);
-            }
             return config;
         }
         catch (ConfigurationParserException&)

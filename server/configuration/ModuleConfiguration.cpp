@@ -46,9 +46,6 @@ bool ModuleConfiguration::isEnabled() const
 
 ZHTTPD::API::IModuleManager* ModuleConfiguration::getModuleManager()
 {
-    // XXX deplacer ca et le rendre commun avec l'autre.
-    typedef ZHTTPD::API::IModuleManager* (*getter_t)();
-
     if (this->_loaded == false && this->_enabled)
     {
         this->_manager = this->_config.getModuleManager(this->_name);

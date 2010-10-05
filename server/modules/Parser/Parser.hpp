@@ -1,3 +1,4 @@
+
 #ifndef __PARSER_HPP__
 # define __PARSER_HPP__
 
@@ -14,20 +15,19 @@ namespace ZHTTPD
 
         class Parser : public ZHTTPD::API::IModule
         {
-        private:
-            enum
-            {
+            enum {
                 MAX_HEADER_SIZE = 10000
             };
 
-            ParserManager* _manager;
-            unsigned int _separator;
-            bool _completed;
-            API::size_t _content_length;
-            API::size_t _received_length;
-            API::size_t _header_length;
-            ZHTTPD::API::IRequest* _request;
-            std::list<API::IBuffer*> _buffers;
+        private:
+            ParserManager*              _manager;
+            unsigned int                _separator;
+            bool                        _completed;
+            API::size_t                 _content_length;
+            API::size_t                 _received_length;
+            API::size_t                 _header_length;
+            ZHTTPD::API::IRequest*      _request;
+            std::list<API::IBuffer*>    _buffers;
 
         public:
             Parser(API::IModuleManager* manager);

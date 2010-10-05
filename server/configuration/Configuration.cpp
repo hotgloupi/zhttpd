@@ -46,7 +46,11 @@ void Configuration::addModuleConfiguration(ModuleConfiguration& module_configura
 {
     std::string const& name = module_configuration.getName();
 
-    // XXX check already exist !
+    if (this->_modules_configuration.find(name) != this->_modules_configuration.end())
+    {
+        LOG_WARN("Module '" + name + "' added twice !");
+        ZHTTPD_DELETE(this->_modules_configuration[name]);
+    }
     this->_modules_configuration[name] = &module_configuration;
 }
 
@@ -60,7 +64,7 @@ ModuleConfiguration& Configuration::getModuleConfiguration(std::string const& na
     modules_configuration_t::const_iterator it = this->_modules_configuration.find(name);
     if (it == this->_modules_configuration.end())
     {
-        this->_modules_configuration[name] = new ModuleConfiguration(name, false, *this);
+        this->_modules_configuration[name] = new ModuleConfiguration(name, true, *this); // XXX is enabled even it not described !
         return *this->_modules_configuration[name];
     }
     return *it->second;

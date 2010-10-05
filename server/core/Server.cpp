@@ -120,6 +120,7 @@ int Server::run(std::string const& configuration_path)
         Thread rcon(this->_rcon);
         LOG_INFO("Server is up");
         rcon.join();
+        ZHTTPD_DELETE(this->_rcon);
 
         LOG_INFO("Server stopping");
 
@@ -128,12 +129,13 @@ int Server::run(std::string const& configuration_path)
         LOG_INFO("Wait for TaskManager...");
         task_manager.join();
 
-
         this->_cleanListeners();
         TaskManager::delInstance();
         RequestManager::delInstance();
         SessionManager::delInstance();
+        BufferManagerStack::delInstance();
         ConfigurationManager::delInstance();
+        ServerState::delInstance();
     }
     LOG_INFO("Server is down");
     return 0;

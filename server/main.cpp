@@ -59,9 +59,11 @@ int main(int argc, char **argv)
     ZHTTPD_DEBUG_release();
     std::cout << "\t* Memory status: " << std::endl
               << "\t\t- Memory in use: " << ZHTTPD::StatsManager::getInstance()->getMemory() / 1000 << " Kbytes" << std::endl
-              << "Up time: " << ((double) ZHTTPD::StatsManager::getInstance()->getUptime()) / 1000.0f
+              << "Uptime: " << ((double) ZHTTPD::StatsManager::getInstance()->getUptime()) / 1000.0f
               << " sec" << std::endl;
 #endif
+    delete server;
+    ZHTTPD::StatsManager::delInstance();
     ZHTTPD::Logger::delInstance();
     return res;
 }

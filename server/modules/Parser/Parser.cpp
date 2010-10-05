@@ -13,11 +13,9 @@
 #include "ParserManager.hpp"
 
 
-using namespace ZHTTPD;
 using namespace ZHTTPD::MOD;
-#undef DELETE
 
-Parser::Parser(API::IModuleManager* manager) :
+Parser::Parser(ZHTTPD::API::IModuleManager* manager) :
     _manager(reinterpret_cast<ParserManager*>(manager)),
     _separator(0),
     _completed(false),
@@ -91,7 +89,7 @@ void Parser::_parseMethod(API::IRequest* request, std::string const& line) const
     request->setRequestQuery(path);
 }
 
-API::size_t Parser::_parseRequest(API::IRequest* request) const
+ZHTTPD::API::size_t Parser::_parseRequest(ZHTTPD::API::IRequest* request) const
 {
     bool methodParsed = false;
     bool carriageReturn = false;

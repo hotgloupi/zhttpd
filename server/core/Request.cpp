@@ -75,7 +75,7 @@ void Request::raiseError(API::HTTP_CODE::Type code, std::string str)
 {
     assert(this->_current_module != 0);
     this->setResponseCode(code, str);
-    API::IModuleManager* mod_error_manager = this->_configuration->getModuleManager("mod_error");
+    API::IModuleManager* mod_error_manager = this->_configuration->getModuleConfiguration("mod_error").getModuleManager();
     assert(mod_error_manager != 0);
     API::IModule* mod_error = mod_error_manager->getInstance();
     assert(mod_error != 0);

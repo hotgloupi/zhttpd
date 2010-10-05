@@ -4,12 +4,10 @@
 
 # define ZHTTPD_FULLNAME "zhttp/0.1"
 
-# define ZHTTPD_DELETE(ptr) \
-    do {\
-        if (ptr != 0) {\
-            delete ptr; \
-            ptr = 0; \
-        }\
+# define ZHTTPD_DELETE(ptr)     \
+    do {                        \
+        delete ptr;             \
+        ptr = 0;                \
     } while(0)
 
 

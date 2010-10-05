@@ -64,11 +64,12 @@ void ZHTTPD_DEBUG_print_maps()
 
 void ZHTTPD_DEBUG_release()
 {
-    delete __ZHTTPD_LOCK_times;
-    delete __ZHTTPD_LOCK_times_mutex;
-    delete __ZHTTPD_MOD_times;
-    delete __ZHTTPD_MOD_counts;
-    delete __ZHTTPD_timer;
+    ZHTTPD_DELETE(__ZHTTPD_LOCK_times);
+    ZHTTPD_DELETE(__ZHTTPD_LOCK_times_mutex);
+    ZHTTPD_DELETE(__ZHTTPD_MOD_times);
+    ZHTTPD_DELETE(__ZHTTPD_MOD_counts);
+    ZHTTPD_DELETE(__ZHTTPD_MOD_mutex);
+    ZHTTPD_DELETE(__ZHTTPD_timer);
 }
 
 #endif
