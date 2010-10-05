@@ -13,7 +13,6 @@ class Environment
 
 private:
     char**  _c_env;
-    bool    _is_set;
     env_t   _environment;
 
 public:

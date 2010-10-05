@@ -8,18 +8,26 @@
 #include "api/IRequest.hpp"
 #include "api/IBuffer.hpp"
 #include "api/types.hpp"
+#include "utils/macros.hpp"
 
 #include "Environment.hpp"
 
-Environment::Environment()
+Environment::Environment() : _c_env(0)
 {
-    _is_set = false;
 }
 
 Environment::~Environment()
 {
-    /*delete *this->_c_env;*/
-    /*delete this->_c_env;*/
+    if (this->_c_env != 0)
+    {
+        ZHTTPD::API::size_t i = 0;
+        while (this->_c_env[i] != 0)
+        {
+            ZHTTPD_DELETE(this->_c_env[i]);
+            ++i;
+        }
+        ZHTTPD_DELETE(this->_c_env);
+    }
 }
 
 void Environment::copyHeadersToEnvironment(ZHTTPD::API::IRequest* request)
@@ -39,14 +47,7 @@ void Environment::copyHeadersToEnvironment(ZHTTPD::API::IRequest* request)
 
 char* const* Environment::getEnvironmentArray() const
 {
-    if (this->_is_set)
-    {
-        return this->_c_env;
-    }
-    else
-    {
-        return 0;
-    }
+    return this->_c_env;
 }
 
 Environment::env_t const& Environment::getEnvironmentList() const
@@ -54,20 +55,17 @@ Environment::env_t const& Environment::getEnvironmentList() const
     return this->_environment;
 }
 
-void Environment::setEnvironmentVariable(char const* _key, char const* _value)
+void Environment::setEnvironmentVariable(char const* _key, char const* value)
 {
-    std::string*    key = new std::string(_key);
-    std::string*    value = new std::string(_value);
-    char            replace[2];
+    std::string    key(_key);
 
-    replace[0] = '-';
-    replace[1] = '_';
-    std::replace(key->begin(), key->end(), replace[0], replace[1]);
-    std::transform(key->begin(), key->end(), key->begin(), toupper);
-    *key = (*key == "CONTENT_LENGHT" || *key == "CONTENT_TYPE") ? "HTTP_" +  *key : *key;
-    this->_environment[*key] = *value;
-    delete key;
-    delete value;
+    std::replace(key.begin(), key.end(), '-', '_');
+    std::transform(key.begin(), key.end(), key.begin(), toupper);
+    if (key == "CONTENT_LENGHT" || key == "CONTENT_TYPE")
+    {
+        key = "HTTP_" + key;
+    }
+    this->_environment[key] = value;
 }
 
 void   Environment::_fillEnvironment()
@@ -92,5 +90,4 @@ void   Environment::_fillEnvironment()
         i++;
     }
     this->_c_env[i] = 0;
-    this->_is_set = true;
 }

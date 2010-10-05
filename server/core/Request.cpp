@@ -300,7 +300,8 @@ void Request::processTask(API::EVENT::Type evt,
 #endif
     LOG_DEBUG("> "+Logger::toString(this) + " " + name + " with " + EVENT_NAME(evt));
     this->_current_module = module;
-    if (module->getModule().processRequest(evt, this, buf) == false)
+    ZHTTPD::API::IModule& mod = module->getModule();
+    if (mod.processRequest(evt, this, buf) == false)
     {
         switch (evt)
         {

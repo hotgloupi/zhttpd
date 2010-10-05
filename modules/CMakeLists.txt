@@ -1,6 +1,16 @@
 
 cmake_minimum_required(VERSION 2.6)
 
+
+if(UNIX)
+    set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -DZHTTPD_DEBUG -DDEBUG -g")
+    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -UDEBUG -UZHTTPD_DEBUG -DNDEBUG")
+else(UNIX)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /D ZHTTPD_DEBUG")
+endif(UNIX)
+
+set(CMAKE_BUILD_TYPE "Debug")
+
 find_package(PkgConfig)
 
 # mod_itworks
