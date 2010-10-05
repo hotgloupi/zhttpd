@@ -64,7 +64,8 @@ ModuleConfiguration& Configuration::getModuleConfiguration(std::string const& na
     modules_configuration_t::const_iterator it = this->_modules_configuration.find(name);
     if (it == this->_modules_configuration.end())
     {
-        this->_modules_configuration[name] = new ModuleConfiguration(name, true, *this); // XXX is enabled even it not described !
+        bool enabled = (name == "mod_error"); //XXX this is ugly
+        this->_modules_configuration[name] = new ModuleConfiguration(name, enabled, *this);
         return *this->_modules_configuration[name];
     }
     return *it->second;
