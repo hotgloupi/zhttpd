@@ -1,0 +1,201 @@
+
+digraph uml
+{
+    fontname = "Bitstream sans Vera"
+    compound = true;
+    ranksep = 1.25;
+    rankdir = BT;
+    label = "ZHTTPD::Thread";
+    fontsize = 24;
+
+    node
+    [
+        fontname = "Monaco"
+        fontsize = 8
+        shape = "record"
+        style = filled
+        fillcolor = white
+    ]
+
+    edge
+    [
+        fontname = "Monaco"
+        fontsize = 8
+    ]
+
+
+    /*
+     *  Thread
+     */
+
+
+    thread_ICondition
+    [
+    label="{\
+ICondition\
+|\
++ \<\<virtual\>\> ~ICondition()\l\
++ \<\<abstract\>\> checkCondition(): bool\l\
+}"
+    ]
+
+    thread_ITask
+    [
+    label="{\
+ITask\
+|\
++ \<\<virtual\>\> ~ITask()\l\
++ \<\<abstract\>\> run(): void\l\
+}"
+    ]
+
+    thread_IThreadCondition
+    [
+    label="{\
+IThreadCondition\
+|\
++ \<\<virtual\>\> ~IThreadCondition()\l\
++ \<\<abstract\>\> wait(): void\l\
++ \<\<abstract\>\> wake(): void\l\
++ \<\<abstract\>\> wakeAll(): void\l\
+}"
+    ]
+
+    thread_Mutex
+    [
+    label="{\
+Mutex\
+|\
+- _locked: bool\l\
+- _mutex: mutex_t\l\
+|\
++ Mutex()\l\
++ ~Mutex()\l\
++ lock(): void\l\
++ tryLock(): bool\l\
++ unlock(): void\l\
+}"
+    ]
+
+    thread_RWLock
+    [
+    label="{\
+RWLock\
+|\
+- _rwlock: rwlock_t\l\
+|\
++ RWLock()\l\
++ ~RWLock()\l\
++ lockRead(): void\l\
++ lockWrite(): void\l\
++ tryLockRead(): bool\l\
++ tryLockWrite(): bool\l\
++ unlockRead(): void\l\
++ unlockWrite(): void\l\
+}"
+    ]
+
+    thread_ScopeLock
+    [
+    label="{\
+ScopeLock\
+|\
+- _mutex: Mutex&\l\
+|\
++ ScopeLock(mutex: Mutex&)\l\
++ ~ScopeLock()\l\
+}"
+    ]
+
+    thread_ThreadCondition
+    [
+    label="{\
+ThreadCondition\
+|\
+- _wait_condition: ICondition*\l\
+- _condition: condition_t\l\
+- _mutex: mutex_t\l\
+|\
++ ThreadCondition(wait_condition: ICondition*)\l\
++ \<\<virtual\>\> ~ThreadCondition()\l\
++ \<\<virtual\>\> wait(): void\l\
++ \<\<virtual\>\> wake(): void\l\
++ \<\<virtual\>\> wakeAll(): void\l\
+}"
+    ]
+
+    thread_ThreadTask
+    [
+    label="{\
+ThreadTask\
+|\
+- _pool: ThreadPool*\l\
+|\
++ ThreadTask(pool: ThreadPool*)\l\
++ \<\<virtual\>\> run(): void\l\
+}"
+    ]
+
+    thread_CheckHasWork
+    [
+    label="{\
+CheckHasWork\
+|\
+- _pool: ThreadPool*\l\
+|\
++ CheckHasWork(pool: ThreadPool*)\l\
++ \<\<virtual\>\> checkCondition(): bool\l\
+}"
+    ]
+
+    thread_ThreadPool
+    [
+    label="{\
+ThreadPool\
+|\
+- _running: bool\l\
+- _threads: std::vector\<Thread*\>\l\
+- _pending_tasks: std::queue\<SmartPtr\<ITask\>\>\l\
+- _running_thread_task: ThreadTask\l\
+- _checking_has_work: CheckHasWork\l\
+- _condition: ThreadCondition\l\
+- _pending_tasks_mutex: Mutex\l\
+|\
++ ThreadPool(nb_threads: unsigned int)\l\
++ ~ThreadPool()\l\
++ queueTask(task: SmartPtr\<ITask\> const&): void\l\
+}"
+    ]
+
+    thread_Thread
+    [
+    label="{\
+Thread\
+|\
+- _thread: thread_t\l\
+- _running: bool\l\
+- _callback_instance: ITask*\l\
+|\
++ Thread(instance: ITask*)\l\
++ \<\<virtual\>\> ~Thread()\l\
+- \<\<static\>\> _run(thread: Thread*): void*\l\
++ join(): void\l\
++ quit(): void\l\
+}"
+    ]
+
+    thread_Mutex -> thread_ScopeLock [arrowhead=diamond]
+    thread_ThreadCondition -> thread_IThreadCondition
+    thread_ICondition -> thread_ThreadCondition [arrowhead=diamond]
+    thread_ThreadTask -> thread_ITask
+    thread_ThreadPool -> thread_ThreadTask [arrowhead=diamond]
+    thread_CheckHasWork -> thread_ICondition
+    thread_ThreadPool -> thread_CheckHasWork [arrowhead=diamond]
+    thread_Thread -> thread_ThreadPool [arrowhead=diamond taillabel="[1..n]"]
+    thread_ITask -> thread_ThreadPool [arrowhead=odiamond taillabel="[0..n]"]
+    thread_ThreadTask -> thread_ThreadPool [arrowhead=diamond]
+    thread_CheckHasWork -> thread_ThreadPool [arrowhead=diamond]
+    thread_ThreadCondition -> thread_ThreadPool [arrowhead=diamond]
+    thread_ITask -> thread_Thread [arrowhead=diamond]
+
+}

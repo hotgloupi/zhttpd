@@ -1,0 +1,205 @@
+digraph uml
+{
+    fontname = "Bitstream sans Vera"
+    compound = true;
+    ranksep = 1.25;
+    rankdir = BT;
+    label = "ZHTTPD configuration classes";
+    fontsize = 24;
+
+    node [
+        fontname = "Monaco"
+        fontsize = 8
+        shape = "record"
+        style = filled
+        fillcolor = white
+    ]
+
+    edge [
+        fontname = "Monaco"
+        fontsize = 8
+    ]
+
+
+    subgraph cluster_config
+    {
+        label = "Configuration classes"
+
+        conf_Configuration
+        [
+    label="{\
+Configuration\
+|\
+- _modules: std::map\<std::string, ModuleConfiguration*\>\l\
+- _available_modules: available_modules_map_t\l\
+- _modules_handlers: std::map\<std::string, Library*\>\l\
+- _index_files: std::list\<std::string\>\l\
+- _vhost: VHost*\l\
+- _ports: std::map\<API::uint16_t, std::string\>\l\
+- _modules_directory: Path*\l\
+- _io_module_managers: std::map\<API::uint16_t, API::IModuleManager*\>\l\
+- _file_reader_manager: MOD::FileReaderManager*\l\
+|\
++ Configuration()\l\
++ \<\<virtual\>\> ~Configuration()\l\
+- _isDynamicLibrary(filename: std::string const&): bool\l\
+- _loadModule(moduleName: std::string const&): bool\l\
++ loadModules(): bool\l\
++ getVHost() const: VHost*\l\
++ addModule(module: ModuleConfiguration*): void\l\
++ getModules() const: std::map\<std::string, ModuleConfiguration*\> const&\l\
++ getModuleConfiguration(name: std::string const&): ModuleConfiguration*\l\
++ getModuleManager(name: std::string const&): API::IModuleManager*\l\
++ getAvailableModules(): available_modules_map_t&\l\
++ getListenPorts() const: std::map\<API::uint16_t, std::string\> const&\l\
++ addListenPort(port: API::uint16_t, io_module: std::string const&): void\l\
++ setVHost(vhost: VHost*): void\l\
++ getInputOutputModuleManager(port: API::uint16_t): API::IModuleManager*\l\
++ getFileReader(): MOD::FileReaderManager*\l\
++ loadIOModuleManager(port: API::uint16_t, name: std::string const&): API::IModuleManager*\l\
++ setModulesDirectory(path: std::string const&): void\l\
++ setModulesDirectory(path: Path*): void\l\
++ addIndexFile(filename: std::string const&): void\l\
++ getIndexFiles(): std::list\<std::string\> const&\l\
++ getLibHandler(name: std::string const&): Library*\l\
+}"
+        ]
+
+        conf_HeaderGuideline
+        [
+    label="{\
+HeaderGuideline\
+|\
+- _key: std::string\l\
+- _match: std::string\l\
+- _deny: bool\l\
+|\
++ HeaderGuideline(key: std::string const&, match: std::string const&, deny: bool)\l\
++ \<\<virtual\>\> ~HeaderGuideline()\l\
++ match(request: API::IRequest&) const: bool\l\
+}"
+        ]
+
+        conf_HostGuideline
+        [
+    label="{\
+HostGuideline\
+|\
+- _match: std::string\l\
+- _deny: bool\l\
+|\
++ HostGuideline(match: std::string const&, deny: bool)\l\
++ \<\<virtual\>\> ~HostGuideline()\l\
++ match(request: API::IRequest&) const: bool\l\
+}"
+        ]
+
+        conf_IVHostGuideline
+        [
+    label="{\
+IVHostGuideline\
+|\
++ \<\<virtual\>\> ~IVHostGuideline()\l\
++ \<\<abstract\>\> match(request: API::IRequest&) const: bool\l\
+}"
+        ]
+
+        conf_ListenGuideline
+        [
+    label="{\
+ListenGuideline\
+|\
+- _port: API::uint16_t\l\
+- _deny: bool\l\
+|\
++ ListenGuideline(port: API::uint16_t, deny: bool)\l\
++ \<\<virtual\>\> ~ListenGuideline()\l\
++ match(request: API::IRequest&) const: bool\l\
+}"
+        ]
+
+        conf_ModuleConfiguration
+        [
+    label="{\
+ModuleConfiguration\
+|\
+- _name: std::string\l\
+- _options: std::map\<std::string, std::string\>\l\
+- _manager: API::IModuleManager*\l\
+- _merged: bool\l\
+- _enabled: bool\l\
+- _config: Configuration*\l\
+|\
++ ModuleConfiguration(name: std::string const&, enabled: bool, config: Configuration*)\l\
++ \<\<virtual\>\> ~ModuleConfiguration()\l\
+- _setConfiguration(manager: ZHTTPD::API::IModuleManager*): void\l\
++ addConfigurationEntry(key: std::string const&, value: std::string const&): void\l\
++ getConfigurationEntry(key: std::string const&): std::string const&\l\
++ getName() const: std::string const&\l\
++ getModuleManager(): API::IModuleManager*\l\
++ getOptions(): std::map\<std::string, std::string\>&\l\
++ merge(parent: ModuleConfiguration*): void\l\
++ isMerged() const: bool\l\
++ setMerged(b: bool): void\l\
++ isEnabled() const: bool\l\
+}"
+        ]
+
+        conf_UrlGuideline
+        [
+    label="{\
+UrlGuideline\
+|\
+- _match: std::string\l\
+- _deny: bool\l\
+|\
++ UrlGuideline(match_string: std::string const&, deny: bool)\l\
++ \<\<virtual\>\> ~UrlGuideline()\l\
++ match(request: API::IRequest&) const: bool\l\
+}"
+        ]
+
+        conf_VHost
+        [
+    label="{\
+VHost\
+|\
+- _childs: std::list\<VHost*\>\l\
+- _parent: VHost*\l\
+- _name: std::string\l\
+- _document_root: std::string\l\
+- _modules: std::map\<std::string, ModuleConfiguration*\>\l\
+- _guide_lines: std::list\<IVHostGuideline*\>\l\
+|\
++ VHost(parent: VHost*)\l\
++ \<\<virtual\>\> ~VHost()\l\
++ match(request: API::IRequest&): VHost*\l\
++ addModule(module: ModuleConfiguration*): void\l\
++ getModule(name: std::string const&): ZHTTPD::API::IModuleManager*\l\
++ getModuleConfiguration(modname: std::string const&): ModuleConfiguration*\l\
++ moduleExists(name: std::string const&): bool\l\
++ addGuideline(guideLine: IVHostGuideline*): void\l\
++ addChild(vhost: VHost*): void\l\
++ setDocumentRoot(path: std::string const&): void\l\
++ getDocumentRoot(): std::string const&\l\
++ getName() const: std::string const&\l\
++ setName(name: std::string const&): void\l\
+}"
+        ]
+
+    } /* cluster_config */
+
+    conf_ModuleConfiguration -> conf_Configuration [arrowhead=odiamond]
+    conf_VHost -> conf_Configuration [arrowhead=odiamond]
+    conf_ModuleConfiguration -> conf_VHost [arrowhead=odiamond]
+    conf_VHost -> conf_VHost [arrowhead=odiamond]
+    conf_IVHostGuideline -> conf_VHost [arrowhead=odiamond]
+    conf_UrlGuideline -> conf_IVHostGuideline [arrowhead=normal]
+    conf_HeaderGuideline -> conf_IVHostGuideline [arrowhead=normal]
+    conf_HostGuideline -> conf_IVHostGuideline [arrowhead=normal]
+    conf_ListenGuideline -> conf_IVHostGuideline [arrowhead=normal]
+
+
+
+}
+

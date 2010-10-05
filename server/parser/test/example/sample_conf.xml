@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<configuration>
+    <modules>
+        <module name="gzip" />
+        <module name="ssl">
+            <option key="directory" value="/var/cert"/>
+            <option key="public_key" value="/var/secret/pub.rsa" />
+            <option key="version" value="3" />
+            <option key="debug" value="true" />
+        </module>
+        <module name="logger">
+            <option key="error_log" value="/var/log/zhttpd/error.log" />
+            <option key="access_log" value="/var/log/zhttpd/access.log" />
+        </module>
+    </modules>
+
+    <server>
+        <listen port="80" />
+        <listen port="443" />
+    </server>
+
+    <vhosts>
+        <error code="404" file="404.php" />
+        <url match="*~" deny="true" />
+    
+        <document-root path="/var/www" />
+
+        <header key="User-Agent" match="*bot*" deny="true" />
+        <header key="User-Agent" match="*" />
+
+        <module name="gzip">
+            <option key="toto" value="osef" />
+        </module>
+
+        <vhost name="mon site">
+            <host match="www.monsite.com" />
+            <host match="monsite.org" />
+            <header key="Host" match="monsite.biz" />
+
+            <document-root path="/var/monsite" />
+
+            <module name="logger">
+                <option key="access_log" value="/var/log/monsite/access.log" />
+            </module>
+
+            <vhost name="secure zone">
+                <url match="/secure/*" />
+                <host match="monsite.org" deny="true"/>
+                <listen port="80" deny="true" />
+
+                <module name="ssl" enable="true">
+                    <option key="domain_name" value="monsite.com" />
+                </module>
+                <document-root path="/var/monsite/secure" />
+            </vhost>
+
+            <vhost name="data">
+                <url match="/images/*" />
+                <listen port="443" deny="true" />
+                <document-root path="/var/monsite" />
+                <module name="logger" enable="false" />
+            </vhost>
+        </vhost>
+    </vhosts>
+
+</configuration>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<configuration>
+
+    <server>
+        <listen port="80" />
+        <listen port="443" />
+    </server>
+
+    <modules>
+        <module name="gzip" />
+        <module name="error" />
+        <module name="ssl">
+            <option key="directory" value="/var/cert" />
+            <option key="public_key" value="/var/secret/pub.rsa" />
+            <option key="version" value="3" />
+            <option key="debug" value="true" />
+        </module>
+        <module name="logger">
+            <option key="error_log" value="/var/log/zhttpd/error.log" />
+            <option key="access_log" value="/var/log/zhttpd/access.log" />
+        </module>
+    </modules>
+
+    <vhosts />
+</configuration>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<configuration>
+    <server />
+    <modules>
+        <module name="ssl">
+            <option key="directory" value="/var/cert" />
+            <option key="public_key" value="/var/secret/pub.rsa" />
+            <option key="version" value="3" />
+            <option key="debug" value="true" />
+        </module>
+        <module name="gzip" />
+        <module name="logger">
+            <option key="error_log" value="/var/log/zhttpd/error.log" />
+            <option key="access_log" value="/var/log/zhttpd/access.log" />
+        </module>
+    </modules>
+    <vhosts />
+</configuration>
+

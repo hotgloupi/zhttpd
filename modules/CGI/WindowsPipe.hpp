@@ -1,0 +1,34 @@
+#ifdef WIN32
+#ifndef WINDOWSPIPE_HPP
+#define WINDOWSPIPE_HPP
+
+#include <Windows.h>
+
+#include "api/types.hpp"
+
+using namespace ZHTTPD;
+
+class WindowsPipe
+{
+private:
+    HANDLE _read;
+    bool _read_closed;
+    HANDLE _write;
+    bool _write_closed;
+
+public:
+    WindowsPipe(bool canRead, bool canWrite);
+    ~WindowsPipe();
+
+    HANDLE GetReadPipe() const;
+    HANDLE GetWritePipe() const;
+
+    void CloseReadPipe();
+    void CloseWritePipe();
+
+    API::size_t read(char* buffer, API::size_t length);
+    API::size_t write(char const* buffer, API::size_t length);
+};
+
+#endif // WINDOWSPIPE_HPP
+#endif // WIN32

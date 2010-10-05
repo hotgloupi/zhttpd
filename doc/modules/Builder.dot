@@ -1,0 +1,22 @@
+ Builder : public ZHTTPD::API::IModule
+    [
+    label="{\
+Builder\
+|\
+- _builded: bool\l\
+|\
++ Builder(manager: ZHTTPD::API::IModuleManager*)\l\
++ processRequest(event: ZHTTPD::API::EVENT::Type, request: ZHTTPD::API::IRequest*, buffer: ZHTTPD::API::IBuffer*): bool\l\
+}"
+    ]
+
+ BuilderManager : public StatefullManager<Builder>
+    [
+    label="{\
+BuilderManager\
+|\
+|\
++ BuilderManager()\l\
+}"
+    ]
+

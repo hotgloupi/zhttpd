@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<configuration>
+    <modules>
+    </modules>
+    <mimetypes>
+        <assign name="*.png" to="image/png" />
+        <assign name="*.jpg" to="image/jpeg" />
+        <assign name="*.jpeg" to="image/jpeg" />
+        <assign name="*.html" to="text/html" />
+        <assign name="*" to="text/plain" />
+    </mimetypes>
+</configuration>

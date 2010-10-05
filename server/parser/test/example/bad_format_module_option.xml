@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<configuration>
+    <modules>
+        <module name="gzip">
+            <option key="toto" />
+        </module>
+    </modules>
+    <server />
+    <vhosts />
+</configuration>
+

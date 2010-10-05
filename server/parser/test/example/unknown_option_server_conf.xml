@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<configuration>
+    <server>
+        <listen port="80" />
+        <listen port="443" />
+        <toto />
+    </server>
+    <modules />
+    <vhosts />
+</configuration>

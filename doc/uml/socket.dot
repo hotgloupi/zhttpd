@@ -1,0 +1,216 @@
+digraph uml
+{
+    fontname = "Bitstream sans Vera"
+    compound = true;
+    ranksep = 1.25;
+    rankdir = BT;
+    label = "ZHTTPD::Socket";
+    fontsize = 24;
+
+    node
+    [
+        fontname = "Monaco"
+        fontsize = 8
+        shape = "record"
+        style = filled
+        fillcolor = white
+    ]
+
+    edge
+    [
+        fontname = "Monaco"
+        fontsize = 8
+    ]
+
+
+    /*
+     *  Socket
+     */
+
+
+    subgraph cluster_SocketSelector
+    {
+        label="typedef SocketSelector"
+        fontsize=12
+
+        socket_BasicSocketSelector
+        [
+    label="{\
+BasicSocketSelector\
+|\
+- _write_interrupt_socket: ZHTTPD::Socket*\l\
+- _read_interrupt_socket: ZHTTPD::Socket*\l\
+- _sets: fd_set[2]\l\
+- _max_fd: ZHTTPD::API::socket_t\l\
+- _fdlist: fdset_t\l\
+- _mutex: Mutex\l\
+|\
++ BasicSocketSelector()\l\
++ ~BasicSocketSelector()\l\
+- _prepareSockets(notifier: ISocketEventNotifier&, fdlist: fdset_t&): void\l\
+- _updateEvents(notifier: ISocketEventNotifier&, fdlist: fdset_t&): void\l\
+- _initInterruptors(): void\l\
++ watchSockets(notifier: ISocketEventNotifier&): void\l\
++ interruptWatch(): void\l\
++ registerFileDescriptor(fd: ZHTTPD::API::socket_t): void\l\
++ unregisterFileDescriptor(fd: ZHTTPD::API::socket_t): void\l\
+}"
+        ]
+
+        socket_EpollSelector
+        [
+    label="{\
+EpollSelector\
+|\
+- _epfd: ZHTTPD::API::socket_t\l\
+- _nfds: ZHTTPD::API::size_t\l\
+- _max_events: ZHTTPD::API::size_t\l\
+- _events: epoll_event_t*\l\
+- _write_interrupt_socket: ZHTTPD::Socket*\l\
+- _read_interrupt_socket: ZHTTPD::Socket*\l\
++ \<\<static\>\> EPOLL_SIZE: ZHTTPD::API::size_t const\l\
+|\
++ EpollSelector()\l\
++ \<\<virtual\>\> ~EpollSelector()\l\
+- _initInterruptors(): void\l\
++ watchSockets(notifier: ISocketEventNotifier&): void\l\
++ registerFileDescriptor(fd: ZHTTPD::API::socket_t): void\l\
++ unregisterFileDescriptor(fd: ZHTTPD::API::socket_t): void\l\
++ interruptWatch(): void\l\
+}"
+        ]
+
+        socket_SocketSelector [label="SocketSelector"]
+        socket_SocketSelector -> socket_BasicSocketSelector [arrowhead=none]
+        socket_SocketSelector -> socket_EpollSelector [arrowhead=none]
+    } /* cluster_SocketSelector */
+
+    socket_ISocketEventHandler
+    [
+    label="{\
+ISocketEventHandler\
+|\
++ \<\<abstract\>\> handleSocketEvent(evt: SOCKET_EVENT::Type): void\l\
+}"
+    ]
+
+    socket_ISocketEventNotifier
+    [
+    label="{\
+ISocketEventNotifier\
+|\
++ \<\<abstract\>\> notify(fd: API::socket_t, evt: SOCKET_EVENT::Type): void\l\
+}"
+    ]
+
+    subgraph cluster_ImplSocket
+    {
+        label="typedef IMPLEMENTATION::Socket"
+        fontsize=12
+
+        socket_UnixSocket
+        [
+    label="{\
+UnixSocket\
+|\
+# _socket: API::socket_t\l\
+|\
++ UnixSocket(socket: API::socket_t)\l\
++ UnixSocket(ip: uint32_t, port: uint16_t)\l\
++ \<\<virtual\>\> ~UnixSocket()\l\
+# accept(): API::socket_t\l\
++ close(): void\l\
++ write(data: char const*, len: size_t): API::size_t\l\
++ read(buf: char*, len: size_t): API::size_t\l\
+}"
+        ]
+
+        socket_WindowsSocket
+        [
+    label="{\
+WindowsSocket\
+|\
+# _socket: API::socket_t\l\
+|\
++ WindowsSocket(socket: API::socket_t)\l\
++ WindowsSocket(ip: API::uint32_t, port: API::uint16_t)\l\
++ \<\<virtual\>\> ~WindowsSocket()\l\
+# accept(): API::socket_t\l\
++ close(): void\l\
++ write(data: char const*, len: size_t): API::size_t\l\
++ read(buf: char*, len: size_t): API::size_t\l\
+}"
+        ]
+
+        socket_ImplSocket [label="IMPLEMENTATION::Socket"]
+
+        socket_ImplSocket -> socket_UnixSocket [arrowhead=none]
+        socket_ImplSocket -> socket_WindowsSocket [arrowhead=none]
+    } /* cluster_ImplSocket */
+
+    socket_Socket
+    [
+    label="{\
+Socket\
+|\
+- Socket()\l\
+- Socket(socket: Socket const&)\l\
++ Socket(socket: API::socket_t)\l\
++ Socket(ip: API::uint32_t, port: API::uint16_t)\l\
++ \<\<virtual\>\> ~Socket()\l\
++ getSocket() const: API::socket_t\l\
++ accept(): Socket*\l\
+}"
+    ]
+
+    socket_SocketEvent
+    [
+    label="{\
+SocketEvent\
+|\
+- _object: ISocketEventHandler*\l\
+- _enabled: volatile bool\l\
+- _events: bool[SOCKET_EVENT::NB_SOCKET_EVENT]\l\
+- _mutex: Mutex\l\
+- _process_mutex: Mutex\l\
+|\
++ SocketEvent(object: ISocketEventHandler&)\l\
++ isEnabled(): bool\l\
++ trigger(): void\l\
++ setHandler(handler: ISocketEventHandler&): void\l\
++ disable(): void\l\
++ destroy(): void\l\
++ notify(evt: SOCKET_EVENT::Type): void\l\
+}"
+    ]
+
+    socket__SocketPool
+    [
+    label="{\
+_SocketPool\
+|\
+- _events: SocketEvent**\l\
+|\
++ _SocketPool()\l\
++ \<\<virtual\>\> ~_SocketPool()\l\
++ registerHandler(fd: API::socket_t, object: ISocketEventHandler&): void\l\
++ unregisterHandler(fd: API::socket_t): void\l\
++ destroyHandler(fd: API::socket_t): void\l\
++ notify(fd: API::socket_t, evt: SOCKET_EVENT::Type): void\l\
++ \<\<virtual\>\> run(): void\l\
++ stop(): void\l\
+}"
+    ]
+
+    socket_SocketPool [label="SocketPool"]
+    socket_SocketPool -> socket__SocketPool
+
+    socket_Socket -> socket_ImplSocket
+    socket_ISocketEventHandler -> socket_SocketEvent [arrowhead=diamond]
+    socket__SocketPool -> socket_SocketSelector
+    socket__SocketPool -> socket_ISocketEventNotifier
+    socket_Socket -> socket__SocketPool [arrowhead=odiamond taillabel="[0..n]"]
+    socket_SocketEvent -> socket__SocketPool [arrowhead=odiamond taillabel="[0..n]"]
+
+
+}

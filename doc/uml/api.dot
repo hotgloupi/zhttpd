@@ -1,0 +1,144 @@
+digraph uml
+{
+    fontname = "Bitstream sans Vera"
+    compound = true;
+    ranksep = 1.25;
+    rankdir = BT;
+    label = "ZHTTPD::API";
+    fontsize = 24;
+
+    node
+    [
+        fontname = "Monaco"
+        fontsize = 8
+        shape = "record"
+        style = filled
+        fillcolor = white
+    ]
+
+    edge
+    [
+        fontname = "Monaco"
+        fontsize = 8
+    ]
+
+    subgraph cluster_api
+    {
+        label = "API"
+
+        subgraph cluster_module
+        {
+            label = "Module classes"
+
+            api_IModule
+            [
+    label="{\
+IModule\
+|\
++ \<\<virtual\>\> ~IModule()\l\
++ \<\<abstract\>\> processRequest(event: EVENT::Type, request: IRequest*, buffer: IBuffer*): bool\l\
+}"
+            ]
+
+            api_IModuleManager
+            [
+    label="{\
+IModuleManager\
+|\
++ \<\<virtual\>\> ~IModuleManager()\l\
++ \<\<abstract\>\> getInstance(in_response: bool): IModule*\l\
++ \<\<abstract\>\> releaseInstance(module: IModule*): void\l\
++ \<\<abstract\>\> addConfigurationEntry(key: std::string const&, value: std::string const&): void\l\
++ \<\<abstract\>\> getCategory() const: CATEGORY::Type\l\
++ \<\<abstract\>\> getName() const: std::string const&\l\
++ \<\<abstract\>\> isRequired(request: IRequest const&) const: bool\l\
+}"
+            ]
+        } /* cluster_module */
+
+        api_IModule -> api_IModuleManager [arrowhead = odiamond]
+
+        subgraph cluster_server
+        {
+            label = "Server classes"
+
+            api_IBuffer
+            [
+    label="{\
+IBuffer\
+|\
++ \<\<virtual\>\> ~IBuffer()\l\
++ \<\<abstract\>\> getRawData(): char*\l\
++ \<\<abstract\>\> getSize() const: API::size_t\l\
++ \<\<abstract\>\> setSize(size: API::size_t): void\l\
++ \<\<abstract\>\> setSize(start: API::size_t, size: API::size_t): void\l\
+}"
+            ]
+
+            api_IBufferManager
+            [
+    label="{\
+IBufferManager\
+|\
++ \<\<virtual\>\> ~IBufferManager()\l\
++ \<\<abstract\>\> allocate(string: std::string const&): IBuffer*\l\
++ \<\<abstract\>\> allocate(data: char const*, size: size_t): IBuffer*\l\
++ \<\<abstract\>\> allocate(size: size_t): IBuffer*\l\
++ \<\<abstract\>\> release(buffer: IBuffer*): void\l\
+}"
+            ]
+
+            api_IRequest
+            [
+    label="{\
+IRequest\
+|\
++ \<\<virtual\>\> ~IRequest()\l\
++ \<\<abstract\>\> callLater(ms: uint32_t): void\l\
++ \<\<abstract\>\> giveData(buffer: IBuffer*): void\l\
++ \<\<abstract\>\> raiseError(code: HTTP_CODE::Type, error: std::string): void\l\
++ \<\<abstract\>\> raiseEnd(): void\l\
++ \<\<abstract\>\> needWrite(buffer: IBuffer*): void\l\
++ \<\<abstract\>\> getSession(): ISession const&\l\
++ \<\<abstract\>\> getBufferManager(): IBufferManager&\l\
++ \<\<abstract\>\> getFilePath() const: std::string const&\l\
++ \<\<abstract\>\> setRequestHeader(key: std::string const&, val: std::string const&): void\l\
++ \<\<abstract\>\> getRequestHeader(key: std::string const&) const: std::string const&\l\
++ \<\<abstract\>\> getRequestHeaderKeys() const: std::list\<std::string const*\>\l\
++ \<\<abstract\>\> setRequestMethod(method: HTTP_METHOD::Type): void\l\
++ \<\<abstract\>\> getRequestMethod() const: HTTP_METHOD::Type\l\
++ \<\<abstract\>\> setRequestQuery(query: std::string const&): void\l\
++ \<\<abstract\>\> getRequestQuery() const: std::string const&\l\
++ \<\<abstract\>\> setResponseCode(code: HTTP_CODE::Type, reason: std::string const&): void\l\
++ \<\<abstract\>\> getResponseCode() const: HTTP_CODE::Type\l\
++ \<\<abstract\>\> setResponseHeader(key: std::string const&, val: std::string const&): void\l\
++ \<\<abstract\>\> getResponseHeader(key: std::string const&) const: std::string const&\l\
++ \<\<abstract\>\> getResponseHeaderKeys() const: std::list\<std::string const*\>\l\
+}"
+            ]
+
+            api_ISession
+            [
+    label="{\
+ISession\
+|\
++ \<\<virtual\>\> ~ISession()\l\
++ \<\<abstract\>\> getSocket() const: socket_t\l\
++ \<\<abstract\>\> getIp() const: uint32_t\l\
++ \<\<abstract\>\> getPort() const: uint16_t\l\
++ \<\<abstract\>\> getProcessedRequestCount() const: size_t\l\
+}"
+            ]
+
+
+        } /* cluster_server */
+
+        api_ISession -> api_IRequest [arrowhead = diamond]
+        api_IBuffer -> api_IBufferManager [arrowhead = odiamond]
+        api_IModule -> api_IRequest [arrowhead = diamond, taillabel = "1..n"]
+
+    } /* cluster_api */
+
+
+}
+

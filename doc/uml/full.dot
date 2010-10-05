@@ -1,0 +1,1327 @@
+
+digraph uml
+{
+    fontname = "Bitstream sans Vera"
+    compound = true;
+    ranksep = 1.25;
+    rankdir = BT;
+    label = "ZHTTPD Httpd";
+    fontsize = 24;
+
+    node
+    [
+        fontname = "Monaco"
+        fontsize = 8
+        shape = "record"
+        style = filled
+        fillcolor = white
+    ]
+
+    edge
+    [
+        fontname = "Monaco"
+        fontsize = 8
+    ]
+
+    subgraph cluster_api
+    {
+        label = "API"
+
+        subgraph cluster_module
+        {
+            label = "Module classes"
+
+            api_IModule
+            [
+    label="{\
+IModule\
+|\
++ \<\<virtual\>\> ~IModule()\l\
++ \<\<abstract\>\> processRequest(event: EVENT::Type, request: IRequest*, buffer: IBuffer*): bool\l\
+}"
+            ]
+
+            api_IModuleManager
+            [
+    label="{\
+IModuleManager\
+|\
++ \<\<virtual\>\> ~IModuleManager()\l\
++ \<\<abstract\>\> getInstance(in_response: bool): IModule*\l\
++ \<\<abstract\>\> releaseInstance(module: IModule*): void\l\
++ \<\<abstract\>\> addConfigurationEntry(key: std::string const&, value: std::string const&): void\l\
++ \<\<abstract\>\> getCategory() const: CATEGORY::Type\l\
++ \<\<abstract\>\> getName() const: std::string const&\l\
++ \<\<abstract\>\> isRequired(request: IRequest const&) const: bool\l\
+}"
+            ]
+        } /* cluster_module */
+
+        api_IModule -> api_IModuleManager [arrowhead = odiamond]
+
+        subgraph cluster_server
+        {
+            label = "Server classes"
+
+            api_IBuffer
+            [
+    label="{\
+IBuffer\
+|\
++ \<\<virtual\>\> ~IBuffer()\l\
++ \<\<abstract\>\> getRawData(): char*\l\
++ \<\<abstract\>\> getSize() const: API::size_t\l\
++ \<\<abstract\>\> setSize(size: API::size_t): void\l\
++ \<\<abstract\>\> setSize(start: API::size_t, size: API::size_t): void\l\
+}"
+            ]
+
+            api_IBufferManager
+            [
+    label="{\
+IBufferManager\
+|\
++ \<\<virtual\>\> ~IBufferManager()\l\
++ \<\<abstract\>\> allocate(string: std::string const&): IBuffer*\l\
++ \<\<abstract\>\> allocate(data: char const*, size: size_t): IBuffer*\l\
++ \<\<abstract\>\> allocate(size: size_t): IBuffer*\l\
++ \<\<abstract\>\> release(buffer: IBuffer*): void\l\
+}"
+            ]
+
+            api_IRequest
+            [
+    label="{\
+IRequest\
+|\
++ \<\<virtual\>\> ~IRequest()\l\
++ \<\<abstract\>\> callLater(ms: uint32_t): void\l\
++ \<\<abstract\>\> giveData(buffer: IBuffer*): void\l\
++ \<\<abstract\>\> raiseError(code: HTTP_CODE::Type, error: std::string): void\l\
++ \<\<abstract\>\> raiseEnd(): void\l\
++ \<\<abstract\>\> needWrite(buffer: IBuffer*): void\l\
++ \<\<abstract\>\> getSession(): ISession const&\l\
++ \<\<abstract\>\> getBufferManager(): IBufferManager&\l\
++ \<\<abstract\>\> getFilePath() const: std::string const&\l\
++ \<\<abstract\>\> setRequestHeader(key: std::string const&, val: std::string const&): void\l\
++ \<\<abstract\>\> getRequestHeader(key: std::string const&) const: std::string const&\l\
++ \<\<abstract\>\> getRequestHeaderKeys() const: std::list\<std::string const*\>\l\
++ \<\<abstract\>\> setRequestMethod(method: HTTP_METHOD::Type): void\l\
++ \<\<abstract\>\> getRequestMethod() const: HTTP_METHOD::Type\l\
++ \<\<abstract\>\> setRequestQuery(query: std::string const&): void\l\
++ \<\<abstract\>\> getRequestQuery() const: std::string const&\l\
++ \<\<abstract\>\> setResponseCode(code: HTTP_CODE::Type, reason: std::string const&): void\l\
++ \<\<abstract\>\> getResponseCode() const: HTTP_CODE::Type\l\
++ \<\<abstract\>\> setResponseHeader(key: std::string const&, val: std::string const&): void\l\
++ \<\<abstract\>\> getResponseHeader(key: std::string const&) const: std::string const&\l\
++ \<\<abstract\>\> getResponseHeaderKeys() const: std::list\<std::string const*\>\l\
+}"
+            ]
+
+            api_ISession
+            [
+    label="{\
+ISession\
+|\
++ \<\<virtual\>\> ~ISession()\l\
++ \<\<abstract\>\> getSocket() const: socket_t\l\
++ \<\<abstract\>\> getIp() const: uint32_t\l\
++ \<\<abstract\>\> getPort() const: uint16_t\l\
++ \<\<abstract\>\> getProcessedRequestCount() const: size_t\l\
+}"
+            ]
+
+
+        } /* cluster_server */
+
+        api_ISession -> api_IRequest [arrowhead = diamond]
+        api_IBuffer -> api_IBufferManager [arrowhead = odiamond]
+        api_IModule -> api_IRequest [arrowhead = diamond, taillabel = "1..n"]
+
+    } /* cluster_api */
+
+    /*
+     * Configuration
+     */
+
+    subgraph cluster_config
+    {
+        label = "Configuration classes"
+
+        conf_Configuration
+        [
+    label="{\
+Configuration\
+|\
+- _modules: std::map\<std::string, ModuleConfiguration*\>\l\
+- _available_modules: available_modules_map_t\l\
+- _modules_handlers: std::map\<std::string, Library*\>\l\
+- _index_files: std::list\<std::string\>\l\
+- _vhost: VHost*\l\
+- _ports: std::map\<API::uint16_t, std::string\>\l\
+- _modules_directory: Path*\l\
+- _io_module_managers: std::map\<API::uint16_t, API::IModuleManager*\>\l\
+- _file_reader_manager: MOD::FileReaderManager*\l\
+|\
++ Configuration()\l\
++ \<\<virtual\>\> ~Configuration()\l\
+- _isDynamicLibrary(filename: std::string const&): bool\l\
+- _loadModule(moduleName: std::string const&): bool\l\
++ loadModules(): bool\l\
++ getVHost() const: VHost*\l\
++ addModule(module: ModuleConfiguration*): void\l\
++ getModules() const: std::map\<std::string, ModuleConfiguration*\> const&\l\
++ getModuleConfiguration(name: std::string const&): ModuleConfiguration*\l\
++ getModuleManager(name: std::string const&): API::IModuleManager*\l\
++ getAvailableModules(): available_modules_map_t&\l\
++ getListenPorts() const: std::map\<API::uint16_t, std::string\> const&\l\
++ addListenPort(port: API::uint16_t, io_module: std::string const&): void\l\
++ setVHost(vhost: VHost*): void\l\
++ getInputOutputModuleManager(port: API::uint16_t): API::IModuleManager*\l\
++ getFileReader(): MOD::FileReaderManager*\l\
++ loadIOModuleManager(port: API::uint16_t, name: std::string const&): API::IModuleManager*\l\
++ setModulesDirectory(path: std::string const&): void\l\
++ setModulesDirectory(path: Path*): void\l\
++ addIndexFile(filename: std::string const&): void\l\
++ getIndexFiles(): std::list\<std::string\> const&\l\
++ getLibHandler(name: std::string const&): Library*\l\
+}"
+        ]
+
+        conf_HeaderGuideline
+        [
+    label="{\
+HeaderGuideline\
+|\
+- _key: std::string\l\
+- _match: std::string\l\
+- _deny: bool\l\
+|\
++ HeaderGuideline(key: std::string const&, match: std::string const&, deny: bool)\l\
++ \<\<virtual\>\> ~HeaderGuideline()\l\
++ match(request: API::IRequest&) const: bool\l\
+}"
+        ]
+
+        conf_HostGuideline
+        [
+    label="{\
+HostGuideline\
+|\
+- _match: std::string\l\
+- _deny: bool\l\
+|\
++ HostGuideline(match: std::string const&, deny: bool)\l\
++ \<\<virtual\>\> ~HostGuideline()\l\
++ match(request: API::IRequest&) const: bool\l\
+}"
+        ]
+
+        conf_IVHostGuideline
+        [
+    label="{\
+IVHostGuideline\
+|\
++ \<\<virtual\>\> ~IVHostGuideline()\l\
++ \<\<abstract\>\> match(request: API::IRequest&) const: bool\l\
+}"
+        ]
+
+        conf_ListenGuideline
+        [
+    label="{\
+ListenGuideline\
+|\
+- _port: API::uint16_t\l\
+- _deny: bool\l\
+|\
++ ListenGuideline(port: API::uint16_t, deny: bool)\l\
++ \<\<virtual\>\> ~ListenGuideline()\l\
++ match(request: API::IRequest&) const: bool\l\
+}"
+        ]
+
+        conf_ModuleConfiguration
+        [
+    label="{\
+ModuleConfiguration\
+|\
+- _name: std::string\l\
+- _options: std::map\<std::string, std::string\>\l\
+- _manager: API::IModuleManager*\l\
+- _merged: bool\l\
+- _enabled: bool\l\
+- _config: Configuration*\l\
+|\
++ ModuleConfiguration(name: std::string const&, enabled: bool, config: Configuration*)\l\
++ \<\<virtual\>\> ~ModuleConfiguration()\l\
+- _setConfiguration(manager: ZHTTPD::API::IModuleManager*): void\l\
++ addConfigurationEntry(key: std::string const&, value: std::string const&): void\l\
++ getConfigurationEntry(key: std::string const&): std::string const&\l\
++ getName() const: std::string const&\l\
++ getModuleManager(): API::IModuleManager*\l\
++ getOptions(): std::map\<std::string, std::string\>&\l\
++ merge(parent: ModuleConfiguration*): void\l\
++ isMerged() const: bool\l\
++ setMerged(b: bool): void\l\
++ isEnabled() const: bool\l\
+}"
+        ]
+
+        conf_UrlGuideline
+        [
+    label="{\
+UrlGuideline\
+|\
+- _match: std::string\l\
+- _deny: bool\l\
+|\
++ UrlGuideline(match_string: std::string const&, deny: bool)\l\
++ \<\<virtual\>\> ~UrlGuideline()\l\
++ match(request: API::IRequest&) const: bool\l\
+}"
+        ]
+
+        conf_VHost
+        [
+    label="{\
+VHost\
+|\
+- _childs: std::list\<VHost*\>\l\
+- _parent: VHost*\l\
+- _name: std::string\l\
+- _document_root: std::string\l\
+- _modules: std::map\<std::string, ModuleConfiguration*\>\l\
+- _guide_lines: std::list\<IVHostGuideline*\>\l\
+|\
++ VHost(parent: VHost*)\l\
++ \<\<virtual\>\> ~VHost()\l\
++ match(request: API::IRequest&): VHost*\l\
++ addModule(module: ModuleConfiguration*): void\l\
++ getModule(name: std::string const&): ZHTTPD::API::IModuleManager*\l\
++ getModuleConfiguration(modname: std::string const&): ModuleConfiguration*\l\
++ moduleExists(name: std::string const&): bool\l\
++ addGuideline(guideLine: IVHostGuideline*): void\l\
++ addChild(vhost: VHost*): void\l\
++ setDocumentRoot(path: std::string const&): void\l\
++ getDocumentRoot(): std::string const&\l\
++ getName() const: std::string const&\l\
++ setName(name: std::string const&): void\l\
+}"
+        ]
+
+    } /* cluster_config */
+
+    conf_ModuleConfiguration -> conf_Configuration [arrowhead=odiamond]
+    conf_VHost -> conf_Configuration [arrowhead=odiamond]
+    conf_ModuleConfiguration -> conf_VHost [arrowhead=odiamond]
+    conf_VHost -> conf_VHost [arrowhead=odiamond]
+    conf_IVHostGuideline -> conf_VHost [arrowhead=odiamond]
+    conf_UrlGuideline -> conf_IVHostGuideline [arrowhead=normal]
+    conf_HeaderGuideline -> conf_IVHostGuideline [arrowhead=normal]
+    conf_HostGuideline -> conf_IVHostGuideline [arrowhead=normal]
+    conf_ListenGuideline -> conf_IVHostGuideline [arrowhead=normal]
+
+    /*
+     * Library
+     */
+
+    subgraph cluster_library
+    {
+        label="Library class"
+
+        Library
+        [
+    label="{\
+Library\
+|\
+- _path: std::string\l\
+|\
++ Library(path: std::string const&)\l\
++ ~Library()\l\
++ getPath(): std::string const&\l\
++ template\<typename Cast\> resolve(name: char const*): Cast\l\
+}"
+        ]
+    } /*cluster_library*/
+
+    /*
+     * Builder
+     */
+
+    subgraph cluster_modules
+    {
+        label="Modules"
+
+        subgraph cluster_module_common
+        {
+            label="Common"
+
+            module_AbstractManager
+            [
+    label="{\
+AbstractManager\
+|\
+- _name: std::string\l\
+- _category: ZHTTPD::API::CATEGORY::Type\l\
+|\
++ AbstractManager(name: std::string const&, category: ZHTTPD::API::CATEGORY::Type)\l\
++ \<\<virtual\>\> getName() const: std::string const&\l\
++ \<\<virtual\>\> getCategory() const: ZHTTPD::API::CATEGORY::Type\l\
++ \<\<virtual\>\> isRequired(r: ZHTTPD::API::IRequest const&) const: bool\l\
+}"
+            ]
+
+            module_StatefullManagementPolicy
+            [
+    label="{\
+StatefullManagementPolicy\
+|\
++ \<\<virtual\>\> getInstance(in_response: bool): ZHTTPD::API::IModule*\l\
++ \<\<virtual\>\> releaseInstance(module: ZHTTPD::API::IModule*): void\l\
+}"
+            ]
+
+            module_StatelessManagementPolicy
+            [
+    label="{\
+StatelessManagementPolicy\
+|\
+- _module: API::IModule*\l\
+|\
++ StatelessManagementPolicy()\l\
++ \<\<virtual\>\> ~StatelessManagementPolicy()\l\
++ \<\<virtual\>\> getInstance(in_response: bool): ZHTTPD::API::IModule*\l\
++ \<\<virtual\>\> releaseInstance(module: ZHTTPD::API::IModule*): void\l\
+}"
+            ]
+
+            module_StatefullManager
+            [
+    label="{\
+StatefullManager\
+|\
++ StatefullManager(name: std::string const&, category: ZHTTPD::API::CATEGORY::Type)\l\
+}"
+            ]
+
+            module_StatelessManager
+            [
+    label="{\
+StatelessManager\
+|\
++ StatelessManager(name: std::string const&, category: ZHTTPD::API::CATEGORY::Type)\l\
+}"
+            ]
+        } /* cluster_module_common */
+
+        module_AbstractManager -> api_IModuleManager
+        module_StatelessManager -> module_AbstractManager
+        module_StatelessManager -> module_StatelessManagementPolicy
+        module_StatefullManager -> module_AbstractManager
+        module_StatefullManager -> module_StatefullManagementPolicy
+
+        subgraph cluster_module_builder
+        {
+            module_Builder
+            [
+    label="{\
+Builder\
+|\
+- _builded: bool\l\
+|\
++ Builder(manager: ZHTTPD::API::IModuleManager*)\l\
+- _findModules(request: ZHTTPD::API::IRequest*, config: Configuration*, vhost: VHost*): void\l\
+- _addModule(category: ZHTTPD::API::CATEGORY::Type, config: Configuration*, vhost: VHost*, request: ZHTTPD::API::IRequest*): void\l\
+- _addBaseModule(name: std::string const&, config: Configuration*, request: ZHTTPD::API::IRequest*): bool\l\
+- _setTruePath(request: ZHTTPD::API::IRequest*, vhost: VHost*, conf: Configuration*): bool\l\
+- _setRelativePath(request: ZHTTPD::API::IRequest*): void\l\
+- _testIndexFiles(request: ZHTTPD::API::IRequest*, conf: Configuration*): void\l\
++ processRequest(event: ZHTTPD::API::EVENT::Type, request: ZHTTPD::API::IRequest*, buffer: ZHTTPD::API::IBuffer*): bool\l\
+}"
+            ]
+
+            module_BuilderManager
+            [
+    label="{\
+BuilderManager\
+|\
++ BuilderManager()\l\
+}"
+            ]
+
+        } /* cluster_module_builder */
+
+    module_BuilderManager -> module_StatefullManager
+    module_Builder -> module_BuilderManager [arrowhead = odiamond]
+    module_Builder -> api_IModule
+
+    } /* cluster_modules */
+
+    subgraph cluster_utils
+    {
+        label="Utils"
+
+        utils_Regex
+        [
+    label="{\
+Regex\
+|\
++ \<\<static\>\> match(pattern: char const*, str: char const*): bool\l\
++ \<\<static\>\> match(pattern: std::string const&, str: std::string const&): bool\l\
+}"
+        ]
+    } /* cluster_utils */
+
+    conf_Configuration -> module_Builder [arrowhead=diamond]
+    Library -> module_Builder [arrowhead=diamond]
+
+    /*
+     *  Socket
+     */
+
+    subgraph cluster_SocketSocket
+    {
+
+    subgraph cluster_SocketSelector
+    {
+        label="typedef SocketSelector"
+        fontsize=12
+
+        socket_BasicSocketSelector
+        [
+    label="{\
+BasicSocketSelector\
+|\
+- _write_interrupt_socket: ZHTTPD::Socket*\l\
+- _read_interrupt_socket: ZHTTPD::Socket*\l\
+- _sets: fd_set[2]\l\
+- _max_fd: ZHTTPD::API::socket_t\l\
+- _fdlist: fdset_t\l\
+- _mutex: Mutex\l\
+|\
++ BasicSocketSelector()\l\
++ ~BasicSocketSelector()\l\
+- _prepareSockets(notifier: ISocketEventNotifier&, fdlist: fdset_t&): void\l\
+- _updateEvents(notifier: ISocketEventNotifier&, fdlist: fdset_t&): void\l\
+- _initInterruptors(): void\l\
++ watchSockets(notifier: ISocketEventNotifier&): void\l\
++ interruptWatch(): void\l\
++ registerFileDescriptor(fd: ZHTTPD::API::socket_t): void\l\
++ unregisterFileDescriptor(fd: ZHTTPD::API::socket_t): void\l\
+}"
+        ]
+
+        socket_EpollSelector
+        [
+    label="{\
+EpollSelector\
+|\
+- _epfd: ZHTTPD::API::socket_t\l\
+- _nfds: ZHTTPD::API::size_t\l\
+- _max_events: ZHTTPD::API::size_t\l\
+- _events: epoll_event_t*\l\
+- _write_interrupt_socket: ZHTTPD::Socket*\l\
+- _read_interrupt_socket: ZHTTPD::Socket*\l\
++ \<\<static\>\> EPOLL_SIZE: ZHTTPD::API::size_t const\l\
+|\
++ EpollSelector()\l\
++ \<\<virtual\>\> ~EpollSelector()\l\
+- _initInterruptors(): void\l\
++ watchSockets(notifier: ISocketEventNotifier&): void\l\
++ registerFileDescriptor(fd: ZHTTPD::API::socket_t): void\l\
++ unregisterFileDescriptor(fd: ZHTTPD::API::socket_t): void\l\
++ interruptWatch(): void\l\
+}"
+        ]
+
+        socket_SocketSelector [label="SocketSelector"]
+        socket_SocketSelector -> socket_BasicSocketSelector [arrowhead=none]
+        socket_SocketSelector -> socket_EpollSelector [arrowhead=none]
+    } /* cluster_SocketSelector */
+
+    socket_ISocketEventHandler
+    [
+    label="{\
+ISocketEventHandler\
+|\
++ \<\<abstract\>\> handleSocketEvent(evt: SOCKET_EVENT::Type): void\l\
+}"
+    ]
+
+    socket_ISocketEventNotifier
+    [
+    label="{\
+ISocketEventNotifier\
+|\
++ \<\<abstract\>\> notify(fd: API::socket_t, evt: SOCKET_EVENT::Type): void\l\
+}"
+    ]
+
+    subgraph cluster_ImplSocket
+    {
+        label="typedef IMPLEMENTATION::Socket"
+        fontsize=12
+
+        socket_UnixSocket
+        [
+    label="{\
+UnixSocket\
+|\
+# _socket: API::socket_t\l\
+|\
++ UnixSocket(socket: API::socket_t)\l\
++ UnixSocket(ip: uint32_t, port: uint16_t)\l\
++ \<\<virtual\>\> ~UnixSocket()\l\
+# accept(): API::socket_t\l\
++ close(): void\l\
++ write(data: char const*, len: size_t): API::size_t\l\
++ read(buf: char*, len: size_t): API::size_t\l\
+}"
+        ]
+
+        socket_WindowsSocket
+        [
+    label="{\
+WindowsSocket\
+|\
+# _socket: API::socket_t\l\
+|\
++ WindowsSocket(socket: API::socket_t)\l\
++ WindowsSocket(ip: API::uint32_t, port: API::uint16_t)\l\
++ \<\<virtual\>\> ~WindowsSocket()\l\
+# accept(): API::socket_t\l\
++ close(): void\l\
++ write(data: char const*, len: size_t): API::size_t\l\
++ read(buf: char*, len: size_t): API::size_t\l\
+}"
+        ]
+
+        socket_ImplSocket [label="IMPLEMENTATION::Socket"]
+
+        socket_ImplSocket -> socket_UnixSocket [arrowhead=none]
+        socket_ImplSocket -> socket_WindowsSocket [arrowhead=none]
+    } /* cluster_ImplSocket */
+
+    socket_Socket
+    [
+    label="{\
+Socket\
+|\
+- Socket()\l\
+- Socket(socket: Socket const&)\l\
++ Socket(socket: API::socket_t)\l\
++ Socket(ip: API::uint32_t, port: API::uint16_t)\l\
++ \<\<virtual\>\> ~Socket()\l\
++ getSocket() const: API::socket_t\l\
++ accept(): Socket*\l\
+}"
+    ]
+
+    socket_SocketEvent
+    [
+    label="{\
+SocketEvent\
+|\
+- _object: ISocketEventHandler*\l\
+- _enabled: volatile bool\l\
+- _events: bool[SOCKET_EVENT::NB_SOCKET_EVENT]\l\
+- _mutex: Mutex\l\
+- _process_mutex: Mutex\l\
+|\
++ SocketEvent(object: ISocketEventHandler&)\l\
++ isEnabled(): bool\l\
++ trigger(): void\l\
++ setHandler(handler: ISocketEventHandler&): void\l\
++ disable(): void\l\
++ destroy(): void\l\
++ notify(evt: SOCKET_EVENT::Type): void\l\
+}"
+    ]
+
+    socket__SocketPool
+    [
+    label="{\
+_SocketPool\
+|\
+- _events: SocketEvent**\l\
+|\
++ _SocketPool()\l\
++ \<\<virtual\>\> ~_SocketPool()\l\
++ registerHandler(fd: API::socket_t, object: ISocketEventHandler&): void\l\
++ unregisterHandler(fd: API::socket_t): void\l\
++ destroyHandler(fd: API::socket_t): void\l\
++ notify(fd: API::socket_t, evt: SOCKET_EVENT::Type): void\l\
++ \<\<virtual\>\> run(): void\l\
++ stop(): void\l\
+}"
+    ]
+
+    socket_SocketPool [label="SocketPool"]
+    socket_SocketPool -> socket__SocketPool
+
+    socket_Socket -> socket_ImplSocket
+    socket_ISocketEventHandler -> socket_SocketEvent [arrowhead=diamond]
+    socket__SocketPool -> socket_SocketSelector
+    socket__SocketPool -> socket_ISocketEventNotifier
+    socket_Socket -> socket__SocketPool [arrowhead=odiamond taillabel="[0..n]"]
+    socket_SocketEvent -> socket__SocketPool [arrowhead=odiamond taillabel="[0..n]"]
+
+    } /* cluster_SocketSocket */
+
+
+    /*
+     *  Thread
+     */
+
+    subgraph cluster_Thread
+    {
+        label="Thread"
+
+    thread_ICondition
+    [
+    label="{\
+ICondition\
+|\
++ \<\<virtual\>\> ~ICondition()\l\
++ \<\<abstract\>\> checkCondition(): bool\l\
+}"
+    ]
+
+    thread_ITask
+    [
+    label="{\
+ITask\
+|\
++ \<\<virtual\>\> ~ITask()\l\
++ \<\<abstract\>\> run(): void\l\
+}"
+    ]
+
+    thread_IThreadCondition
+    [
+    label="{\
+IThreadCondition\
+|\
++ \<\<virtual\>\> ~IThreadCondition()\l\
++ \<\<abstract\>\> wait(): void\l\
++ \<\<abstract\>\> wake(): void\l\
++ \<\<abstract\>\> wakeAll(): void\l\
+}"
+    ]
+
+    thread_Mutex
+    [
+    label="{\
+Mutex\
+|\
+- _locked: bool\l\
+- _mutex: mutex_t\l\
+|\
++ Mutex()\l\
++ ~Mutex()\l\
++ lock(): void\l\
++ tryLock(): bool\l\
++ unlock(): void\l\
+}"
+    ]
+
+    thread_RWLock
+    [
+    label="{\
+RWLock\
+|\
+- _rwlock: rwlock_t\l\
+|\
++ RWLock()\l\
++ ~RWLock()\l\
++ lockRead(): void\l\
++ lockWrite(): void\l\
++ tryLockRead(): bool\l\
++ tryLockWrite(): bool\l\
++ unlockRead(): void\l\
++ unlockWrite(): void\l\
+}"
+    ]
+
+    thread_ScopeLock
+    [
+    label="{\
+ScopeLock\
+|\
+- _mutex: Mutex&\l\
+|\
++ ScopeLock(mutex: Mutex&)\l\
++ ~ScopeLock()\l\
+}"
+    ]
+
+    thread_ThreadCondition
+    [
+    label="{\
+ThreadCondition\
+|\
+- _wait_condition: ICondition*\l\
+- _condition: condition_t\l\
+- _mutex: mutex_t\l\
+|\
++ ThreadCondition(wait_condition: ICondition*)\l\
++ \<\<virtual\>\> ~ThreadCondition()\l\
++ \<\<virtual\>\> wait(): void\l\
++ \<\<virtual\>\> wake(): void\l\
++ \<\<virtual\>\> wakeAll(): void\l\
+}"
+    ]
+
+    thread_ThreadTask
+    [
+    label="{\
+ThreadTask\
+|\
+- _pool: ThreadPool*\l\
+|\
++ ThreadTask(pool: ThreadPool*)\l\
++ \<\<virtual\>\> run(): void\l\
+}"
+    ]
+
+    thread_CheckHasWork
+    [
+    label="{\
+CheckHasWork\
+|\
+- _pool: ThreadPool*\l\
+|\
++ CheckHasWork(pool: ThreadPool*)\l\
++ \<\<virtual\>\> checkCondition(): bool\l\
+}"
+    ]
+
+    thread_ThreadPool
+    [
+    label="{\
+ThreadPool\
+|\
+- _running: bool\l\
+- _threads: std::vector\<Thread*\>\l\
+- _pending_tasks: std::queue\<SmartPtr\<ITask\>\>\l\
+- _running_thread_task: ThreadTask\l\
+- _checking_has_work: CheckHasWork\l\
+- _condition: ThreadCondition\l\
+- _pending_tasks_mutex: Mutex\l\
+|\
++ ThreadPool(nb_threads: unsigned int)\l\
++ ~ThreadPool()\l\
++ queueTask(task: SmartPtr\<ITask\> const&): void\l\
+}"
+    ]
+
+    thread_Thread
+    [
+    label="{\
+Thread\
+|\
+- _thread: thread_t\l\
+- _running: bool\l\
+- _callback_instance: ITask*\l\
+|\
++ Thread(instance: ITask*)\l\
++ \<\<virtual\>\> ~Thread()\l\
+- \<\<static\>\> _run(thread: Thread*): void*\l\
++ join(): void\l\
++ quit(): void\l\
+}"
+    ]
+
+    thread_Mutex -> thread_ScopeLock [arrowhead=diamond]
+    thread_ThreadCondition -> thread_IThreadCondition
+    thread_ICondition -> thread_ThreadCondition [arrowhead=diamond]
+    thread_ThreadTask -> thread_ITask
+    thread_ThreadPool -> thread_ThreadTask [arrowhead=diamond]
+    thread_CheckHasWork -> thread_ICondition
+    thread_ThreadPool -> thread_CheckHasWork [arrowhead=diamond]
+    thread_Thread -> thread_ThreadPool [arrowhead=diamond taillabel="[1..n]"]
+    thread_ITask -> thread_ThreadPool [arrowhead=odiamond taillabel="[0..n]"]
+    thread_ThreadTask -> thread_ThreadPool [arrowhead=diamond]
+    thread_CheckHasWork -> thread_ThreadPool [arrowhead=diamond]
+    thread_ThreadCondition -> thread_ThreadPool [arrowhead=diamond]
+    thread_ITask -> thread_Thread [arrowhead=diamond]
+
+    } /* cluster_Thread */
+
+
+
+
+    /*
+     *  Core
+     */
+
+    subgraph cluster_Core
+    {
+        label="Core"
+
+    module_ParserManager [label="ParserManager"]
+    module_PreOutputBuilderManager [label="PreOutputBuilderManager"]
+    utils_Singleton [label="Singleton"]
+
+        core_Buffer
+        [
+    label="{\
+Buffer\
+|\
+- _allocator: Allocator*\l\
+- _data: char*\l\
+- _size: API::size_t\l\
+- _offset: API::size_t\l\
+|\
++ Buffer(allocator: Allocator&, data: char const*, size: API::size_t)\l\
++ Buffer(allocator: Allocator&, size: API::size_t)\l\
++ \<\<virtual\>\> ~Buffer()\l\
++ getRawData(): char*\l\
++ getSize() const: API::size_t\l\
++ setSize(size: API::size_t): void\l\
++ setSize(start: API::size_t, size: API::size_t): void\l\
+}"
+        ]
+
+        core_BufferManager
+        [
+    label="{\
+BufferManager\
+|\
+- _mutex: Mutex\l\
+- _pool: MemoryPool\<buffer_t\>\l\
+- _allocator: BufferAllocator\l\
+|\
++ BufferManager()\l\
++ \<\<virtual\>\> ~BufferManager()\l\
++ \<\<virtual\>\> allocate(string: std::string const&): API::IBuffer*\l\
++ \<\<virtual\>\> allocate(data: char const*, size: API::size_t): API::IBuffer*\l\
++ \<\<virtual\>\> allocate(size: API::size_t): API::IBuffer*\l\
++ \<\<virtual\>\> release(buffer: API::IBuffer*): void\l\
+}"
+        ]
+
+        core_BufferManagerStack
+        [
+    label="{\
+BufferManagerStack\
+|\
+- _managers: std::list\<API::IBufferManager*\>\l\
+- _mutex: Mutex\l\
+- _size: API::size_t\l\
+- _max: API::size_t\l\
+|\
+# BufferManagerStack()\l\
+# ~BufferManagerStack()\l\
++ pop(): API::IBufferManager*\l\
++ push(manager: API::IBufferManager*): void\l\
+}"
+        ]
+
+        core_ConfigurationManager
+        [
+    label="{\
+ConfigurationManager\
+|\
+- _configuration: SmartPtr\<Configuration\>\l\
+- _mutex: Mutex\l\
+|\
+- ConfigurationManager()\l\
++ setConfiguration(configuration: Configuration*): void\l\
++ getConfiguration(): SmartPtr\<Configuration\>\l\
+}"
+        ]
+
+        core_Listener
+        [
+    label="{\
+Listener\
+|\
+- _ip: API::uint32_t\l\
+- _port: API::uint16_t\l\
+- _socket: Socket*\l\
+- _session_manager: SessionManager*\l\
+- _is_running: volatile bool\l\
+- _stopped: volatile bool\l\
+|\
++ Listener(ip: API::uint32_t, port: API::uint16_t)\l\
++ ~Listener()\l\
++ run(): void\l\
++ stop(): void\l\
+}"
+        ]
+
+        core_ModuleList
+        [
+    label="{\
+ModuleList\
+|\
+- _head: ModuleWrapper*\l\
+- _tail: ModuleWrapper*\l\
+|\
++ ModuleList()\l\
++ ~ModuleList()\l\
++ append(manager: API::IModuleManager&, module: API::IModule&): ModuleWrapper*\l\
++ setProcessingModule(manager: API::IModuleManager&, module: API::IModule&): ModuleWrapper*\l\
++ head(): ModuleWrapper*\l\
++ tail(): ModuleWrapper*\l\
++ isInResponsePart(node: ModuleWrapper*): bool\l\
+}"
+        ]
+
+        core_ModuleTask
+        [
+    label="{\
+ModuleTask\
+|\
+- _event: API::EVENT::Type\l\
+- _request: Request&\l\
+- _module: ModuleWrapper&\l\
+- _buffer: API::IBuffer*\l\
+- _triggered: bool\l\
+|\
++ ModuleTask(event: API::EVENT::Type, request: Request&, module: ModuleWrapper&, buffer: API::IBuffer*)\l\
++ \<\<virtual\>\> ~ModuleTask()\l\
++ run(): void\l\
+}"
+        ]
+
+        core_ModuleWrapper
+        [
+    label="{\
+ModuleWrapper\
+|\
+- _manager: API::IModuleManager&\l\
+- _module: API::IModule&\l\
+- _next: ModuleWrapper*\l\
+|\
++ ModuleWrapper(manager: API::IModuleManager&, module: API::IModule&)\l\
++ \<\<virtual\>\> ~ModuleWrapper()\l\
++ getNext(): ModuleWrapper*\l\
++ setNext(next: ModuleWrapper*): void\l\
++ getModule(): API::IModule&\l\
++ getModuleManager(): API::IModuleManager&\l\
+}"
+        ]
+
+        core_Rcon
+        [
+    label="{\
+Rcon\
+|\
+- _server: Server&\l\
+- _socket: Socket*\l\
+- _buffer: std::string\l\
+|\
++ Rcon(server: Server&, port: API::uint16_t)\l\
++ ~Rcon()\l\
+- _rconSession(socket: Socket*): bool\l\
+- _readCommands(socket: Socket*): void\l\
+- _executeCommand(socket: Socket*, command: std::string const&): bool\l\
+- _sendString(socket: Socket*, line: std::string const&): void\l\
++ \<\<virtual\>\> run(): void\l\
+}"
+        ]
+
+        core_Request
+        [
+    label="{\
+Request\
+|\
+- _buffer_manager: SafeBufferManager\l\
+- _buffer_manager: API::IBufferManager&\l\
+- _session: Session&\l\
+- _request_file_path: std::string\l\
+- _request_method: API::HTTP_METHOD::Type\l\
+- _request_query: std::string\l\
+- _request_headers: mutable headers_t\l\
+- _response_code: API::HTTP_CODE::Type\l\
+- _response_msg: std::string\l\
+- _response_headers: mutable headers_t\l\
+- _modules: ModuleList\l\
+- _current_module: ModuleWrapper*\l\
+- _tasks: RequestTasks*\l\
+- _queued: bool\l\
+- _queued_mutex: RWLock\l\
+- _configuration: SmartPtr\<Configuration\>\l\
+|\
++ Request(buffer_manager: API::IBufferManager&, session: Session&, configuration: SmartPtr\<Configuration\>)\l\
++ \<\<virtual\>\> ~Request()\l\
++ callLater(ms: API::uint32_t): void\l\
++ giveData(buffer: API::IBuffer*): void\l\
++ raiseError(code: API::HTTP_CODE::Type, error: std::string): void\l\
++ raiseEnd(): void\l\
++ needWrite(buffer: API::IBuffer*): void\l\
++ getSession(): API::ISession const&\l\
++ getBufferManager(): API::IBufferManager&\l\
++ getFilePath() const: std::string const&\l\
++ setFilePath(path: std::string const&): void\l\
++ setRequestHeader(key: std::string const&, val: std::string const&): void\l\
++ getRequestHeader(key: std::string const&) const: std::string const&\l\
++ getRequestHeaderKeys() const: std::list\<std::string const*\>\l\
++ setRequestMethod(method: API::HTTP_METHOD::Type): void\l\
++ getRequestMethod() const: API::HTTP_METHOD::Type\l\
++ setRequestQuery(query: std::string const&): void\l\
++ getRequestQuery() const: std::string const&\l\
++ setResponseCode(code: API::HTTP_CODE::Type, reason: std::string const&): void\l\
++ getResponseCode() const: API::HTTP_CODE::Type\l\
++ getResponseMessage() const: std::string const&\l\
++ setResponseHeader(key: std::string const&, val: std::string const&): void\l\
++ getResponseHeader(key: std::string const&) const: std::string const&\l\
++ getResponseHeaderKeys() const: std::list\<std::string const*\>\l\
++ append(manager: API::IModuleManager&, module: API::IModule&): ModuleWrapper*\l\
++ insertAfter(manager: API::IModuleManager&, module: API::IModule&): ModuleWrapper*\l\
++ getServerSession(): Session&\l\
++ getInputModule(): ModuleWrapper*\l\
++ getOutputModule(): ModuleWrapper*\l\
++ processTask(evt: API::EVENT::Type, module: ModuleWrapper*, buf: API::IBuffer*): void\l\
++ hasPendingEvent(): bool\l\
++ getRequestTasks(): RequestTasks&\l\
++ isQueued(): bool\l\
++ setQueued(state: bool): void\l\
++ getConfiguration(): SmartPtr\<Configuration\>\l\
+}"
+        ]
+
+        core_RequestManager
+        [
+    label="{\
+RequestManager\
+|\
+- _configuration_manager: ConfigurationManager*\l\
+- _parser_manager: MOD::ParserManager*\l\
+- _builder_manager: MOD::BuilderManager*\l\
+- _preoutputbuilder_manager: MOD::PreOutputBuilderManager*\l\
+- _socket_pool: ZHTTPD::SocketPool*\l\
+- _socket_pool_thread: Thread*\l\
+|\
+- _RequestManager()\l\
+- \<\<virtual\>\> ~_RequestManager()\l\
++ handleNewRequest(session: Session&): void\l\
++ monitorSocketEvent(request: Request&): void\l\
++ ignoreSocketEvent(request: Request&): void\l\
++ endRequest(request: Request*): void\l\
+}"
+        ]
+
+        core_RequestTasks
+        [
+    label="{\
+RequestTasks\
+|\
+- _request: Request&\l\
+- _can_read: volatile bool\l\
+- _can_write: volatile bool\l\
+- _has_error: volatile bool\l\
+- _call_later_task: ModuleTask*\l\
+- _call_later_time: API::uint32_t\l\
+- _call_later_timer: Timer\l\
+- _wait_read: bool\l\
+- _wait_write: bool\l\
+- _registered: bool\l\
+- _end_task: ModuleTask*\l\
+- _write_buffers: buffers_t\l\
+- _tasks: tasks_t\l\
+- _timer: Timer\l\
+- _mutex: Mutex\l\
+|\
++ RequestTasks(request: Request&)\l\
++ ~RequestTasks()\l\
+- _register(): void\l\
+- _unregister(): void\l\
+- _addTask(event: API::EVENT::Type, request: Request&, module: ModuleWrapper&, buffer: API::IBuffer*): void\l\
++ getNextTask(): SmartPtr\<ModuleTask\>\l\
++ hasWork(): bool\l\
++ hasPendingEvent(): bool\l\
++ addTask(event: API::EVENT::Type, request: Request&, module: ModuleWrapper&, buffer: API::IBuffer*): void\l\
++ needRead(): void\l\
++ needWrite(buffer: API::IBuffer*): void\l\
++ reset(): void\l\
++ notifyHasError(): void\l\
++ handleSocketEvent(evt: SOCKET_EVENT::Type): void\l\
++ addEndTask(request: Request&, module: ModuleWrapper&): void\l\
++ addCallLaterTask(request: Request&, module: ModuleWrapper&, delay: API::uint32_t): void\l\
+}"
+        ]
+
+        core_SafeBufferManager
+        [
+    label="{\
+SafeBufferManager\
+|\
+- _manager: API::IBufferManager&\l\
+- _buffers: buffers_t\l\
+- _mutex: Mutex\l\
+|\
++ SafeBufferManager(manager: API::IBufferManager&)\l\
++ \<\<virtual\>\> ~SafeBufferManager()\l\
++ \<\<virtual\>\> allocate(string: std::string const&): API::IBuffer*\l\
++ \<\<virtual\>\> allocate(data: char const*, size: size_t): API::IBuffer*\l\
++ \<\<virtual\>\> allocate(size: size_t): API::IBuffer*\l\
++ \<\<virtual\>\> release(buffer: API::IBuffer*): void\l\
++ getBufferManager(): API::IBufferManager&\l\
+}"
+        ]
+
+        core_ListenerContainer
+        [
+    label="{\
+ListenerContainer\
+|\
+- _listener: Listener*\l\
+- _thread: Thread*\l\
+- _stopped: bool\l\
+|\
++ ListenerContainer(port: API::uint16_t)\l\
++ ~ListenerContainer()\l\
++ stop(): void\l\
+}"
+        ]
+
+        core_Server
+        [
+    label="{\
+Server\
+|\
+- _listeners: listeners_t\l\
+- _rcon: Rcon*\l\
+- _configuration_path: std::string\l\
+|\
++ Server()\l\
++ ~Server()\l\
+- _cleanup(): void\l\
+- _loadListeners(config: Configuration*): void\l\
+- _stopListeners(): void\l\
+- _cleanListeners(): void\l\
++ run(configuration_path: std::string const&): int\l\
++ stop(): void\l\
++ reload(): bool\l\
+}"
+        ]
+
+        core_ServerState
+        [
+    label="{\
+ServerState\
+|\
+- _state: volatile State\l\
+|\
+- ServerState()\l\
++ setState(s: State): void\l\
++ getState(): State\l\
+}"
+        ]
+
+        core_Session
+        [
+    label="{\
+Session\
+|\
+- _socket: Socket*\l\
+- _ip: mutable API::uint32_t\l\
+- _port: API::uint16_t\l\
+- _processed_request_count: API::size_t\l\
+|\
++ Session(socket: Socket*, port: API::uint16_t)\l\
++ ~Session()\l\
++ getSocket() const: API::socket_t\l\
++ getIp() const: API::uint32_t\l\
++ getPort() const: API::uint16_t\l\
++ incrProcessedRequestCount(): void\l\
++ getProcessedRequestCount() const: API::size_t\l\
++ getServerSocket(): Socket&\l\
++ getServerSocketPtr(): Socket*\l\
+}"
+        ]
+
+        core_SessionManager
+        [
+    label="{\
+SessionManager\
+|\
+- _request_manager: RequestManager*\l\
+|\
+# SessionManager()\l\
+# \<\<virtual\>\> ~_SessionManager()\l\
++ handleNewSession(socket: Socket*, port: API::uint16_t): void\l\
++ endSession(session: Session&): void\l\
+}"
+        ]
+
+        core_TaskManager
+        [
+    label="{\
+TaskManager\
+|\
+- _thread_pool: ThreadPool\l\
+- _requests: request_set_t\l\
+- _pending_add_requests: request_set_t\l\
+- _pending_add_requests_mutex: Mutex\l\
+- _pending_del_requests: request_set_t\l\
+- _being_processed: request_set_t\l\
+- _being_processed_mutex: Mutex\l\
+|\
+- TaskManager()\l\
+- \<\<virtual\>\> ~TaskManager()\l\
+- _giveWork(): void\l\
+- _addPendingRequests(): void\l\
+- _delPendingRequests(): void\l\
++ notifyEndTask(request: Request&): void\l\
++ startRequest(request: Request&): void\l\
++ stopRequest(request: Request&): void\l\
++ \<\<virtual\>\> run(): void\l\
+}"
+        ]
+
+
+
+
+        core_Buffer -> api_IBuffer
+        core_BufferManager -> api_IBufferManager
+        api_IBuffer -> core_BufferManager [arrowhead=odiamond taillabel="[0..n]"]
+        core_BufferManagerStack -> utils_Singleton
+        core_BufferManager -> core_BufferManagerStack [arrowhead=odiamond taillabel="[0..n]"]
+        core_ConfigurationManager -> utils_Singleton
+        conf_Configuration -> core_ConfigurationManager [arrowhead=diamond]
+        socket_Socket -> core_Listener [arrowhead=diamond]
+        core_ModuleWrapper -> core_ModuleList [arrowhead=diamond taillabel="[1..n]"]
+        core_Request -> core_ModuleTask [arrowhead=diamond]
+        core_ModuleWrapper -> core_ModuleTask [arrowhead=diamond]
+        api_IBuffer -> core_ModuleTask [arrowhead=odiamond]
+        core_ModuleWrapper -> core_ModuleWrapper [arrowhead=odiamond]
+        api_IModule -> core_ModuleWrapper [arrowhead=diamond]
+        api_IModuleManager -> core_ModuleWrapper [arrowhead=diamond]
+        core_Server -> core_Rcon [arrowhead=diamond]
+        socket_Socket -> core_Rcon [arrowhead=odiamond]
+        core_Request -> api_IRequest
+        core_Session -> core_Request [arrowhead=diamond]
+        core_ModuleList -> core_Request [arrowhead=diamond]
+        core_RequestTasks -> core_Request [arrowhead=odiamond]
+        conf_Configuration -> core_Request [arrowhead=diamond]
+        core_RequestManager -> utils_Singleton
+        module_ParserManager -> core_RequestManager [arrowhead=diamond]
+        module_BuilderManager -> core_RequestManager [arrowhead=diamond]
+        module_PreOutputBuilderManager -> core_RequestManager [arrowhead=diamond]
+        socket_SocketPool -> core_RequestManager [arrowhead=diamond]
+        core_Request -> core_RequestTasks [arrowhead=diamond]
+        core_ModuleTask -> core_RequestTasks [arrowhead=odiamond taillabel="[0..n]"]
+        api_IBuffer -> core_RequestTasks [arrowhead=odiamond taillabel="[0..n]"]
+        core_SafeBufferManager -> api_IBufferManager
+        api_IBufferManager -> core_SafeBufferManager [arrowhead=diamond]
+        api_IBuffer -> core_SafeBufferManager [arrowhead=odiamond taillabel="[0..n]"]
+        core_Listener -> core_ListenerContainer [arrowhead=diamond]
+        core_ListenerContainer -> core_Server [arrowhead=odiamond taillabel="[0..n]"]
+        core_Rcon -> core_Server [arrowhead=odiamond]
+        core_ServerState -> utils_Singleton
+        core_Session -> api_ISession
+        socket_Socket -> core_Session [arrowhead=diamond]
+        core_SessionManager -> utils_Singleton
+        core_RequestManager -> core_SessionManager [arrowhead=diamond]
+        core_TaskManager -> utils_Singleton
+        core_Request -> core_TaskManager [arrowhead=odiamond headlabel="[0..n]"]
+        thread_ThreadPool -> core_TaskManager [arrowhead=diamond]
+
+        } /* cluster_Core */
+
+}

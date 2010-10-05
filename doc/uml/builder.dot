@@ -1,0 +1,394 @@
+digraph uml
+{
+    fontname = "Bitstream sans Vera"
+    compound = true;
+    ranksep = 1.25;
+    rankdir = BT;
+    label = "ZHTTPD Builder classes";
+    fontsize = 24;
+
+    node [
+        fontname = "Monaco"
+        fontsize = 8
+        shape = "record"
+        style = filled
+        fillcolor = white
+    ]
+
+    edge [
+        fontname = "Monaco"
+        fontsize = 8
+    ]
+
+    /*
+     * API
+     */
+
+    subgraph cluster_module
+    {
+        label = "API Module classes"
+
+        api_IModule
+        [
+    label="{\
+IModule\
+|\
++ \<\<virtual\>\> ~IModule()\l\
++ \<\<abstract\>\> processRequest(event: EVENT::Type, request: IRequest*, buffer: IBuffer*): bool\l\
+}"
+        ]
+
+        api_IModuleManager
+        [
+    label="{\
+IModuleManager\
+|\
++ \<\<virtual\>\> ~IModuleManager()\l\
++ \<\<abstract\>\> getInstance(in_response: bool): IModule*\l\
++ \<\<abstract\>\> releaseInstance(module: IModule*): void\l\
++ \<\<abstract\>\> addConfigurationEntry(key: std::string const&, value: std::string const&): void\l\
++ \<\<abstract\>\> getCategory() const: CATEGORY::Type\l\
++ \<\<abstract\>\> getName() const: std::string const&\l\
++ \<\<abstract\>\> isRequired(request: IRequest const&) const: bool\l\
+}"
+        ]
+    } /* cluster_module */
+
+    api_IModule -> api_IModuleManager [arrowhead = odiamond]
+
+    /*
+     * Configuration
+     */
+
+    subgraph cluster_config
+    {
+        label = "Configuration classes"
+
+        conf_Configuration
+        [
+    label="{\
+Configuration\
+|\
+- _modules: std::map\<std::string, ModuleConfiguration*\>\l\
+- _available_modules: available_modules_map_t\l\
+- _modules_handlers: std::map\<std::string, Library*\>\l\
+- _index_files: std::list\<std::string\>\l\
+- _vhost: VHost*\l\
+- _ports: std::map\<API::uint16_t, std::string\>\l\
+- _modules_directory: Path*\l\
+- _io_module_managers: std::map\<API::uint16_t, API::IModuleManager*\>\l\
+- _file_reader_manager: MOD::FileReaderManager*\l\
+|\
++ Configuration()\l\
++ \<\<virtual\>\> ~Configuration()\l\
+- _isDynamicLibrary(filename: std::string const&): bool\l\
+- _loadModule(moduleName: std::string const&): bool\l\
++ loadModules(): bool\l\
++ getVHost() const: VHost*\l\
++ addModule(module: ModuleConfiguration*): void\l\
++ getModules() const: std::map\<std::string, ModuleConfiguration*\> const&\l\
++ getModuleConfiguration(name: std::string const&): ModuleConfiguration*\l\
++ getModuleManager(name: std::string const&): API::IModuleManager*\l\
++ getAvailableModules(): available_modules_map_t&\l\
++ getListenPorts() const: std::map\<API::uint16_t, std::string\> const&\l\
++ addListenPort(port: API::uint16_t, io_module: std::string const&): void\l\
++ setVHost(vhost: VHost*): void\l\
++ getInputOutputModuleManager(port: API::uint16_t): API::IModuleManager*\l\
++ getFileReader(): MOD::FileReaderManager*\l\
++ loadIOModuleManager(port: API::uint16_t, name: std::string const&): API::IModuleManager*\l\
++ setModulesDirectory(path: std::string const&): void\l\
++ setModulesDirectory(path: Path*): void\l\
++ addIndexFile(filename: std::string const&): void\l\
++ getIndexFiles(): std::list\<std::string\> const&\l\
++ getLibHandler(name: std::string const&): Library*\l\
+}"
+        ]
+
+        conf_HeaderGuideline
+        [
+    label="{\
+HeaderGuideline\
+|\
+- _key: std::string\l\
+- _match: std::string\l\
+- _deny: bool\l\
+|\
++ HeaderGuideline(key: std::string const&, match: std::string const&, deny: bool)\l\
++ \<\<virtual\>\> ~HeaderGuideline()\l\
++ match(request: API::IRequest&) const: bool\l\
+}"
+        ]
+
+        conf_HostGuideline
+        [
+    label="{\
+HostGuideline\
+|\
+- _match: std::string\l\
+- _deny: bool\l\
+|\
++ HostGuideline(match: std::string const&, deny: bool)\l\
++ \<\<virtual\>\> ~HostGuideline()\l\
++ match(request: API::IRequest&) const: bool\l\
+}"
+        ]
+
+        conf_IVHostGuideline
+        [
+    label="{\
+IVHostGuideline\
+|\
++ \<\<virtual\>\> ~IVHostGuideline()\l\
++ \<\<abstract\>\> match(request: API::IRequest&) const: bool\l\
+}"
+        ]
+
+        conf_ListenGuideline
+        [
+    label="{\
+ListenGuideline\
+|\
+- _port: API::uint16_t\l\
+- _deny: bool\l\
+|\
++ ListenGuideline(port: API::uint16_t, deny: bool)\l\
++ \<\<virtual\>\> ~ListenGuideline()\l\
++ match(request: API::IRequest&) const: bool\l\
+}"
+        ]
+
+        conf_ModuleConfiguration
+        [
+    label="{\
+ModuleConfiguration\
+|\
+- _name: std::string\l\
+- _options: std::map\<std::string, std::string\>\l\
+- _manager: API::IModuleManager*\l\
+- _merged: bool\l\
+- _enabled: bool\l\
+- _config: Configuration*\l\
+|\
++ ModuleConfiguration(name: std::string const&, enabled: bool, config: Configuration*)\l\
++ \<\<virtual\>\> ~ModuleConfiguration()\l\
+- _setConfiguration(manager: ZHTTPD::API::IModuleManager*): void\l\
++ addConfigurationEntry(key: std::string const&, value: std::string const&): void\l\
++ getConfigurationEntry(key: std::string const&): std::string const&\l\
++ getName() const: std::string const&\l\
++ getModuleManager(): API::IModuleManager*\l\
++ getOptions(): std::map\<std::string, std::string\>&\l\
++ merge(parent: ModuleConfiguration*): void\l\
++ isMerged() const: bool\l\
++ setMerged(b: bool): void\l\
++ isEnabled() const: bool\l\
+}"
+        ]
+
+        conf_UrlGuideline
+        [
+    label="{\
+UrlGuideline\
+|\
+- _match: std::string\l\
+- _deny: bool\l\
+|\
++ UrlGuideline(match_string: std::string const&, deny: bool)\l\
++ \<\<virtual\>\> ~UrlGuideline()\l\
++ match(request: API::IRequest&) const: bool\l\
+}"
+        ]
+
+        conf_VHost
+        [
+    label="{\
+VHost\
+|\
+- _childs: std::list\<VHost*\>\l\
+- _parent: VHost*\l\
+- _name: std::string\l\
+- _document_root: std::string\l\
+- _modules: std::map\<std::string, ModuleConfiguration*\>\l\
+- _guide_lines: std::list\<IVHostGuideline*\>\l\
+|\
++ VHost(parent: VHost*)\l\
++ \<\<virtual\>\> ~VHost()\l\
++ match(request: API::IRequest&): VHost*\l\
++ addModule(module: ModuleConfiguration*): void\l\
++ getModule(name: std::string const&): ZHTTPD::API::IModuleManager*\l\
++ getModuleConfiguration(modname: std::string const&): ModuleConfiguration*\l\
++ moduleExists(name: std::string const&): bool\l\
++ addGuideline(guideLine: IVHostGuideline*): void\l\
++ addChild(vhost: VHost*): void\l\
++ setDocumentRoot(path: std::string const&): void\l\
++ getDocumentRoot(): std::string const&\l\
++ getName() const: std::string const&\l\
++ setName(name: std::string const&): void\l\
+}"
+        ]
+
+    } /* cluster_config */
+
+    conf_ModuleConfiguration -> conf_Configuration [arrowhead=odiamond]
+    conf_VHost -> conf_Configuration [arrowhead=odiamond]
+    conf_ModuleConfiguration -> conf_VHost [arrowhead=odiamond]
+    conf_VHost -> conf_VHost [arrowhead=odiamond]
+    conf_IVHostGuideline -> conf_VHost [arrowhead=odiamond]
+    conf_UrlGuideline -> conf_IVHostGuideline [arrowhead=normal]
+    conf_HeaderGuideline -> conf_IVHostGuideline [arrowhead=normal]
+    conf_HostGuideline -> conf_IVHostGuideline [arrowhead=normal]
+    conf_ListenGuideline -> conf_IVHostGuideline [arrowhead=normal]
+
+    /*
+     * Library
+     */
+
+    subgraph cluster_library
+    {
+        label="Library class"
+
+        Library
+        [
+    label="{\
+Library\
+|\
+- _path: std::string\l\
+|\
++ Library(path: std::string const&)\l\
++ ~Library()\l\
++ getPath(): std::string const&\l\
++ template\<typename Cast\> resolve(name: char const*): Cast\l\
+}"
+        ]
+    } /*cluster_library*/
+
+    /*
+     * Builder
+     */
+
+    subgraph cluster_modules
+    {
+        label="Modules"
+
+        subgraph cluster_module_common
+        {
+            label="Common"
+
+            module_AbstractManager
+            [
+    label="{\
+AbstractManager\
+|\
+- _name: std::string\l\
+- _category: ZHTTPD::API::CATEGORY::Type\l\
+|\
++ AbstractManager(name: std::string const&, category: ZHTTPD::API::CATEGORY::Type)\l\
++ \<\<virtual\>\> getName() const: std::string const&\l\
++ \<\<virtual\>\> getCategory() const: ZHTTPD::API::CATEGORY::Type\l\
++ \<\<virtual\>\> isRequired(r: ZHTTPD::API::IRequest const&) const: bool\l\
+}"
+            ]
+
+            module_StatefullManagementPolicy
+            [
+    label="{\
+StatefullManagementPolicy\
+|\
++ \<\<virtual\>\> getInstance(in_response: bool): ZHTTPD::API::IModule*\l\
++ \<\<virtual\>\> releaseInstance(module: ZHTTPD::API::IModule*): void\l\
+}"
+            ]
+
+            module_StatelessManagementPolicy
+            [
+    label="{\
+StatelessManagementPolicy\
+|\
+- _module: API::IModule*\l\
+|\
++ StatelessManagementPolicy()\l\
++ \<\<virtual\>\> ~StatelessManagementPolicy()\l\
++ \<\<virtual\>\> getInstance(in_response: bool): ZHTTPD::API::IModule*\l\
++ \<\<virtual\>\> releaseInstance(module: ZHTTPD::API::IModule*): void\l\
+}"
+            ]
+
+            module_StatefullManager
+            [
+    label="{\
+StatefullManager\
+|\
++ StatefullManager(name: std::string const&, category: ZHTTPD::API::CATEGORY::Type)\l\
+}"
+            ]
+
+            module_StatelessManager
+            [
+    label="{\
+StatelessManager\
+|\
++ StatelessManager(name: std::string const&, category: ZHTTPD::API::CATEGORY::Type)\l\
+}"
+            ]
+        } /* cluster_module_common */
+
+        module_AbstractManager -> api_IModuleManager
+        module_StatelessManager -> module_AbstractManager
+        module_StatelessManager -> module_StatelessManagementPolicy
+        module_StatefullManager -> module_AbstractManager
+        module_StatefullManager -> module_StatefullManagementPolicy
+
+        subgraph cluster_module_builder
+        {
+            module_Builder
+            [
+    label="{\
+Builder\
+|\
+- _builded: bool\l\
+|\
++ Builder(manager: ZHTTPD::API::IModuleManager*)\l\
+- _findModules(request: ZHTTPD::API::IRequest*, config: Configuration*, vhost: VHost*): void\l\
+- _addModule(category: ZHTTPD::API::CATEGORY::Type, config: Configuration*, vhost: VHost*, request: ZHTTPD::API::IRequest*): void\l\
+- _addBaseModule(name: std::string const&, config: Configuration*, request: ZHTTPD::API::IRequest*): bool\l\
+- _setTruePath(request: ZHTTPD::API::IRequest*, vhost: VHost*, conf: Configuration*): bool\l\
+- _setRelativePath(request: ZHTTPD::API::IRequest*): void\l\
+- _testIndexFiles(request: ZHTTPD::API::IRequest*, conf: Configuration*): void\l\
++ processRequest(event: ZHTTPD::API::EVENT::Type, request: ZHTTPD::API::IRequest*, buffer: ZHTTPD::API::IBuffer*): bool\l\
+}"
+            ]
+
+            module_BuilderManager
+            [
+    label="{\
+BuilderManager\
+|\
++ BuilderManager()\l\
+}"
+            ]
+
+        } /* cluster_module_builder */
+
+    module_BuilderManager -> module_StatefullManager
+    module_Builder -> module_BuilderManager [arrowhead = odiamond]
+    module_Builder -> api_IModule
+
+    } /* cluster_modules */
+
+    subgraph cluster_utils
+    {
+        label="Utils"
+
+        utils_Regex
+        [
+    label="{\
+Regex\
+|\
++ \<\<static\>\> match(pattern: char const*, str: char const*): bool\l\
++ \<\<static\>\> match(pattern: std::string const&, str: std::string const&): bool\l\
+}"
+        ]
+    } /* cluster_utils */
+
+    conf_Configuration -> module_Builder [arrowhead=diamond]
+    Library -> module_Builder [arrowhead=diamond]
+}
