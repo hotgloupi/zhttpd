@@ -49,11 +49,12 @@ void ModuleManagerFactory::findModules(std::string const& modules_directory)
         if (this->_isDynamicLibrary(*it))
         {
             Library* lib = 0;
+            ZHTTPD::API::IModuleManager* manager = 0;
             try
             {
                 lib = new Library(dir + *it);
                 lib_handler_t getInstance = lib->resolve<lib_handler_t>("getInstance");
-                ZHTTPD::API::IModuleManager* manager = getInstance();
+                manager = getInstance();
                 std::string const& name = manager->getName();
                 // TODO rendre possible de remplacer les modules par défaut
                 // comme mod_network, mod_error, etc...
@@ -65,13 +66,13 @@ void ModuleManagerFactory::findModules(std::string const& modules_directory)
                 this->_libraries[name] = lib;
                 this->_builders[name] = &ModuleManagerFactory::_createFromLibrary;
                 this->_available_modules[manager->getCategory()].push_back(name);
-                //ZHTTPD_DELETE(manager);
-                delete manager;
+                ZHTTPD_DELETE(manager);
             }
             catch (std::exception& err)
             {
                 LOG_ERROR("Cannot load '" + std::string(dir + *it) + "': " + err.what());
                 ZHTTPD_DELETE(lib);
+                ZHTTPD_DELETE(manager);
             }
         }
     }
