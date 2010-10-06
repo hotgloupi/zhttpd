@@ -23,10 +23,12 @@ Environment::~Environment()
         ZHTTPD::API::size_t i = 0;
         while (this->_c_env[i] != 0)
         {
-            ZHTTPD_DELETE(this->_c_env[i]);
+            delete [] this->_c_env[i];
+            this->_c_env[i] = 0;
             ++i;
         }
-        ZHTTPD_DELETE(this->_c_env);
+        delete [] this->_c_env;
+        this->_c_env = 0;
     }
 }
 
