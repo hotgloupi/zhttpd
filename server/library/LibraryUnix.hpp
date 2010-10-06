@@ -23,14 +23,20 @@ namespace ZHTTPD
         public:
             Library(std::string const& path)
             {
-                this->_handle = ::dlopen((path).c_str(), RTLD_NOW);
+                char const* c_path = path.c_str();
+                this->_handle = ::dlopen(c_path, RTLD_NOW);
                 char const* err = ::dlerror();
+
                 if (this->_handle == 0)
                 {
                     if (err != 0)
                         throw std::runtime_error("Cannot open library " + path + ": " + std::string(err));
                     else
                         throw std::runtime_error("Cannot open library " + path);
+                }
+                else if (err != 0)
+                {
+                    LOG_WARN("dlopen(): " + std::string(err));
                 }
             }
 
