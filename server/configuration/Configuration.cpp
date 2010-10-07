@@ -45,10 +45,11 @@ VHost& Configuration::getVHost() const
 void Configuration::addModuleConfiguration(ModuleConfiguration& module_configuration)
 {
     std::string const& name = module_configuration.getName();
+    LOG_DEBUG("Adding " + name);
 
     if (this->_modules_configuration.find(name) != this->_modules_configuration.end())
     {
-        LOG_WARN("Module '" + name + "' added twice !");
+        LOG_INFO("Old module configuration '" + name + "' is overrided.");
         ZHTTPD_DELETE(this->_modules_configuration[name]);
     }
     this->_modules_configuration[name] = &module_configuration;

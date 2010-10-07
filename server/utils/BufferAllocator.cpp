@@ -9,14 +9,12 @@ namespace ZHTTPD
 {
     BufferAllocator::BufferAllocator(API::size_t size)
     {
-        LOG_DEBUG("CREATE BufferAllocator " + Logger::toString(this));
         this->_free_blocks.reserve(size);
         this->_blocks.reserve(size);
     }
 
     BufferAllocator::~BufferAllocator()
     {
-        LOG_DEBUG("DELETE  BufferAllocator " + Logger::toString(this));
         this->clean();
         if (!this->_blocks.empty())
             LOG_WARN("There are blocks left (all buffers were not released).");
@@ -61,7 +59,6 @@ namespace ZHTTPD
         {
             char* n = new char[BLOCK_SIZE];
             this->_blocks.push_back(n);
-            LOG_DEBUG("New one !");
             StatsManager::getInstance()->addMemory(BLOCK_SIZE);
 #ifdef ZHTTPD_DEBUG
             this->_debug[n] = size;

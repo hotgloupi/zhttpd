@@ -91,8 +91,6 @@ bool                            CGI::_checkExtension(request_t* request)
 
 void CGI::_initialize(request_t* request)
 {
-    /* if (!this->_checkContentLength(ss_atoi<ZHTTPD::API::uint32_t>(request->getRequestHeader("Content-length"))))
-        request->raiseError(ZHTTPD::API::HTTP_CODE::LENGTH_REQUIRED);*/
     this->_checkExtension(request);
     this->_method = request->getRequestMethod();
     this->_fillEnvironment(request);
@@ -123,10 +121,6 @@ bool            CGI::_processOnIdle(CGI::request_t* request, CGI::buffer_t*)
     ZHTTPD::API::size_t n_read = this->_process.read(read_buffer, CGI::BUFFER_SIZE);
     if (n_read > 0)
     {
- //       LOG_DEBUG("#################################################");
- //       write(1, read_buffer, n_read);
- //       LOG_DEBUG("#################################################");
-
         temp_buffer = request->getBufferManager().allocate(read_buffer, n_read);
         if (this->_headers == true)
         {
@@ -167,17 +161,24 @@ bool CGI::_processOnEnd(CGI::request_t* request, buffer_t*)
     return (true);
 }
 
-void                CGI::_fillEnvironment(request_t* request)
+void CGI::_fillEnvironment(request_t* request)
 {
-    ZHTTPD::API::size_t     question_mark_position;
-    std::string     query_string;
-
+    char const* request_uri = request->getRequestQuery().c_str();
+    std::size_t request_uri_size = request->getRequestQuery().size();
+    char* path = new char[request_uri_size + 1];
+    ::memcpy(path, request_uri, request_uri_size);
+    path[request_uri_size] = '\0';
+    std::size_t i = 0;
+    while (path[i] != '\0' && path[i] != '&' && path[i] != '#')
+        ++i;
+    std::size_t query_pos = (path[i] == '?' ? i + 1 : i);
+    path[i] = '\0';
     this->_environment.setEnvironmentVariable("GATEWAY_INTERAFCE", "CGI/1.1");
-    this->_environment.setEnvironmentVariable("REQUEST_URI", request->getRequestQuery().c_str());
-    this->_environment.setEnvironmentVariable("SCRIPT_NAME", request->getRequestQuery().c_str());
+    this->_environment.setEnvironmentVariable("REQUEST_URI", request_uri);
+    this->_environment.setEnvironmentVariable("SCRIPT_NAME", path);
     this->_environment.setEnvironmentVariable("SCRIPT_FILENAME", request->getFilePath().c_str());
     this->_environment.setEnvironmentVariable("SERVER_SOFTWARE", "ZHTTPD HTTPD");
-    this->_environment.setEnvironmentVariable("SERVER_NAME", "ZHTTPD");
+    this->_environment.setEnvironmentVariable("SERVER_NAME", "zhttpd/0.1");
     this->_environment.setEnvironmentVariable("SERVER_PROTOCOL", "HTTP/1.1");
     this->_environment.setEnvironmentVariable("PATH_TRANSLATED", request->getFilePath().c_str());
     this->_environment.setEnvironmentVariable("SERVER_PORT",
@@ -189,14 +190,8 @@ void                CGI::_fillEnvironment(request_t* request)
         this->_environment.setEnvironmentVariable("REQUEST_METHOD", "POST");
     else
         request->raiseError(ZHTTPD::API::HTTP_CODE::METHOD_NOT_ALLOWED);
-    question_mark_position = request->getRequestQuery().find('?');
-    if (question_mark_position != std::string::npos)
-    {
-        query_string = request->getRequestQuery().substr(question_mark_position + 1);
-        this->_environment.setEnvironmentVariable("QUERY_STRING", query_string.c_str());
-    }
-    else
-        this->_environment.setEnvironmentVariable("QUERY_STRING", "");
+    this->_environment.setEnvironmentVariable("QUERY_STRING", &request_uri[query_pos]);
+    delete [] path;
 }
 
 void            CGI::_debug(request_t* request, buffer_t*)

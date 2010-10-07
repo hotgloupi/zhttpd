@@ -63,6 +63,7 @@ void ModuleManagerFactory::findModules(std::string const& modules_directory)
                     throw std::runtime_error("Two modules with the name '" +
                                              name + "' have been found");
                 }
+                LOG_INFO("Module '" + name + "' loaded from " + std::string(dir + *it));
                 this->_libraries[name] = lib;
                 this->_builders[name] = &ModuleManagerFactory::_createFromLibrary;
                 this->_available_modules[manager->getCategory()].push_back(name);

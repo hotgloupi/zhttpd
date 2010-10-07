@@ -17,6 +17,7 @@ ModuleConfiguration::ModuleConfiguration(std::string const& name, bool enabled, 
     _enabled(enabled),
     _config(config)
 {
+    assert(this->_name.size() > 0);
 }
 
 ModuleConfiguration::~ModuleConfiguration()

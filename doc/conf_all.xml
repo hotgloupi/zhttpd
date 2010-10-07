@@ -13,7 +13,6 @@
     </server>
 
     <modules>
-        <module name="mod_network" />
         <module name="mod_dirlisting" enabled="true"/>
 
         <module name="mod_filereader">
