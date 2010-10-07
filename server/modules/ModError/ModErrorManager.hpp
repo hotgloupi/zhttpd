@@ -10,11 +10,8 @@ namespace ZHTTPD
 {
     namespace MOD
     {
-        class ModErrorManager :
-            public StatelessManager<ModError>
+        class ModErrorManager : public StatelessManager<ModError>
         {
-        private:
-
         public:
             ModErrorManager() :
                 StatelessManager<ModError>("mod_error", ZHTTPD::API::CATEGORY::PROCESSING)
@@ -23,7 +20,6 @@ namespace ZHTTPD
 
             virtual bool isRequired(ZHTTPD::API::IRequest const& ) const
             {
-                LOG_FATAL("");
                 return false;
             }
         };
