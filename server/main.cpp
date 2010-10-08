@@ -45,7 +45,6 @@ int main(int argc, char **argv)
 #ifndef WIN32
     (void) signal(SIGINT, sigint);
     (void) signal(SIGPIPE, sigpipe);
-    //signal(SIGPIPE, SIG_IGN);
 #endif
 
 
@@ -57,12 +56,11 @@ int main(int argc, char **argv)
 #ifdef ZHTTPD_DEBUG
     ZHTTPD_DEBUG_print_maps();
     ZHTTPD_DEBUG_release();
-    std::cout << "\t* Memory status: " << std::endl
-              << "\t\t- Memory in use: " << ZHTTPD::StatsManager::getInstance()->getMemory() / 1000 << " Kbytes" << std::endl
-              << "Uptime: " << ((double) ZHTTPD::StatsManager::getInstance()->getUptime()) / 1000.0f
+    std::cout << "Uptime: " << ((double) ZHTTPD::StatsManager::getInstance()->getUptime()) / 1000.0f
               << " sec" << std::endl;
 #endif
     delete server;
+    server = 0;
     ZHTTPD::StatsManager::delInstance();
     ZHTTPD::Logger::delInstance();
     return res;

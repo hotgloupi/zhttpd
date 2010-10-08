@@ -74,13 +74,12 @@ namespace ZHTTPD
                 config
             );
             LOG_DEBUG("CREATING REQUEST "+Logger::toString(request));
-            API::IModuleManager* io = &config->getInputOutputModuleManager(session.getPort());
-            assert(io != 0);
-            request->append(*io, *io->getInstance(false));
+            API::IModuleManager& io = config->getInputOutputModuleManager(session.getPort());
+            request->append(io, *io.getInstance(false));
             request->append(*this->_parser_manager, *this->_parser_manager->getInstance());
             request->append(*this->_builder_manager, *this->_builder_manager->getInstance());
             request->append(*this->_preoutputbuilder_manager, *this->_preoutputbuilder_manager->getInstance());
-            request->append(*io, *io->getInstance(true));
+            request->append(io, *io.getInstance(true));
             request->getRequestTasks().needRead();
             TaskManager::getInstance()->startRequest(*request);
         }
