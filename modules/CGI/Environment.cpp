@@ -12,6 +12,8 @@
 
 #include "Environment.hpp"
 
+// XXX improve all this shit
+
 Environment::Environment() : _c_env(0)
 {
 }

@@ -64,7 +64,7 @@ ModuleConfiguration& Configuration::getModuleConfiguration(std::string const& na
     modules_configuration_t::const_iterator it = this->_modules_configuration.find(name);
     if (it == this->_modules_configuration.end())
     {
-        bool enabled = (name == "mod_error"); //XXX this is ugly
+        bool enabled = (name == "mod_error"); //XXX this is ugly, only mod_error is enabled by default
         this->_modules_configuration[name] = new ModuleConfiguration(name, enabled, *this);
         return *this->_modules_configuration[name];
     }
