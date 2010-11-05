@@ -169,7 +169,7 @@ void CGI::_fillEnvironment(request_t* request)
     ::memcpy(path, request_uri, request_uri_size);
     path[request_uri_size] = '\0';
     std::size_t i = 0;
-    while (path[i] != '\0' && path[i] != '&' && path[i] != '#')
+    while (path[i] != '\0' && path[i] != '?' && path[i] != '#')
         ++i;
     std::size_t query_pos = (path[i] == '?' ? i + 1 : i);
     path[i] = '\0';
