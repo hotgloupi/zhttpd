@@ -21,6 +21,7 @@
         </module>
         <module name="mod_cgi">
             <option key="sh" value="/bin/sh" />
+            <option key="php" value="/usr/bin/php-cgi" />
         </module>
     </modules>
 

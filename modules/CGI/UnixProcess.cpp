@@ -27,6 +27,9 @@
 # include "Process.hpp"
 # include "Utils.hpp"
 
+# define READ_END   0
+# define WRITE_END  1
+
 UnixProcess::UnixProcess()
 {
     this->_read_pipe[0] = -1;
@@ -111,47 +114,49 @@ bool UnixProcess::create(std::string const& executable,
 
 bool UnixProcess::_childProcessusHandler()
 {
-    if (::dup2(this->_read_pipe[1], STDOUT_FILENO) < 0)
-        throw std::runtime_error("Child CGI process: dup2() failed: " + std::string(::strerror(errno)));
-    //::setvbuf(stdout,(char*)NULL, _IONBF, 0);
-    ::close(this->_read_pipe[1]);
-    ::close(this->_read_pipe[0]);
-    if (::dup2(this->_write_pipe[0], STDIN_FILENO) < 0)
+    ::close(STDIN_FILENO);
+    ::close(this->_write_pipe[WRITE_END]);
+    if (::dup2(this->_write_pipe[READ_END], STDIN_FILENO) < 0)
         throw std::runtime_error("Child CGI process dup2() failed: " + std::string(::strerror(errno)));
     //::setvbuf(stdin,(char*)NULL, _IOLBF, 0);
-    ::close(this->_write_pipe[0]);
-    ::close(this->_write_pipe[1]);
+
+    ::close(STDOUT_FILENO);
+    ::close(this->_read_pipe[READ_END]);
+    if (::dup2(this->_read_pipe[WRITE_END], STDOUT_FILENO) < 0)
+        throw std::runtime_error("Child CGI process: dup2() failed: " + std::string(::strerror(errno)));
+    //::setvbuf(stdout,(char*)NULL, _IONBF, 0);
+
     this->_execute();
 
     return (false);
 }
 
-bool                            UnixProcess::_parentProcessusHandler()
+bool UnixProcess::_parentProcessusHandler()
 {
-    ::close(this->_write_pipe[0]);
-    ::close(this->_read_pipe[1]);
-
+    ::close(this->_write_pipe[READ_END]);
+    ::close(this->_read_pipe[WRITE_END]);
     return (false);
 }
 
 ZHTTPD::API::size_t UnixProcess::write(char const* buffer, ZHTTPD::API::size_t size)
 {
-    fd_set                      write_fd_set;
-    struct timeval              time;
-    int                         nwrite = 0;
+    fd_set write_fd_set;
+    struct timeval time;
+    int nwrite = 0;
+    int fd = this->_write_pipe[WRITE_END];
 
     if (buffer != NULL)
     {
         FD_ZERO(&write_fd_set);
-        FD_SET(this->_write_pipe[1], &write_fd_set);
+        FD_SET(fd, &write_fd_set);
         time.tv_sec = 0;
         time.tv_usec = 0;
-        if (::select(this->_write_pipe[1] + 1, NULL,  &write_fd_set, NULL, &time) < 0)
+        if (::select(fd + 1, NULL,  &write_fd_set, NULL, &time) < 0)
            throw std::runtime_error("CGI module: select() failed on child read fd: " + std::string(::strerror(errno)));
-        if (FD_ISSET(this->_write_pipe[1], &write_fd_set))
+        if (FD_ISSET(fd, &write_fd_set))
         {
-            FD_CLR(this->_write_pipe[1], &write_fd_set);
-            nwrite = ::write(this->_write_pipe[1], buffer, size);
+            FD_CLR(fd, &write_fd_set);
+            nwrite = ::write(fd, buffer, size);
             if (nwrite == -1)
                 throw std::runtime_error("CGI: write() failed: " + std::string(::strerror(errno)));
             return (nwrite);
@@ -163,23 +168,24 @@ ZHTTPD::API::size_t UnixProcess::write(char const* buffer, ZHTTPD::API::size_t s
 
 ZHTTPD::API::size_t UnixProcess::read(char* buffer, ZHTTPD::API::size_t size)
 {
-    fd_set                          read_set;
-    struct timeval                  time;
-    int                             nread = 0;
+    fd_set read_set;
+    struct timeval time;
+    int nread = 0;
+    int fd = this->_read_pipe[READ_END];
 
     FD_ZERO(&read_set);
-    FD_SET(this->_read_pipe[0], &read_set);
+    FD_SET(fd, &read_set);
     time.tv_sec = 0;
     time.tv_usec = 0;
     if (this->_status != PROCESS_STATUS::FINISHED)
     {
-        if (::select(this->_read_pipe[0] + 1, &read_set, NULL, NULL, &time) < 0)
+        if (::select(fd + 1, &read_set, NULL, NULL, &time) < 0)
             throw std::runtime_error("CGI module: select() failed: " + std::string(::strerror(errno)));
     }
     if (this->_status == PROCESS_STATUS::FINISHED || FD_ISSET(this->_read_pipe[0], &read_set))
     {
-        FD_CLR(this->_read_pipe[0], &read_set);
-        nread = ::read(this->_read_pipe[0], buffer, size);
+        FD_CLR(fd, &read_set);
+        nread = ::read(fd, buffer, size);
         if (nread == -1)
             throw std::runtime_error("CGI: read() failed: " + std::string(::strerror(errno)));
         return (nread);
