@@ -29,8 +29,7 @@ int main(int argc, char **argv)
 #ifdef ZHTTPD_DEBUG
     ZHTTPD_DEBUG_init();
 #endif
-
-    std::cout << "ZHTTPD Server v0.1 "
+    std::cout << "Starting " << ZHTTPD_FULLNAME << " "
 #ifdef ZHTTPD_DEBUG
               << "(DEBUG)"
 #else
