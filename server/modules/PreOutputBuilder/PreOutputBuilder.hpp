@@ -20,7 +20,7 @@ namespace ZHTTPD
 				PreOutputBuilderManager* _manager;
 				bool _chunked;
 				bool _headers;
-				void _sendHeaders(API::IRequest* request);
+				void _sendHeaders(API::IRequest* request, bool has_data = true);
 				void _sendChunkInfo(API::IRequest* request, API::IBuffer* buffer);
 			public:
 				PreOutputBuilder(API::IModuleManager* manager);

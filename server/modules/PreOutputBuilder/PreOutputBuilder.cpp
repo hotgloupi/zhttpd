@@ -34,7 +34,7 @@ namespace ZHTTPD
         {
         }
 
-        void PreOutputBuilder::_sendHeaders(API::IRequest* request)
+        void PreOutputBuilder::_sendHeaders(API::IRequest* request, bool has_data /* = true */)
         {
             std::string buffer;
             buffer += "HTTP/1.1 ";
@@ -59,7 +59,7 @@ namespace ZHTTPD
                 if (val.size() > 0)
                     buffer += *key + ": " + val + "\r\n";
             }
-            if (request->getResponseHeader("Content-Length") == "")
+            if (has_data && request->getResponseHeader("Content-Length") == "")
             {
                 buffer += "Transfer-Encoding: chunked\r\n";
                 this->_chunked = true;
@@ -92,7 +92,9 @@ namespace ZHTTPD
             }
             else if (event == API::EVENT::ON_END)
             {
-                if (this->_chunked)
+                if (!this->_headers)
+                    this->_sendHeaders(request, false);
+                else if (this->_chunked)
                     request->giveData(request->getBufferManager().allocate("\r\n0\r\n\r\n")); // final chunk
                 request->raiseEnd();
                 return true;

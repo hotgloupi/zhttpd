@@ -118,9 +118,10 @@ bool            CGI::_processOnIdle(CGI::request_t* request, CGI::buffer_t*)
     buffer_t*   to_send = 0;
     char        read_buffer[CGI::BUFFER_SIZE];
 
-    ZHTTPD::API::size_t n_read = this->_process.read(read_buffer, CGI::BUFFER_SIZE);
+    ZHTTPD::API::size_t n_read = this->_process.read(read_buffer, CGI::BUFFER_SIZE - 1);
     if (n_read > 0)
     {
+        read_buffer[n_read] = '\0';
         temp_buffer = request->getBufferManager().allocate(read_buffer, n_read);
         if (this->_headers == true)
         {
@@ -134,7 +135,7 @@ bool            CGI::_processOnIdle(CGI::request_t* request, CGI::buffer_t*)
             request->giveData(to_send);
         }
         else
-            LOG_DEBUG("Only headers found !");
+            LOG_DEBUG("Only headers found: " + read_buffer);
 
     }
     else
