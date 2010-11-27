@@ -4,7 +4,7 @@
 
 # include "IVHostGuideline.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class UrlGuideline : public IVHostGuideline
     {
@@ -16,7 +16,7 @@ namespace ZHTTPD
         UrlGuideline(std::string const& match_string, bool deny = false);
         virtual ~UrlGuideline();
 
-        bool match(API::IRequest& request) const;
+        bool match(api::IRequest& request) const;
     };
 }
 

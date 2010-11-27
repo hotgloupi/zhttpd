@@ -14,19 +14,19 @@
 # include "SocketEvent.hpp"
 # include "ISocketEventNotifier.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     namespace POLICIES
     {
         class BasicSocketSelector
         {
-            typedef std::set<API::socket_t> fdset_t;
+            typedef std::set<api::socket_t> fdset_t;
 
         private:
-            ZHTTPD::Socket*        _write_interrupt_socket;
-            ZHTTPD::Socket*        _read_interrupt_socket;
+            zhttpd::Socket*        _write_interrupt_socket;
+            zhttpd::Socket*        _read_interrupt_socket;
             fd_set              _sets[2];
-            ZHTTPD::API::socket_t  _max_fd;
+            zhttpd::api::socket_t  _max_fd;
             fdset_t             _fdlist;
             Mutex               _mutex;
 
@@ -36,8 +36,8 @@ namespace ZHTTPD
             void watchSockets(ISocketEventNotifier& notifier);
             void interruptWatch();
 
-            void registerFileDescriptor(ZHTTPD::API::socket_t fd);
-            void unregisterFileDescriptor(ZHTTPD::API::socket_t fd);
+            void registerFileDescriptor(zhttpd::api::socket_t fd);
+            void unregisterFileDescriptor(zhttpd::api::socket_t fd);
 
         private:
             void _prepareSockets(ISocketEventNotifier& notifier, fdset_t& fdlist);

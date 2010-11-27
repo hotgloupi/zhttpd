@@ -10,10 +10,10 @@
 
 #include "DirListing.hpp"
 
-using namespace ZHTTPD;
-using namespace ZHTTPD::MOD;
+using namespace zhttpd;
+using namespace zhttpd::mod;
 
-DirListing::DirListing(API::IModuleManager*)
+DirListing::DirListing(api::IModuleManager*)
 {
 }
 
@@ -21,9 +21,9 @@ DirListing::~DirListing()
 {
 }
 
-bool DirListing::processRequest(API::EVENT::Type event, API::IRequest* request, API::IBuffer*)
+bool DirListing::processRequest(api::event::Type event, api::IRequest* request, api::IBuffer*)
 {
-    if (event == API::EVENT::ON_END)
+    if (event == api::event::ON_END)
     {
         Path dir(request->getFilePath());
         std::list<std::string> files = dir.getDirectoryContent();

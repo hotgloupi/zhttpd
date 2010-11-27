@@ -16,9 +16,9 @@
 #  include "ThreadUnix.hpp"
 # endif // !_WIN32
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    typedef IMPLEMENTATION::Thread      Thread;
+    typedef implementation::Thread      Thread;
 }
 
 #endif // !__THREAD_HPP__

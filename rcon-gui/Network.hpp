@@ -3,7 +3,7 @@
 
 #include <QTcpSocket>
 
-namespace ZHTTPD
+namespace zhttpd
 {
     namespace RCON
     {

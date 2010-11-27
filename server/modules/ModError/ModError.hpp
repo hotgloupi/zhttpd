@@ -5,26 +5,26 @@
 # include "utils/Logger.hpp"
 # include "core/Request.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace MOD
+    namespace mod
     {
         class ModErrorManager;
 
-        class ModError : public ZHTTPD::API::IModule
+        class ModError : public zhttpd::api::IModule
         {
         public:
-            ModError(ZHTTPD::API::IModuleManager*) {}
-            bool processRequest(ZHTTPD::API::EVENT::Type event,
-                                ZHTTPD::API::IRequest* request,
-                                ZHTTPD::API::IBuffer* buffer)
+            ModError(zhttpd::api::IModuleManager*) {}
+            bool processRequest(zhttpd::api::event::Type event,
+                                zhttpd::api::IRequest* request,
+                                zhttpd::api::IBuffer* buffer)
             {
                 if (buffer != 0)
                     request->getBufferManager().release(buffer);
-                if (event == ZHTTPD::API::EVENT::ON_END)
+                if (event == zhttpd::api::event::ON_END)
                 {
                     request->setResponseHeader("Content-Type", "text/html");
-                    ZHTTPD::API::IBuffer* b = request->getBufferManager().allocate(
+                    zhttpd::api::IBuffer* b = request->getBufferManager().allocate(
                         "<h1>" +
                         Logger::toString(request->getResponseCode()) + " " +
                         request->getResponseMessage() +

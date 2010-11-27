@@ -12,7 +12,7 @@
 
 # include "Request.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class TaskManager :
         public Singleton<TaskManager>,
@@ -38,9 +38,9 @@ namespace ZHTTPD
     private:
         TaskManager();
         virtual ~TaskManager();
-        API::size_t _giveWork();
-        API::size_t _addPendingRequests();
-        API::size_t _delPendingRequests();
+        api::size_t _giveWork();
+        api::size_t _addPendingRequests();
+        api::size_t _delPendingRequests();
     };
 }
 

@@ -3,8 +3,8 @@
 #include "ModuleParser.hpp"
 #include "ConfigurationParserException.hpp"
 
-using namespace ZHTTPD;
-using namespace ZHTTPD::PARSER;
+using namespace zhttpd;
+using namespace zhttpd::parser;
 
 ModuleParser::ModuleParser()
 {

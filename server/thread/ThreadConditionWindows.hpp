@@ -9,9 +9,9 @@
 # include "IThreadCondition.hpp"
 # include "ICondition.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace IMPLEMENTATION
+    namespace implementation
     {
         class ThreadCondition : public IThreadCondition, private NonCopyable
         {

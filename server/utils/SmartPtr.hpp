@@ -6,7 +6,7 @@
 
 # include "Atomic.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     template<typename PtrType>
     class SmartPtr

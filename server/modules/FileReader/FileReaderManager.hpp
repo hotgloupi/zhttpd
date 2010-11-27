@@ -8,9 +8,9 @@
 
 # include "FileReader.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace MOD
+    namespace mod
     {
 
         class FileReaderManager : public StatefullManager<FileReader>
@@ -25,8 +25,8 @@ namespace ZHTTPD
                 ~FileReaderManager();
                 void addConfigurationEntry(std::string const& key,
                                            std::string const& value);
-                API::CATEGORY::Type getCategory() const;
-                bool isRequired(API::IRequest const& request) const;
+                api::category::Type getCategory() const;
+                bool isRequired(api::IRequest const& request) const;
                 std::string const& getMimeType(std::string const& ext) const;
                 std::string const& getDefaultMimeType() const;
                 unsigned int getDelay() const;

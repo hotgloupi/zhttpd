@@ -4,9 +4,9 @@
 
 # include "types.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace API
+    namespace api
     {
         class IBuffer
         {
@@ -21,14 +21,14 @@ namespace ZHTTPD
             /**
              * Retourne la taille du buffer (toujours > 0).
              */
-            virtual API::size_t getSize() const = 0;
+            virtual api::size_t getSize() const = 0;
 
             /**
              * Redimensionne le buffer à la taille spécifiée.
              * Les données présentes sont conservées (fonctionne comme realloc)
              * @param size Taille totale voulue en octet.
              */
-            virtual void setSize(API::size_t size) = 0;
+            virtual void setSize(api::size_t size) = 0;
 
             /**
              * Redimensionne le buffer à la taille spécifiée.
@@ -40,7 +40,7 @@ namespace ZHTTPD
              *  b = buffer_manager.allocate("abcdef");
              *  b.setSize(2, 4); // b contient "cdef"
              */
-            virtual void setSize(API::size_t start, API::size_t size) = 0;
+            virtual void setSize(api::size_t start, api::size_t size) = 0;
 
         };
     }

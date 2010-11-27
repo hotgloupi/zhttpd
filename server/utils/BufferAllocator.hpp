@@ -8,16 +8,16 @@
 
 #include "api/types.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class BufferAllocator
     {
         public:
-            BufferAllocator(API::size_t size = 10000);
+            BufferAllocator(api::size_t size = 10000);
             virtual ~BufferAllocator();
-            char* allocate(API::size_t size);
-            char* resize(char* data, API::size_t old_size, API::size_t new_size);
-            void release(char* data, API::size_t size);
+            char* allocate(api::size_t size);
+            char* resize(char* data, api::size_t old_size, api::size_t new_size);
+            void release(char* data, api::size_t size);
             void clean();
         private:
             enum
@@ -28,7 +28,7 @@ namespace ZHTTPD
             std::vector<char*> _free_blocks;
             std::vector<char*> _blocks;
 #ifdef ZHTTPD_DEBUG
-            std::map<char*, API::size_t> _debug;
+            std::map<char*, api::size_t> _debug;
 #endif
     };
 }

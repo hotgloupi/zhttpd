@@ -7,9 +7,9 @@
 
 #include "Session.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
-Session::Session(Socket* socket, API::uint16_t port) :
+Session::Session(Socket* socket, api::uint16_t port) :
     _socket(socket),
     _ip(0),
     _port(port),
@@ -26,12 +26,12 @@ Session::~Session()
     ZHTTPD_DELETE(this->_socket);
 }
 
-API::socket_t Session::getSocket() const
+api::socket_t Session::getSocket() const
 {
     return this->_fd;
 }
 
-API::uint32_t Session::getIp() const
+api::uint32_t Session::getIp() const
 {
     if (this->_ip == 0)
     {
@@ -41,7 +41,7 @@ API::uint32_t Session::getIp() const
     return this->_ip;
 }
 
-API::uint16_t Session::getPort() const
+api::uint16_t Session::getPort() const
 {
     assert(this->_port != 0);
     return this->_port;
@@ -52,7 +52,7 @@ void Session::incrProcessedRequestCount()
     ++this->_processed_request_count;
 }
 
-API::size_t Session::getProcessedRequestCount() const
+api::size_t Session::getProcessedRequestCount() const
 {
     return this->_processed_request_count;
 }

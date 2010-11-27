@@ -11,22 +11,22 @@
 # include "Request.hpp"
 # include "TaskManager.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class ModuleTask : public ITask
     {
     private:
-        API::EVENT::Type    _event;
+        api::event::Type    _event;
         Request&            _request;
         ModuleWrapper&      _module;
-        API::IBuffer*       _buffer;
+        api::IBuffer*       _buffer;
         bool                _triggered;
 
     public:
-        ModuleTask(API::EVENT::Type event,
+        ModuleTask(api::event::Type event,
                    Request& request,
                    ModuleWrapper& module,
-                   API::IBuffer* buffer) :
+                   api::IBuffer* buffer) :
             _event(event),
             _request(request),
             _module(module),

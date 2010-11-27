@@ -8,7 +8,7 @@
 
 #include "CryptoLock.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
 struct CRYPTO_dynlock_value* CryptoLock::createMutex(char const*, int)
 {

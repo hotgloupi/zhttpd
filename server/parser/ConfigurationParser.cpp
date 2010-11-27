@@ -6,7 +6,7 @@
 #include "ModuleParser.hpp"
 #include "VHostParser.hpp"
 
-using namespace ZHTTPD::PARSER;
+using namespace zhttpd::parser;
 
 ConfigurationParser::ConfigurationParser() : _xml_doc(0)
 {
@@ -46,7 +46,7 @@ void ConfigurationParser::loadString(std::string const& xml)
     }
 }
 
-ZHTTPD::Configuration* ConfigurationParser::parse()
+zhttpd::Configuration* ConfigurationParser::parse()
 {
     if (this->_xml_doc != 0)
     {
@@ -68,7 +68,7 @@ ZHTTPD::Configuration* ConfigurationParser::parse()
         throw ConfigurationParserException("A file should have been loaded before parsing");
 }
 
-void ConfigurationParser::parseBaseModules(ZHTTPD::Configuration* config)
+void ConfigurationParser::parseBaseModules(zhttpd::Configuration* config)
 {
     ticpp::Node* child = 0;
     try
@@ -84,7 +84,7 @@ void ConfigurationParser::parseBaseModules(ZHTTPD::Configuration* config)
     }
 }
 
-void ConfigurationParser::parseVHosts(ZHTTPD::Configuration* config)
+void ConfigurationParser::parseVHosts(zhttpd::Configuration* config)
 {
     try
     {
@@ -97,7 +97,7 @@ void ConfigurationParser::parseVHosts(ZHTTPD::Configuration* config)
     }
 }
 
-void ConfigurationParser::parseServer(ZHTTPD::Configuration* config)
+void ConfigurationParser::parseServer(zhttpd::Configuration* config)
 {
     ticpp::Node* child = 0;
     try

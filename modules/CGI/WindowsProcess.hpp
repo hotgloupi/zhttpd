@@ -20,15 +20,15 @@ private:
 
     bool _running;
     PROCESS_INFORMATION _processInfos;
-    ZHTTPD::API::IBuffer* _pendingData;
+    zhttpd::api::IBuffer* _pendingData;
 
 public:
     WindowsProcess();
     ~WindowsProcess();
 
     bool create(std::string const & executable, std::list<std::string> const& arguments, Environment const& environment);
-    ZHTTPD::API::size_t write(char const* buffer, ZHTTPD::API::size_t length);
-    ZHTTPD::API::size_t read(char* buffer, ZHTTPD::API::size_t length);
+    zhttpd::api::size_t write(char const* buffer, zhttpd::api::size_t length);
+    zhttpd::api::size_t read(char* buffer, zhttpd::api::size_t length);
     Process::ProcessStatus getStatus() const;
 };
 

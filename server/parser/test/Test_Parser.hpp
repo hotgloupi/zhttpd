@@ -19,10 +19,10 @@ private:
     {
         try
         {
-            ZHTTPD::PARSER::ConfigurationParser p;
+            zhttpd::parser::ConfigurationParser p;
             p.loadFile("example/sample_conf.xml");
         }
-        catch (ZHTTPD::PARSER::ConfigurationParserException& e)
+        catch (zhttpd::parser::ConfigurationParserException& e)
         {
             this->assert_test(1 == 0, e.what());
         }
@@ -32,11 +32,11 @@ private:
     {
          try
         {
-            ZHTTPD::PARSER::ConfigurationParser p;
+            zhttpd::parser::ConfigurationParser p;
             p.loadFile("osef.xml");
             this->assert_test(1 == 0, "Loading should have failed, but succeed");
         }
-        catch (ZHTTPD::PARSER::ConfigurationParserException& e)
+        catch (zhttpd::parser::ConfigurationParserException& e)
         {
             std::cerr << e.what() << std::endl;
         }
@@ -46,11 +46,11 @@ private:
     {
         try
         {
-            ZHTTPD::PARSER::ConfigurationParser p;
+            zhttpd::parser::ConfigurationParser p;
             p.loadFile("example/bad_format.xml");
             this->assert_test(1 == 0, "Loading should have failed, but succeed");
         }
-        catch (ZHTTPD::PARSER::ConfigurationParserException& e)
+        catch (zhttpd::parser::ConfigurationParserException& e)
         {
             std::cerr << e.what() << std::endl;
         }
@@ -64,9 +64,9 @@ private:
     {
         try
         {
-            ZHTTPD::PARSER::ConfigurationParser p;
+            zhttpd::parser::ConfigurationParser p;
             p.loadFile("example/base_module.xml");
-            ZHTTPD::Configuration* conf = p.parse();
+            zhttpd::Configuration* conf = p.parse();
             this->assert_test(conf != 0, "Configuration have not been initialized correctly");
             if (conf != 0)
             {
@@ -75,7 +75,7 @@ private:
                 //this->assert_test(conf->getModules().front()->getConfigurationEntry("toto") == "", "Asking an undefined option does not return \"\"");
             }
         }
-        catch (ZHTTPD::PARSER::ConfigurationParserException& e)
+        catch (zhttpd::parser::ConfigurationParserException& e)
         {
             this->assert_test(1 == 0, e.what());
         }
@@ -85,11 +85,11 @@ private:
     {
         try
         {
-            ZHTTPD::PARSER::ConfigurationParser p;
+            zhttpd::parser::ConfigurationParser p;
             p.parse();
             this->assert_test(1 == 0, "Parse should have failed, but succeed");
         }
-        catch (ZHTTPD::PARSER::ConfigurationParserException& e)
+        catch (zhttpd::parser::ConfigurationParserException& e)
         {
             std::cerr << e.what() << std::endl;
         }
@@ -97,14 +97,14 @@ private:
 
     void _parseBaseModulesMisformed()
     {
-        ZHTTPD::PARSER::ConfigurationParser p;
+        zhttpd::parser::ConfigurationParser p;
         try
         {
             p.loadFile("example/bad_format_module.xml");
             p.parse();
             this->assert_test(1 == 0, "parseBaseModules should have failed, but succeed");
         }
-        catch (ZHTTPD::PARSER::ConfigurationParserException& e)
+        catch (zhttpd::parser::ConfigurationParserException& e)
         {
             std::cerr << e.what() << std::endl;
         }
@@ -112,14 +112,14 @@ private:
 
     void _parseBaseModulesEmpty()
     {
-        ZHTTPD::PARSER::ConfigurationParser p;
+        zhttpd::parser::ConfigurationParser p;
         try
         {
             p.loadFile("example/no_base_modules.xml");
             p.parse();
             this->assert_test(1 == 0, "parseBaseModules should have failed, but succeed");
         }
-        catch (ZHTTPD::PARSER::ConfigurationParserException& e)
+        catch (zhttpd::parser::ConfigurationParserException& e)
         {
             std::cerr << e.what() << std::endl;
         }
@@ -127,14 +127,14 @@ private:
 
     void _parseBadModuleOption()
     {
-        ZHTTPD::PARSER::ConfigurationParser p;
+        zhttpd::parser::ConfigurationParser p;
         try
         {
             p.loadFile("example/bad_format_module_option.xml");
             p.parse();
             this->assert_test(1 == 0, "parseOption in module should have failed, but succeed");
         }
-        catch (ZHTTPD::PARSER::ConfigurationParserException& e)
+        catch (zhttpd::parser::ConfigurationParserException& e)
         {
             std::cerr << e.what() << std::endl;
         }
@@ -148,11 +148,11 @@ private:
     {
         try
         {
-            ZHTTPD::PARSER::ConfigurationParser p;
+            zhttpd::parser::ConfigurationParser p;
             p.loadFile("example/base_mimetypes.xml");
             p.parse();
         }
-        catch (ZHTTPD::PARSER::ConfigurationParserException& e)
+        catch (zhttpd::parser::ConfigurationParserException& e)
         {
             this->assert_test(1 == 0, e.what());
         }
@@ -160,14 +160,14 @@ private:
 
     void _parseBaseMimeTypesEmpty()
     {
-        ZHTTPD::PARSER::ConfigurationParser p;
+        zhttpd::parser::ConfigurationParser p;
         try
         {
             p.loadFile("example/base_mimetypes_empty.xml");
             p.parse();
             this->assert_test(false, "parseBaseMimeTypes should have failed, but succeed");
         }
-        catch (ZHTTPD::PARSER::ConfigurationParserException& e)
+        catch (zhttpd::parser::ConfigurationParserException& e)
         {
             std::cerr << e.what() << std::endl;
         }
@@ -179,13 +179,13 @@ private:
 
     void _parseVHosts()
     {
-        ZHTTPD::PARSER::ConfigurationParser p;
+        zhttpd::parser::ConfigurationParser p;
         try
         {
             p.loadFile("example/sample_conf.xml");
             p.parse();
         }
-        catch (ZHTTPD::PARSER::ConfigurationParserException& e)
+        catch (zhttpd::parser::ConfigurationParserException& e)
         {
             this->assert_test(false, e.what());
         }
@@ -193,14 +193,14 @@ private:
 
     void _parseVHostsEmpty()
     {
-        ZHTTPD::PARSER::ConfigurationParser p;
+        zhttpd::parser::ConfigurationParser p;
         try
         {
             p.loadFile("example/vhosts_empty.xml");
             p.parse();
             this->assert_test(false, "parseBaseMimeTypes should have failed, but succeed");
         }
-        catch (ZHTTPD::PARSER::ConfigurationParserException& e)
+        catch (zhttpd::parser::ConfigurationParserException& e)
         {
             std::cerr << e.what() << std::endl;
         }
@@ -217,15 +217,15 @@ private:
 
     void _parseServer()
     {
-        ZHTTPD::PARSER::ConfigurationParser p;
+        zhttpd::parser::ConfigurationParser p;
         try
         {
             p.loadFile("example/base_server_conf.xml");
             p.parse();
-            // ZHTTPD::Configuration* conf = p.getConfig();
-            // this->assert_test(conf->getListenPorts()[8080] == "", "wrong port result: " + ZHTTPD::Logger::toString(8080) + " != ''");
+            // zhttpd::Configuration* conf = p.getConfig();
+            // this->assert_test(conf->getListenPorts()[8080] == "", "wrong port result: " + zhttpd::Logger::toString(8080) + " != ''");
         }
-        catch (ZHTTPD::PARSER::ConfigurationParserException& e)
+        catch (zhttpd::parser::ConfigurationParserException& e)
         {
             this->assert_test(false, e.what());
         }
@@ -233,14 +233,14 @@ private:
 
     void _parseServerEmpty()
     {
-        ZHTTPD::PARSER::ConfigurationParser p;
+        zhttpd::parser::ConfigurationParser p;
         try
         {
             p.loadFile("example/server_empty.xml");
             p.parse();
             this->assert_test(false, "parse server should have failed, but succeed");
         }
-        catch (ZHTTPD::PARSER::ConfigurationParserException& e)
+        catch (zhttpd::parser::ConfigurationParserException& e)
         {
             std::cerr << e.what() << std::endl;
         }
@@ -248,14 +248,14 @@ private:
 
     void _parseServerWrongOption()
     {
-        ZHTTPD::PARSER::ConfigurationParser p;
+        zhttpd::parser::ConfigurationParser p;
         try
         {
             p.loadFile("example/unknown_option_server_conf.xml");
             p.parse();
             this->assert_test(false, "parse server should have failed, but succeed");
         }
-        catch (ZHTTPD::PARSER::ConfigurationParserException& e)
+        catch (zhttpd::parser::ConfigurationParserException& e)
         {
             std::cerr << e.what() << std::endl;
         }

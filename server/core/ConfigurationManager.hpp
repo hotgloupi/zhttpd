@@ -11,7 +11,7 @@
 
 # include "configuration/Configuration.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class ConfigurationManager : public Singleton<ConfigurationManager>
     {

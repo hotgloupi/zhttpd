@@ -2,7 +2,7 @@
 
 extern "C"
 {
-    ZHTTPD_EXPORT ZHTTPD::API::IModuleManager* getInstance()
+    ZHTTPD_EXPORT zhttpd::api::IModuleManager* getInstance()
     {
         return new GzipManager();
     }

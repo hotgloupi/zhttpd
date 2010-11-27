@@ -12,7 +12,7 @@
 # include "ScopeLock.hpp"
 # include "ICondition.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
 ThreadPool::ThreadTask::ThreadTask(ThreadPool* pool) : _pool(pool)
 {

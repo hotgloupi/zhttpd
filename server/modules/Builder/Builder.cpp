@@ -8,13 +8,13 @@
 #include "utils/Path.hpp"
 
 
-using namespace ZHTTPD::MOD;
+using namespace zhttpd::mod;
 
-Builder::Builder(ZHTTPD::API::IModuleManager*) : _builded(false) {}
+Builder::Builder(zhttpd::api::IModuleManager*) : _builded(false) {}
 
-bool Builder::processRequest(ZHTTPD::API::EVENT::Type event,
-                             ZHTTPD::API::IRequest* request,
-                             ZHTTPD::API::IBuffer* buffer)
+bool Builder::processRequest(zhttpd::api::event::Type event,
+                             zhttpd::api::IRequest* request,
+                             zhttpd::api::IBuffer* buffer)
 {
     bool error = false;
     if (!this->_builded)
@@ -35,14 +35,14 @@ bool Builder::processRequest(ZHTTPD::API::EVENT::Type event,
         }
         else
         {
-            request->raiseError(API::HTTP_CODE::NOT_FOUND);
+            request->raiseError(api::http_code::NOT_FOUND);
             LOG_ERROR("No vhost found");
             this->_builded = true;
             error = true;
         }
         this->_builded = true;
     }
-    if (event == ZHTTPD::API::EVENT::ON_REQUEST_DATA)
+    if (event == zhttpd::api::event::ON_REQUEST_DATA)
     {
         if (error)
             request->getBufferManager().release(buffer);
@@ -53,25 +53,25 @@ bool Builder::processRequest(ZHTTPD::API::EVENT::Type event,
     return false;
 }
 
-void Builder::_findModules(ZHTTPD::API::IRequest* request, ZHTTPD::Configuration* config, ZHTTPD::VHost* vhost)
+void Builder::_findModules(zhttpd::api::IRequest* request, zhttpd::Configuration* config, zhttpd::VHost* vhost)
 {
     LOG_DEBUG("creating modules chain");
-    this->_addModule(ZHTTPD::API::CATEGORY::PREOUTPUT, config, vhost, request);
-    this->_addModule(ZHTTPD::API::CATEGORY::POSTRESPONSEFILTER, config, vhost, request);
-    this->_addModule(ZHTTPD::API::CATEGORY::COMPRESS, config, vhost, request);
-    this->_addModule(ZHTTPD::API::CATEGORY::PRERESPONSEFILTER, config, vhost, request);
-    this->_addModule(ZHTTPD::API::CATEGORY::POSTPROCESSING, config, vhost, request);
-    this->_addModule(ZHTTPD::API::CATEGORY::PROCESSING, config, vhost, request);
-    this->_addModule(ZHTTPD::API::CATEGORY::PREPROCESSING, config, vhost, request);
-    this->_addModule(ZHTTPD::API::CATEGORY::POSTREQUESTFILTER, config, vhost, request);
-    this->_addModule(ZHTTPD::API::CATEGORY::UNCOMPRESS, config, vhost, request);
-    this->_addModule(ZHTTPD::API::CATEGORY::PREREQUESTFILTER, config, vhost, request);
+    this->_addModule(zhttpd::api::category::PREOUTPUT, config, vhost, request);
+    this->_addModule(zhttpd::api::category::POSTRESPONSEFILTER, config, vhost, request);
+    this->_addModule(zhttpd::api::category::COMPRESS, config, vhost, request);
+    this->_addModule(zhttpd::api::category::PRERESPONSEFILTER, config, vhost, request);
+    this->_addModule(zhttpd::api::category::POSTPROCESSING, config, vhost, request);
+    this->_addModule(zhttpd::api::category::PROCESSING, config, vhost, request);
+    this->_addModule(zhttpd::api::category::PREPROCESSING, config, vhost, request);
+    this->_addModule(zhttpd::api::category::POSTREQUESTFILTER, config, vhost, request);
+    this->_addModule(zhttpd::api::category::UNCOMPRESS, config, vhost, request);
+    this->_addModule(zhttpd::api::category::PREREQUESTFILTER, config, vhost, request);
 }
 
-void Builder::_addModule(ZHTTPD::API::CATEGORY::Type category, ZHTTPD::Configuration* config, ZHTTPD::VHost* vhost, ZHTTPD::API::IRequest* request)
+void Builder::_addModule(zhttpd::api::category::Type category, zhttpd::Configuration* config, zhttpd::VHost* vhost, zhttpd::api::IRequest* request)
 {
-    ZHTTPD::Configuration::available_modules_t const& mods = config->getAvailableModules();
-    ZHTTPD::Configuration::available_modules_t::const_iterator cat_mods = mods.find(category);
+    zhttpd::Configuration::available_modules_t const& mods = config->getAvailableModules();
+    zhttpd::Configuration::available_modules_t::const_iterator cat_mods = mods.find(category);
     if (cat_mods != mods.end())
     {
         std::list<std::string>::const_iterator it = (cat_mods->second).begin();
@@ -86,7 +86,7 @@ void Builder::_addModule(ZHTTPD::API::CATEGORY::Type category, ZHTTPD::Configura
             ModuleConfiguration& mod_conf = vhost->getModuleConfiguration(*it);
             if (mod_conf.isEnabled())
             {
-                ZHTTPD::API::IModuleManager* mod_manager = mod_conf.getModuleManager();
+                zhttpd::api::IModuleManager* mod_manager = mod_conf.getModuleManager();
                 assert(mod_manager != 0);
                 if (mod_manager->isRequired(*request))
                 {
@@ -99,12 +99,12 @@ void Builder::_addModule(ZHTTPD::API::CATEGORY::Type category, ZHTTPD::Configura
             ++it;
         }
     }
-    if (category == ZHTTPD::API::CATEGORY::PROCESSING)
+    if (category == zhttpd::api::category::PROCESSING)
     {
         ModuleConfiguration& mod_conf = vhost->getModuleConfiguration("mod_filereader");
         if (mod_conf.isEnabled())
         {
-            ZHTTPD::API::IModuleManager* mod_manager = mod_conf.getModuleManager();
+            zhttpd::api::IModuleManager* mod_manager = mod_conf.getModuleManager();
             assert(mod_manager != 0);
             if (mod_manager->isRequired(*request))
             {
@@ -115,11 +115,11 @@ void Builder::_addModule(ZHTTPD::API::CATEGORY::Type category, ZHTTPD::Configura
             }
         }
         // only reached when filereader is not available
-        request->raiseError(ZHTTPD::API::HTTP_CODE::FORBIDDEN);
+        request->raiseError(zhttpd::api::http_code::FORBIDDEN);
     }
 }
 
-void Builder::_setPath(ZHTTPD::API::IRequest* request, ZHTTPD::Configuration* config, ZHTTPD::VHost* vhost)
+void Builder::_setPath(zhttpd::api::IRequest* request, zhttpd::Configuration* config, zhttpd::VHost* vhost)
 {
     Path path(vhost->getDocumentRoot());
     std::string filepath = request->getRequestQuery();

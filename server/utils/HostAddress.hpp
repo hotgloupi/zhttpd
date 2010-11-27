@@ -6,13 +6,13 @@
 
 # include "api/types.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class HostAddress
     {
     private:
-        API::uint32_t _ip;
-        API::uint16_t _port;
+        api::uint32_t _ip;
+        api::uint16_t _port;
         std::string _host;
         enum
         {
@@ -23,12 +23,12 @@ namespace ZHTTPD
 # endif
         };
     public:
-        HostAddress(API::uint32_t ip, API::uint16_t port);
+        HostAddress(api::uint32_t ip, api::uint16_t port);
         HostAddress(std::string const& host);
-        HostAddress(API::socket_t socket);
+        HostAddress(api::socket_t socket);
 
-        API::uint32_t getIp();
-        API::uint16_t getPort();
+        api::uint32_t getIp();
+        api::uint16_t getPort();
 
         std::string getHostname();
     };

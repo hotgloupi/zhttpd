@@ -4,7 +4,7 @@
 
 #include <string>
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class Regex
     {

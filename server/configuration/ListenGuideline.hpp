@@ -4,19 +4,19 @@
 
 # include "IVHostGuideline.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class ListenGuideline : public IVHostGuideline
     {
     private:
-        API::uint16_t _port;
+        api::uint16_t _port;
         bool _deny;
 
     public:
-        ListenGuideline(API::uint16_t port, bool deny = false);
+        ListenGuideline(api::uint16_t port, bool deny = false);
         virtual ~ListenGuideline();
 
-        bool match(API::IRequest& request) const;
+        bool match(api::IRequest& request) const;
     };
 }
 

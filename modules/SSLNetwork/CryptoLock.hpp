@@ -6,10 +6,10 @@
 
 struct CRYPTO_dynlock_value
 {
-    ZHTTPD::Mutex mutex;
+    zhttpd::Mutex mutex;
 };
 
-namespace ZHTTPD
+namespace zhttpd
 {
 
     struct CryptoLock

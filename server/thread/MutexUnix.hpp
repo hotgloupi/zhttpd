@@ -12,9 +12,9 @@
 
 # include "Mutex.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace IMPLEMENTATION
+    namespace implementation
     {
         class Mutex : private NonCopyable
         {

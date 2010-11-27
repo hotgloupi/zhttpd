@@ -16,22 +16,22 @@ extern "C"
 #include "api/IModule.hpp"
 #include "LuaApi.hpp"
 
-class Lua : public ZHTTPD::API::IModule
+class Lua : public zhttpd::api::IModule
 {
     private:
         bool _executeLua(std::string const& file);
-        void _luaError(ZHTTPD::API::IRequest* request, std::string const& file);
-        void _loadApi(ZHTTPD::API::IRequest* request);
-        void _parseQuery(ZHTTPD::API::IRequest* request);
-        void _parsePost(ZHTTPD::API::IRequest* request);
+        void _luaError(zhttpd::api::IRequest* request, std::string const& file);
+        void _loadApi(zhttpd::api::IRequest* request);
+        void _parseQuery(zhttpd::api::IRequest* request);
+        void _parsePost(zhttpd::api::IRequest* request);
         char _urlDecode(std::string::const_iterator& it, std::string::const_iterator& itEnd);
         lua_State* _state;
         bool _loaded;
         std::string _post;
     public:
-        Lua(ZHTTPD::API::IModuleManager* manager);
+        Lua(zhttpd::api::IModuleManager* manager);
         ~Lua();
-        bool processRequest(ZHTTPD::API::EVENT::Type event, ZHTTPD::API::IRequest* request, ZHTTPD::API::IBuffer* buffer);
+        bool processRequest(zhttpd::api::event::Type event, zhttpd::api::IRequest* request, zhttpd::api::IBuffer* buffer);
 };
 
 #endif

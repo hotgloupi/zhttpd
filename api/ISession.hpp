@@ -4,9 +4,9 @@
 
 # include "types.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace API
+    namespace api
     {
         class ISession
         {

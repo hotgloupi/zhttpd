@@ -8,12 +8,12 @@
 
 # include "api/types.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class Timer
     {
     private:
-        API::uint64_t _base_time;
+        api::uint64_t _base_time;
 #ifdef _WIN32
         LARGE_INTEGER _frequence;
 #endif // _WIN32
@@ -24,9 +24,9 @@ namespace ZHTTPD
         /**
          * Retourne le temps écoulé en millisecondes
          */
-        API::uint32_t getElapsedTime() const;
-        API::uint64_t getPreciseElapsedTime() const;
-        static void sleep(API::uint32_t ms);
+        api::uint32_t getElapsedTime() const;
+        api::uint64_t getPreciseElapsedTime() const;
+        static void sleep(api::uint32_t ms);
     };
 }
 

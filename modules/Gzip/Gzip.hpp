@@ -9,22 +9,22 @@
 #include "api/IModuleManager.hpp"
 #include "api/IModule.hpp"
 
-class Gzip : public ZHTTPD::API::IModule
+class Gzip : public zhttpd::api::IModule
 {
     private:
         enum
         {
             GZIP_CHUNK = 16384
         };
-        bool _load(ZHTTPD::API::IRequest* request);
+        bool _load(zhttpd::api::IRequest* request);
         void _unload();
-        bool _deflate(ZHTTPD::API::IBuffer* in_buffer, ZHTTPD::API::IBuffer* out_buffer);
+        bool _deflate(zhttpd::api::IBuffer* in_buffer, zhttpd::api::IBuffer* out_buffer);
         bool _initialized;
         z_stream _stream;
     public:
-        Gzip(ZHTTPD::API::IModuleManager* manager);
+        Gzip(zhttpd::api::IModuleManager* manager);
         ~Gzip();
-        bool processRequest(ZHTTPD::API::EVENT::Type event, ZHTTPD::API::IRequest* request, ZHTTPD::API::IBuffer* buffer);
+        bool processRequest(zhttpd::api::event::Type event, zhttpd::api::IRequest* request, zhttpd::api::IBuffer* buffer);
 };
 
 #endif

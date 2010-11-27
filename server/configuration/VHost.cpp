@@ -5,7 +5,7 @@
 
 #include "VHost.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
 VHost::VHost(VHost* parent, Configuration& conf) :
     _configuration(conf),
@@ -30,7 +30,7 @@ VHost::~VHost()
         delete *it;
 }
 
-VHost* VHost::match(API::IRequest& request)
+VHost* VHost::match(api::IRequest& request)
 {
     VHost* match = this;
     std::list<IVHostGuideline*>::iterator it_gl = this->_guide_lines.begin();
@@ -58,7 +58,7 @@ void VHost::addModule(ModuleConfiguration* module)
     this->_modules[module->getName()] = module;
 }
 
-ZHTTPD::API::IModuleManager* VHost::getModule(std::string const& name)
+zhttpd::api::IModuleManager* VHost::getModule(std::string const& name)
 {
     if (this->_modules.find(name) != this->_modules.end())
     {

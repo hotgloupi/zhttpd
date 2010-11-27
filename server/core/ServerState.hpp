@@ -4,7 +4,7 @@
 
 # include "utils/Singleton.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class ServerState : public Singleton<ServerState>
     {

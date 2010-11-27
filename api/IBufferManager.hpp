@@ -6,9 +6,9 @@
 
 # include "IBuffer.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace API
+    namespace api
     {
         class IBufferManager
         {

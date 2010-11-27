@@ -7,17 +7,17 @@
 
 #include "Gzip.hpp"
 
-class GzipManager : public ZHTTPD::MOD::StatefullManager<Gzip>
+class GzipManager : public zhttpd::mod::StatefullManager<Gzip>
 {
     private:
         std::string _name;
     public:
         GzipManager() :
-            ZHTTPD::MOD::StatefullManager<Gzip>("mod_gzip", ZHTTPD::API::CATEGORY::COMPRESS)
+            zhttpd::mod::StatefullManager<Gzip>("mod_gzip", zhttpd::api::category::COMPRESS)
         {
         }
 
-        virtual bool isRequired(ZHTTPD::API::IRequest const& request) const
+        virtual bool isRequired(zhttpd::api::IRequest const& request) const
         {
             if (request.getRequestHeader("Accept-Encoding").find("gzip") != std::string::npos ||
                 request.getRequestHeader("Accept-Encoding").find("deflate") != std::string::npos)

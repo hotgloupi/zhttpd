@@ -25,9 +25,9 @@
 # endif // !UNIX
 
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace API
+    namespace api
     {
         typedef std::size_t     size_t;
         typedef std::ptrdiff_t  ssize_t;

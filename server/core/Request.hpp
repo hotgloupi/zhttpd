@@ -22,15 +22,15 @@
 #  include "SafeBufferManager.hpp"
 # endif
 
-namespace ZHTTPD
+namespace zhttpd
 {
     struct HTTPResponse
     {
-        API::HTTP_CODE::Type code;
+        api::http_code::Type code;
         char const* message;
     };
 
-    class Request : public API::IRequest
+    class Request : public api::IRequest
     {
     private:
         typedef std::map<std::string, std::string> headers_t;
@@ -38,15 +38,15 @@ namespace ZHTTPD
 # ifdef ZHTTPD_DEBUG
         SafeBufferManager           _buffer_manager;
 # else
-        API::IBufferManager&        _buffer_manager;
+        api::IBufferManager&        _buffer_manager;
 # endif
         Session&                    _session;
         std::string                 _request_file_path;
-        API::HTTP_METHOD::Type      _request_method;
+        api::http_method::Type      _request_method;
         std::string                 _request_query;
         mutable headers_t           _request_headers;
 
-        API::HTTP_CODE::Type        _response_code;
+        api::http_code::Type        _response_code;
         std::string                 _response_msg;
         mutable headers_t           _response_headers;
 
@@ -59,44 +59,44 @@ namespace ZHTTPD
         static const HTTPResponse   _responses[];
 
     public:
-        Request(API::IBufferManager& buffer_manager,
+        Request(api::IBufferManager& buffer_manager,
                 Session& session,
                 SmartPtr<Configuration> configuration);
         virtual ~Request();
-        void callLater(API::uint32_t ms);
-        void giveData(API::IBuffer* buffer);
-        void raiseError(API::HTTP_CODE::Type code, std::string error = "");
+        void callLater(api::uint32_t ms);
+        void giveData(api::IBuffer* buffer);
+        void raiseError(api::http_code::Type code, std::string error = "");
         void raiseEnd();
-        void needWrite(API::IBuffer* buffer);
-        API::ISession const& getSession();
-        API::IBufferManager& getBufferManager();
+        void needWrite(api::IBuffer* buffer);
+        api::ISession const& getSession();
+        api::IBufferManager& getBufferManager();
 
         std::string const& getFilePath() const;
         void setFilePath(std::string const& path);
         void setRequestHeader(std::string const& key, std::string const& val);
         std::string const& getRequestHeader(std::string const& key) const;
         std::list<std::string const*> getRequestHeaderKeys() const;
-        void setRequestMethod(API::HTTP_METHOD::Type method);
-        API::HTTP_METHOD::Type getRequestMethod() const;
+        void setRequestMethod(api::http_method::Type method);
+        api::http_method::Type getRequestMethod() const;
         void setRequestQuery(std::string const& query);
         std::string const& getRequestQuery() const;
 
-        void setResponseCode(API::HTTP_CODE::Type code, std::string const& reason = "");
-        API::HTTP_CODE::Type getResponseCode() const;
+        void setResponseCode(api::http_code::Type code, std::string const& reason = "");
+        api::http_code::Type getResponseCode() const;
         std::string const& getResponseMessage() const;
         void setResponseHeader(std::string const& key, std::string const& val);
         std::string const& getResponseHeader(std::string const& key) const;
         std::list<std::string const*> getResponseHeaderKeys() const;
 
         // méthodes non-présentes dans l'API
-        ModuleWrapper* append(API::IModuleManager& manager, API::IModule& module);
-        ModuleWrapper* insertAfter(API::IModuleManager& manager, API::IModule& module);
+        ModuleWrapper* append(api::IModuleManager& manager, api::IModule& module);
+        ModuleWrapper* insertAfter(api::IModuleManager& manager, api::IModule& module);
         Session& getServerSession();
         ModuleWrapper* getInputModule();
         ModuleWrapper* getOutputModule();
-        void processTask(API::EVENT::Type evt,
+        void processTask(api::event::Type evt,
                          ModuleWrapper* module,
-                         API::IBuffer* buf);
+                         api::IBuffer* buf);
         bool hasPendingEvent();
         RequestTasks& getRequestTasks();
         bool isQueued();

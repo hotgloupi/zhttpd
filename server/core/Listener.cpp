@@ -7,9 +7,9 @@
 #include "Listener.hpp"
 #include "ServerState.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
-Listener::Listener(API::uint32_t ip, API::uint16_t port) :
+Listener::Listener(api::uint32_t ip, api::uint16_t port) :
     _ip(ip),
     _port(port),
     _socket(0),

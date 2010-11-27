@@ -4,13 +4,13 @@
 
 # include "api/IRequest.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class IVHostGuideline
     {
     public:
         virtual ~IVHostGuideline() {}
-        virtual bool match(API::IRequest& request) const = 0;
+        virtual bool match(api::IRequest& request) const = 0;
     };
 }
 

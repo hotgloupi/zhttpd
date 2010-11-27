@@ -18,12 +18,12 @@
 #  include "utils/Timer.hpp"
 #  include "thread/Mutex.hpp"
 #  include "utils/Logger.hpp"
-extern std::map<std::string, ZHTTPD::API::uint64_t>* __ZHTTPD_LOCK_times;
-extern ZHTTPD::Mutex*                                __ZHTTPD_LOCK_times_mutex;
-extern std::map<std::string, ZHTTPD::API::uint64_t>* __ZHTTPD_MOD_times;
-extern std::map<std::string, ZHTTPD::API::uint32_t>* __ZHTTPD_MOD_counts;
-extern ZHTTPD::Timer*                                __ZHTTPD_timer;
-extern ZHTTPD::Mutex*                                __ZHTTPD_MOD_mutex;
+extern std::map<std::string, zhttpd::api::uint64_t>* __ZHTTPD_LOCK_times;
+extern zhttpd::Mutex*                                __ZHTTPD_LOCK_times_mutex;
+extern std::map<std::string, zhttpd::api::uint64_t>* __ZHTTPD_MOD_times;
+extern std::map<std::string, zhttpd::api::uint32_t>* __ZHTTPD_MOD_counts;
+extern zhttpd::Timer*                                __ZHTTPD_timer;
+extern zhttpd::Mutex*                                __ZHTTPD_MOD_mutex;
 
 void ZHTTPD_DEBUG_init();
 void ZHTTPD_DEBUG_print_maps();
@@ -33,9 +33,9 @@ void ZHTTPD_DEBUG_release();
     do {                                                                                        \
         if ((mutex).tryLock() == false)                                                         \
         {                                                                                       \
-            ZHTTPD::API::uint64_t start = __ZHTTPD_timer->getPreciseElapsedTime();                    \
+            zhttpd::api::uint64_t start = __ZHTTPD_timer->getPreciseElapsedTime();                    \
             (mutex).lock();                                                                     \
-            ZHTTPD::API::uint64_t delta = __ZHTTPD_timer->getPreciseElapsedTime() - start;            \
+            zhttpd::api::uint64_t delta = __ZHTTPD_timer->getPreciseElapsedTime() - start;            \
             __ZHTTPD_LOCK_times_mutex->lock();                                                     \
             (*__ZHTTPD_LOCK_times)["L " + ZHTTPD_LOGGER_FUNC_NAME] += delta;                          \
             __ZHTTPD_LOCK_times_mutex->unlock();                                                   \
@@ -52,9 +52,9 @@ void ZHTTPD_DEBUG_release();
     do {                                                                                        \
         if ((mutex).tryLockRead() == false)                                                     \
         {                                                                                       \
-            ZHTTPD::API::uint64_t start = __ZHTTPD_timer->getPreciseElapsedTime();                    \
+            zhttpd::api::uint64_t start = __ZHTTPD_timer->getPreciseElapsedTime();                    \
             (mutex).lockRead();                                                                 \
-            ZHTTPD::API::uint64_t delta = __ZHTTPD_timer->getPreciseElapsedTime() - start;            \
+            zhttpd::api::uint64_t delta = __ZHTTPD_timer->getPreciseElapsedTime() - start;            \
             __ZHTTPD_LOCK_times_mutex->lock();                                                     \
             (*__ZHTTPD_LOCK_times)["R " + ZHTTPD_LOGGER_FUNC_NAME] += delta;                          \
             __ZHTTPD_LOCK_times_mutex->unlock();                                                   \
@@ -72,9 +72,9 @@ void ZHTTPD_DEBUG_release();
     do {                                                                                        \
         if ((mutex).tryLockWrite() == false)                                                    \
         {                                                                                       \
-            ZHTTPD::API::uint64_t start = __ZHTTPD_timer->getPreciseElapsedTime();                    \
+            zhttpd::api::uint64_t start = __ZHTTPD_timer->getPreciseElapsedTime();                    \
             (mutex).lockWrite();                                                                \
-            ZHTTPD::API::uint64_t delta = __ZHTTPD_timer->getPreciseElapsedTime() - start;            \
+            zhttpd::api::uint64_t delta = __ZHTTPD_timer->getPreciseElapsedTime() - start;            \
             __ZHTTPD_LOCK_times_mutex->lock();                                                     \
             (*__ZHTTPD_LOCK_times)["W " + ZHTTPD_LOGGER_FUNC_NAME] += delta;                          \
             __ZHTTPD_LOCK_times_mutex->unlock();                                                   \
@@ -92,14 +92,14 @@ void ZHTTPD_DEBUG_release();
 
 #  define ZHTTPD_MOD_START                                                                         \
     __ZHTTPD_MOD_mutex->lock();                                                                    \
-    ZHTTPD::API::uint64_t __ZHTTPD_MOD_start = __ZHTTPD_timer->getPreciseElapsedTime();                  \
+    zhttpd::api::uint64_t __ZHTTPD_MOD_start = __ZHTTPD_timer->getPreciseElapsedTime();                  \
     __ZHTTPD_MOD_mutex->unlock();                                                                  \
 
 
 #  define ZHTTPD_MOD_END(name)                                                                     \
     do {                                                                                        \
         __ZHTTPD_MOD_mutex->lock();                                                                \
-        ZHTTPD::API::uint64_t delta = __ZHTTPD_timer->getPreciseElapsedTime() - __ZHTTPD_MOD_start;      \
+        zhttpd::api::uint64_t delta = __ZHTTPD_timer->getPreciseElapsedTime() - __ZHTTPD_MOD_start;      \
         (*__ZHTTPD_MOD_times)[name] += delta;                                                      \
         (*__ZHTTPD_MOD_counts)[name] += 1;                                                         \
         __ZHTTPD_MOD_mutex->unlock();                                                              \

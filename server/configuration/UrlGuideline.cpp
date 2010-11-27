@@ -5,7 +5,7 @@
 
 #include "UrlGuideline.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
 UrlGuideline::UrlGuideline(std::string const& match_string, bool deny) :
     _match(match_string),
@@ -19,10 +19,10 @@ UrlGuideline::~UrlGuideline()
 
 }
 
-bool UrlGuideline::match(API::IRequest& request) const
+bool UrlGuideline::match(api::IRequest& request) const
 {
     std::string const& query = request.getRequestQuery();
-    API::size_t pos = std::min(query.find_first_of('?'), query.find_first_of('#'));
+    api::size_t pos = std::min(query.find_first_of('?'), query.find_first_of('#'));
     bool result = Regex::match(this->_match, query.substr(0, pos));
     LOG_DEBUG("Is '" +query.substr(0, pos)  + "' match '" + this->_match + "' ? " + Logger::toString(result));
     if (this->_deny)

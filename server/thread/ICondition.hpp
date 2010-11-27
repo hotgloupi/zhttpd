@@ -2,7 +2,7 @@
 #ifndef __ICONDITION_HPP__
 # define __ICONDITION_HPP__
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class ICondition
     {

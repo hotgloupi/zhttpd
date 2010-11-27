@@ -7,7 +7,7 @@
 
 # include "ModuleWrapper.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class ModuleList
     {
@@ -18,10 +18,10 @@ namespace ZHTTPD
     public:
         ModuleList();
         ~ModuleList();
-        ModuleWrapper* append(API::IModuleManager& manager,
-                              API::IModule& module);
-        ModuleWrapper* setProcessingModule(API::IModuleManager& manager,
-                                           API::IModule& module);
+        ModuleWrapper* append(api::IModuleManager& manager,
+                              api::IModule& module);
+        ModuleWrapper* setProcessingModule(api::IModuleManager& manager,
+                                           api::IModule& module);
         ModuleWrapper* head();
         ModuleWrapper* tail();
         bool isInResponsePart(ModuleWrapper* node);

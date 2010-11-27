@@ -9,33 +9,33 @@
 # include "api/IModule.hpp"
 # include "api/IModuleManager.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace MOD
+    namespace mod
     {
         class SSLNetworkManager;
 
-        class SSLNetwork : public API::IModule
+        class SSLNetwork : public api::IModule
         {
         private:
-            typedef bool (SSLNetwork::*action_t)(API::IRequest* request, API::IBuffer* buffer);
-            static action_t const _actions[API::EVENT::ON_END + 1];
+            typedef bool (SSLNetwork::*action_t)(api::IRequest* request, api::IBuffer* buffer);
+            static action_t const _actions[api::event::ON_END + 1];
 
         private:
-            bool _processOnCanRead(API::IRequest* request, API::IBuffer* buffer);
-            bool _processOnCanWrite(API::IRequest* request, API::IBuffer* buffer);
-            bool _processOnResponseData(API::IRequest* request, API::IBuffer* buffer);
-            bool _processOnEnd(API::IRequest* request, API::IBuffer* buffer);
+            bool _processOnCanRead(api::IRequest* request, api::IBuffer* buffer);
+            bool _processOnCanWrite(api::IRequest* request, api::IBuffer* buffer);
+            bool _processOnResponseData(api::IRequest* request, api::IBuffer* buffer);
+            bool _processOnEnd(api::IRequest* request, api::IBuffer* buffer);
 
-            bool _initSsl(API::socket_t fd);
-
-        public:
-            static API::size_t const BUFFER_SIZE;
+            bool _initSsl(api::socket_t fd);
 
         public:
-            bool processRequest(API::EVENT::Type event, API::IRequest* request, API::IBuffer* buffer);
+            static api::size_t const BUFFER_SIZE;
 
-            SSLNetwork(API::IModuleManager* manager, bool resp = false);
+        public:
+            bool processRequest(api::event::Type event, api::IRequest* request, api::IBuffer* buffer);
+
+            SSLNetwork(api::IModuleManager* manager, bool resp = false);
             ~SSLNetwork();
 
         private:

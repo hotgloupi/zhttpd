@@ -2,7 +2,7 @@
 
 int main(int ac, char** av)
 {
-    ZHTTPD::RCON::Rcon rcon(ac, av);
+    zhttpd::RCON::Rcon rcon(ac, av);
     return rcon.run();
 }
 

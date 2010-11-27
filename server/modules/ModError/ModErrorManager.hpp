@@ -6,19 +6,19 @@
 
 # include "ModError.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace MOD
+    namespace mod
     {
         class ModErrorManager : public StatelessManager<ModError>
         {
         public:
             ModErrorManager() :
-                StatelessManager<ModError>("mod_error", ZHTTPD::API::CATEGORY::PROCESSING)
+                StatelessManager<ModError>("mod_error", zhttpd::api::category::PROCESSING)
             {
             }
 
-            virtual bool isRequired(ZHTTPD::API::IRequest const& ) const
+            virtual bool isRequired(zhttpd::api::IRequest const& ) const
             {
                 return false;
             }

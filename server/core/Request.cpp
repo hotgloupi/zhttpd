@@ -13,19 +13,19 @@
 
 #include "modules/ModError/ModErrorManager.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
 
-Request::Request(API::IBufferManager& buffer_manager,
+Request::Request(api::IBufferManager& buffer_manager,
                  Session& session,
                  SmartPtr<Configuration> configuration) :
     _buffer_manager(buffer_manager),
     _session(session),
     _request_file_path(),
-    _request_method(API::HTTP_METHOD::UNDEFINED),
+    _request_method(api::http_method::UNDEFINED),
     _request_query(),
     _request_headers(),
-    _response_code(API::HTTP_CODE::UNDEFINED),
+    _response_code(api::http_code::UNDEFINED),
     _response_msg(),
     _response_headers(),
     _modules(new ModuleList()),
@@ -46,13 +46,13 @@ Request::~Request()
     SessionManager::getInstance()->endSession(this->_session);
 }
 
-void Request::callLater(API::uint32_t delay)
+void Request::callLater(api::uint32_t delay)
 {
     assert(this->_current_module != 0);
     this->_tasks->addCallLaterTask(*this, *this->_current_module, delay);
 }
 
-void Request::giveData(API::IBuffer* buffer)
+void Request::giveData(api::IBuffer* buffer)
 {
     assert(this->_current_module != 0);
     assert(this->_current_module->getNext() != 0);
@@ -63,21 +63,21 @@ void Request::giveData(API::IBuffer* buffer)
         return;
     }
 
-    API::EVENT::Type evt = (
+    api::event::Type evt = (
         this->_modules->isInResponsePart(this->_current_module) ?
-        API::EVENT::ON_RESPONSE_DATA :
-        API::EVENT::ON_REQUEST_DATA
+        api::event::ON_RESPONSE_DATA :
+        api::event::ON_REQUEST_DATA
     );
     this->_tasks->addTask(evt, *this, *this->_current_module->getNext(), buffer);
 }
 
-void Request::raiseError(API::HTTP_CODE::Type code, std::string str)
+void Request::raiseError(api::http_code::Type code, std::string str)
 {
     assert(this->_current_module != 0);
     this->setResponseCode(code, str);
-    API::IModuleManager* mod_error_manager = this->_configuration->getModuleConfiguration("mod_error").getModuleManager();
+    api::IModuleManager* mod_error_manager = this->_configuration->getModuleConfiguration("mod_error").getModuleManager();
     assert(mod_error_manager != 0);
-    API::IModule* mod_error = mod_error_manager->getInstance();
+    api::IModule* mod_error = mod_error_manager->getInstance();
     assert(mod_error != 0);
     ModuleWrapper* wrapper = this->_modules->setProcessingModule(*mod_error_manager, *mod_error);
     this->_tasks->reset();
@@ -99,19 +99,19 @@ void Request::raiseEnd()
     }
 }
 
-void Request::needWrite(API::IBuffer* buffer)
+void Request::needWrite(api::IBuffer* buffer)
 {
     assert(this->_current_module != 0);
     assert(this->_current_module == this->getOutputModule());
     this->_tasks->needWrite(buffer);
 }
 
-API::ISession const& Request::getSession()
+api::ISession const& Request::getSession()
 {
     return this->_session;
 }
 
-API::IBufferManager& Request::getBufferManager()
+api::IBufferManager& Request::getBufferManager()
 {
     return this->_buffer_manager;
 }
@@ -152,12 +152,12 @@ std::list<std::string const*> Request::getRequestHeaderKeys() const
     return res;
 }
 
-void Request::setRequestMethod(API::HTTP_METHOD::Type method)
+void Request::setRequestMethod(api::http_method::Type method)
 {
     this->_request_method = method;
 }
 
-API::HTTP_METHOD::Type Request::getRequestMethod() const
+api::http_method::Type Request::getRequestMethod() const
 {
     return this->_request_method;
 }
@@ -172,7 +172,7 @@ std::string const& Request::getRequestQuery() const
     return this->_request_query;
 }
 
-void Request::setResponseCode(API::HTTP_CODE::Type code, std::string const& reason)
+void Request::setResponseCode(api::http_code::Type code, std::string const& reason)
 {
     this->_response_code = code;
     if (reason.size() > 0)
@@ -181,8 +181,8 @@ void Request::setResponseCode(API::HTTP_CODE::Type code, std::string const& reas
     }
     else
     {
-        for (API::size_t i = 0 ;
-             Request::_responses[i].code != ZHTTPD::API::HTTP_CODE::UNDEFINED ; ++i)
+        for (api::size_t i = 0 ;
+             Request::_responses[i].code != zhttpd::api::http_code::UNDEFINED ; ++i)
         {
             if (Request::_responses[i].code == code)
             {
@@ -194,7 +194,7 @@ void Request::setResponseCode(API::HTTP_CODE::Type code, std::string const& reas
     }
 }
 
-API::HTTP_CODE::Type Request::getResponseCode() const
+api::http_code::Type Request::getResponseCode() const
 {
     return this->_response_code;
 }
@@ -229,7 +229,7 @@ std::list<std::string const*> Request::getResponseHeaderKeys() const
 }
 
 
-ModuleWrapper* Request::append(API::IModuleManager& manager, API::IModule& module)
+ModuleWrapper* Request::append(api::IModuleManager& manager, api::IModule& module)
 {
     return this->_modules->append(manager, module);
 }
@@ -250,7 +250,7 @@ ModuleWrapper* Request::getOutputModule()
 }
 /*
    ___________________________________________________________________________
-   | EVENT::Type      |       Actions faites sur le serveur                  |
+   | event::Type      |       Actions faites sur le serveur                  |
    --------------------------------------------------------------------------|
    | ON_CAN_READ      | Met fin à la requête                                 |
    --------------------------------------------------------------------------|
@@ -274,20 +274,20 @@ ModuleWrapper* Request::getOutputModule()
  */
 
 #define EVENT_NAME(evt) (\
-        evt == API::EVENT::ON_CAN_READ ? "ON_CAN_READ" : \
-        evt == API::EVENT::ON_CAN_WRITE ? "ON_CAN_WRITE" : \
-        evt == API::EVENT::ON_REQUEST_DATA ? "ON_REQUEST_DATA" : \
-        evt == API::EVENT::ON_RESPONSE_DATA ? "ON_RESPONSE_DATA" : \
-        evt == API::EVENT::ON_END ? "ON_END" : \
-        evt == API::EVENT::ON_IDLE ? "ON_IDLE" : \
-        evt == API::EVENT::ON_ERROR ? "ON_ERROR" : \
+        evt == api::event::ON_CAN_READ ? "ON_CAN_READ" : \
+        evt == api::event::ON_CAN_WRITE ? "ON_CAN_WRITE" : \
+        evt == api::event::ON_REQUEST_DATA ? "ON_REQUEST_DATA" : \
+        evt == api::event::ON_RESPONSE_DATA ? "ON_RESPONSE_DATA" : \
+        evt == api::event::ON_END ? "ON_END" : \
+        evt == api::event::ON_IDLE ? "ON_IDLE" : \
+        evt == api::event::ON_ERROR ? "ON_ERROR" : \
         "UNKNOWN !" \
     )
 
 
-void Request::processTask(API::EVENT::Type evt,
+void Request::processTask(api::event::Type evt,
                           ModuleWrapper* module,
-                          API::IBuffer* buf)
+                          api::IBuffer* buf)
 {
     if (this->_current_module != 0)
     {
@@ -304,22 +304,22 @@ void Request::processTask(API::EVENT::Type evt,
     {
         switch (evt)
         {
-        case API::EVENT::ON_CAN_READ:
-        case API::EVENT::ON_CAN_WRITE:
+        case api::event::ON_CAN_READ:
+        case api::event::ON_CAN_WRITE:
             if (buf != 0)
                 this->getBufferManager().release(buf);
             return;
             break;
-        case API::EVENT::ON_REQUEST_DATA:
-        case API::EVENT::ON_RESPONSE_DATA:
+        case api::event::ON_REQUEST_DATA:
+        case api::event::ON_RESPONSE_DATA:
             this->getBufferManager().release(buf);
             this->_tasks->addEndTask(*this, *this->getInputModule());
             LOG_WARN(this->_current_module->getModuleManager().getName() + " did not process data event.");
             break;
-        case API::EVENT::ON_END:
+        case api::event::ON_END:
             this->raiseEnd();
             break;
-        case API::EVENT::ON_ERROR:
+        case api::event::ON_ERROR:
             LOG_WARN("ON_ERROR event should not be received");
             break;
         default:
@@ -333,7 +333,7 @@ void Request::processTask(API::EVENT::Type evt,
 
 #undef EVENT_NAME
 
-ModuleWrapper* Request::insertAfter(API::IModuleManager& manager, API::IModule& module)
+ModuleWrapper* Request::insertAfter(api::IModuleManager& manager, api::IModule& module)
 {
     ModuleWrapper *next = this->_current_module->getNext();
     this->_current_module->setNext(0);
@@ -371,57 +371,57 @@ SmartPtr<Configuration> Request::getConfiguration()
 
 
 const HTTPResponse Request::_responses[] = {
-    {ZHTTPD::API::HTTP_CODE::ACCEPTED                     , "Accepted"},
-    {ZHTTPD::API::HTTP_CODE::CONTINUE                     , "Continue"},
-    {ZHTTPD::API::HTTP_CODE::SWITCHING_PROTOCOLS          , "Switching Protocols"},
-    {ZHTTPD::API::HTTP_CODE::PROCESSING                   , "Processing"},
-    {ZHTTPD::API::HTTP_CODE::OK                           , "OK"},
-    {ZHTTPD::API::HTTP_CODE::CREATED                      , "Created"},
-    {ZHTTPD::API::HTTP_CODE::ACCEPTED                     , "Accepted "},
-    {ZHTTPD::API::HTTP_CODE::NON_AUTHORITATIVE_INFORMATION, "Non-Authoritative Information"},
-    {ZHTTPD::API::HTTP_CODE::NO_CONTENT                   , "No Content"},
-    {ZHTTPD::API::HTTP_CODE::RESET_CONTENT                , "Reset Content"},
-    {ZHTTPD::API::HTTP_CODE::PARTIAL_CONTENT              , "Partial Content"},
-    {ZHTTPD::API::HTTP_CODE::MULTI_STATUS                 , "Multi-Status"},
-    {ZHTTPD::API::HTTP_CODE::CONTENT_DIFFERENT            , "Content Different"},
-    {ZHTTPD::API::HTTP_CODE::MULTIPLE_CHOICES             , "Multiple Choices"},
-    {ZHTTPD::API::HTTP_CODE::MOVED_PERMANENTLY            , "Moved Permanently"},
-    {ZHTTPD::API::HTTP_CODE::FOUND                        , "Found"},
-    {ZHTTPD::API::HTTP_CODE::SEE_OTHER                    , "See Other"},
-    {ZHTTPD::API::HTTP_CODE::NOT_MODIFIED                 , "Not Modified"},
-    {ZHTTPD::API::HTTP_CODE::USE_PROXY                    , "Use Proxy"},
-    {ZHTTPD::API::HTTP_CODE::TEMPORARY_REDIRECT           , "Temporary Redirect"},
-    {ZHTTPD::API::HTTP_CODE::TOO_MANY_REDIRECT            , "Too many Redirect"},
-    {ZHTTPD::API::HTTP_CODE::BAD_REQUEST                  , "Bad Request"},
-    {ZHTTPD::API::HTTP_CODE::UNAUTHORIZED                 , "Unauthorized"},
-    {ZHTTPD::API::HTTP_CODE::PAYMENT_REQUIRED             , "Payment Required"},
-    {ZHTTPD::API::HTTP_CODE::FORBIDDEN                    , "Forbidden"},
-    {ZHTTPD::API::HTTP_CODE::NOT_FOUND                    , "Not Found"},
-    {ZHTTPD::API::HTTP_CODE::METHOD_NOT_ALLOWED           , "Method Not Allowed"},
-    {ZHTTPD::API::HTTP_CODE::NOT_ACCEPTABLE               , "Not Acceptable"},
-    {ZHTTPD::API::HTTP_CODE::PROXY_AUTHENTICATION_REQUIRED, "Proxy Authentication Required"},
-    {ZHTTPD::API::HTTP_CODE::REQUEST_TIME_OUT             , "Request Time-out"},
-    {ZHTTPD::API::HTTP_CODE::CONFLICT                     , "Conflict"},
-    {ZHTTPD::API::HTTP_CODE::GONE                         , "Gone"},
-    {ZHTTPD::API::HTTP_CODE::LENGTH_REQUIRED              , "Length Required"},
-    {ZHTTPD::API::HTTP_CODE::PRECONDITION_FAILED          , "Precondition Failed"},
-    {ZHTTPD::API::HTTP_CODE::REQUEST_ENTITY_TOO_LARGE     , "Request Entity Too Large"},
-    {ZHTTPD::API::HTTP_CODE::REQUEST_URI_TOO_LONG         , "Request-URI Too Long"},
-    {ZHTTPD::API::HTTP_CODE::UNSUPPORTED_MEDIA_TYPE       , "Unsupported Media Type"},
-    {ZHTTPD::API::HTTP_CODE::REQUESTED_RANGE_UNSATISFIABLE, "Requested range unsatisfiable"},
-    {ZHTTPD::API::HTTP_CODE::EXPECTATION_FAILED           , "Expectation failed"},
-    {ZHTTPD::API::HTTP_CODE::UNPROCESSABLE_ENTITY         , "Unprocessable entity"},
-    {ZHTTPD::API::HTTP_CODE::LOCKED                       , "Locked"},
-    {ZHTTPD::API::HTTP_CODE::METHOD_FAILURE               , "Method failure"},
-    {ZHTTPD::API::HTTP_CODE::UNORDERED_COLLECTION         , "Unordered Collection"},
-    {ZHTTPD::API::HTTP_CODE::UPGRADE_REQUIRED             , "Upgrade Required"},
-    {ZHTTPD::API::HTTP_CODE::INTERNAL_SERVER_ERROR        , "Internal Server Error"},
-    {ZHTTPD::API::HTTP_CODE::NOT_IMPLEMENTED              , "Not Implemented"},
-    {ZHTTPD::API::HTTP_CODE::BAD_GATEWAY                  , "Bad Gateway ou Proxy Error"},
-    {ZHTTPD::API::HTTP_CODE::SERVICE_UNAVAILABLE          , "Service Unavailable"},
-    {ZHTTPD::API::HTTP_CODE::GATEWAY_TIME_OUT             , "Gateway Time-out"},
-    {ZHTTPD::API::HTTP_CODE::HTTP_VERSION_NOT_SUPPORTED   , "HTTP Version not supported"},
-    {ZHTTPD::API::HTTP_CODE::INSUFFICIENT_STORAGE         , "Insufficient storage"},
-    {ZHTTPD::API::HTTP_CODE::BANDWIDTH_LIMIT_EXCEEDED     , "Bandwidth Limit Exceeded"},
-    {ZHTTPD::API::HTTP_CODE::UNDEFINED                    , "End Of Codes"},
+    {zhttpd::api::http_code::ACCEPTED                     , "Accepted"},
+    {zhttpd::api::http_code::CONTINUE                     , "Continue"},
+    {zhttpd::api::http_code::SWITCHING_PROTOCOLS          , "Switching Protocols"},
+    {zhttpd::api::http_code::PROCESSING                   , "Processing"},
+    {zhttpd::api::http_code::OK                           , "OK"},
+    {zhttpd::api::http_code::CREATED                      , "Created"},
+    {zhttpd::api::http_code::ACCEPTED                     , "Accepted "},
+    {zhttpd::api::http_code::NON_AUTHORITATIVE_INFORMATION, "Non-Authoritative Information"},
+    {zhttpd::api::http_code::NO_CONTENT                   , "No Content"},
+    {zhttpd::api::http_code::RESET_CONTENT                , "Reset Content"},
+    {zhttpd::api::http_code::PARTIAL_CONTENT              , "Partial Content"},
+    {zhttpd::api::http_code::MULTI_STATUS                 , "Multi-Status"},
+    {zhttpd::api::http_code::CONTENT_DIFFERENT            , "Content Different"},
+    {zhttpd::api::http_code::MULTIPLE_CHOICES             , "Multiple Choices"},
+    {zhttpd::api::http_code::MOVED_PERMANENTLY            , "Moved Permanently"},
+    {zhttpd::api::http_code::FOUND                        , "Found"},
+    {zhttpd::api::http_code::SEE_OTHER                    , "See Other"},
+    {zhttpd::api::http_code::NOT_MODIFIED                 , "Not Modified"},
+    {zhttpd::api::http_code::USE_PROXY                    , "Use Proxy"},
+    {zhttpd::api::http_code::TEMPORARY_REDIRECT           , "Temporary Redirect"},
+    {zhttpd::api::http_code::TOO_MANY_REDIRECT            , "Too many Redirect"},
+    {zhttpd::api::http_code::BAD_REQUEST                  , "Bad Request"},
+    {zhttpd::api::http_code::UNAUTHORIZED                 , "Unauthorized"},
+    {zhttpd::api::http_code::PAYMENT_REQUIRED             , "Payment Required"},
+    {zhttpd::api::http_code::FORBIDDEN                    , "Forbidden"},
+    {zhttpd::api::http_code::NOT_FOUND                    , "Not Found"},
+    {zhttpd::api::http_code::METHOD_NOT_ALLOWED           , "Method Not Allowed"},
+    {zhttpd::api::http_code::NOT_ACCEPTABLE               , "Not Acceptable"},
+    {zhttpd::api::http_code::PROXY_AUTHENTICATION_REQUIRED, "Proxy Authentication Required"},
+    {zhttpd::api::http_code::REQUEST_TIME_OUT             , "Request Time-out"},
+    {zhttpd::api::http_code::CONFLICT                     , "Conflict"},
+    {zhttpd::api::http_code::GONE                         , "Gone"},
+    {zhttpd::api::http_code::LENGTH_REQUIRED              , "Length Required"},
+    {zhttpd::api::http_code::PRECONDITION_FAILED          , "Precondition Failed"},
+    {zhttpd::api::http_code::REQUEST_ENTITY_TOO_LARGE     , "Request Entity Too Large"},
+    {zhttpd::api::http_code::REQUEST_URI_TOO_LONG         , "Request-URI Too Long"},
+    {zhttpd::api::http_code::UNSUPPORTED_MEDIA_TYPE       , "Unsupported Media Type"},
+    {zhttpd::api::http_code::REQUESTED_RANGE_UNSATISFIABLE, "Requested range unsatisfiable"},
+    {zhttpd::api::http_code::EXPECTATION_FAILED           , "Expectation failed"},
+    {zhttpd::api::http_code::UNPROCESSABLE_ENTITY         , "Unprocessable entity"},
+    {zhttpd::api::http_code::LOCKED                       , "Locked"},
+    {zhttpd::api::http_code::METHOD_FAILURE               , "Method failure"},
+    {zhttpd::api::http_code::UNORDERED_COLLECTION         , "Unordered Collection"},
+    {zhttpd::api::http_code::UPGRADE_REQUIRED             , "Upgrade Required"},
+    {zhttpd::api::http_code::INTERNAL_SERVER_ERROR        , "Internal Server Error"},
+    {zhttpd::api::http_code::NOT_IMPLEMENTED              , "Not Implemented"},
+    {zhttpd::api::http_code::BAD_GATEWAY                  , "Bad Gateway ou Proxy Error"},
+    {zhttpd::api::http_code::SERVICE_UNAVAILABLE          , "Service Unavailable"},
+    {zhttpd::api::http_code::GATEWAY_TIME_OUT             , "Gateway Time-out"},
+    {zhttpd::api::http_code::HTTP_VERSION_NOT_SUPPORTED   , "HTTP Version not supported"},
+    {zhttpd::api::http_code::INSUFFICIENT_STORAGE         , "Insufficient storage"},
+    {zhttpd::api::http_code::BANDWIDTH_LIMIT_EXCEEDED     , "Bandwidth Limit Exceeded"},
+    {zhttpd::api::http_code::UNDEFINED                    , "End Of Codes"},
 };

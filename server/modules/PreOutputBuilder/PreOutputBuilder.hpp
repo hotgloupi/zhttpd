@@ -7,25 +7,25 @@
 #include "api/IModule.hpp"
 #include "api/IModuleManager.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-	namespace MOD
+	namespace mod
 	{
 
 		class PreOutputBuilderManager;
 
-		class PreOutputBuilder : public ZHTTPD::API::IModule
+		class PreOutputBuilder : public zhttpd::api::IModule
 		{
 			private:
 				PreOutputBuilderManager* _manager;
 				bool _chunked;
 				bool _headers;
-				void _sendHeaders(API::IRequest* request);
-				void _sendChunkInfo(API::IRequest* request, API::IBuffer* buffer);
+				void _sendHeaders(api::IRequest* request);
+				void _sendChunkInfo(api::IRequest* request, api::IBuffer* buffer);
 			public:
-				PreOutputBuilder(API::IModuleManager* manager);
+				PreOutputBuilder(api::IModuleManager* manager);
 				~PreOutputBuilder();
-				bool processRequest(API::EVENT::Type event, API::IRequest* request, API::IBuffer* buffer);
+				bool processRequest(api::event::Type event, api::IRequest* request, api::IBuffer* buffer);
 		};
 
 	}

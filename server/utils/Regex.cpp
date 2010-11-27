@@ -2,7 +2,7 @@
 #include <iostream>
 #include "Regex.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
 #define SKIP_STARS(s)                               \
 do {                                                \

@@ -2,7 +2,7 @@
 #ifndef __ITASK_HPP__
 # define __ITASK_HPP__
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class ITask
     {

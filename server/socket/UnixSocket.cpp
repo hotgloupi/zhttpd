@@ -13,9 +13,9 @@
 # include "utils/Logger.hpp"
 # include "UnixSocket.hpp"
 
-using namespace ZHTTPD::IMPLEMENTATION;
+using namespace zhttpd::implementation;
 
-UnixSocket::UnixSocket(API::socket_t socket) : _socket(socket)
+UnixSocket::UnixSocket(api::socket_t socket) : _socket(socket)
 {
 # ifdef SO_NOSIGPIPE12
     int set = 1;
@@ -55,7 +55,7 @@ void UnixSocket::close()
     ::close(this->_socket);
 }
 
-ZHTTPD::API::size_t UnixSocket::write(char const* data, size_t len)
+zhttpd::api::size_t UnixSocket::write(char const* data, size_t len)
 {
     ssize_t res = ::send(this->_socket, data, len, MSG_NOSIGNAL);
     if (res <= 0)
@@ -65,7 +65,7 @@ ZHTTPD::API::size_t UnixSocket::write(char const* data, size_t len)
     return res;
 }
 
-ZHTTPD::API::size_t UnixSocket::read(char* buf, size_t len)
+zhttpd::api::size_t UnixSocket::read(char* buf, size_t len)
 {
     ssize_t res = ::read(this->_socket, buf, len);
     if (res <= 0)
@@ -73,11 +73,11 @@ ZHTTPD::API::size_t UnixSocket::read(char* buf, size_t len)
     return res;
 }
 
-ZHTTPD::API::socket_t UnixSocket::accept()
+zhttpd::api::socket_t UnixSocket::accept()
 {
     struct ::sockaddr_in csin;
     unsigned int len = sizeof(csin);
-    API::socket_t socket = ::accept(this->_socket,
+    api::socket_t socket = ::accept(this->_socket,
                                reinterpret_cast<struct ::sockaddr*>(&csin),
                                &len);
     if (socket < 0 || socket > 49999)

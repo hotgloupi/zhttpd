@@ -8,9 +8,9 @@
 #  include "ThreadConditionUnix.hpp"
 # endif // !_WIN32
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    typedef IMPLEMENTATION::ThreadCondition     ThreadCondition;
+    typedef implementation::ThreadCondition     ThreadCondition;
 }
 
 #endif //!__THREADCONDITION_HPP__

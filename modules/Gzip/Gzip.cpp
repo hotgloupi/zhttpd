@@ -8,7 +8,7 @@
 
 #include "Gzip.hpp"
 
-Gzip::Gzip(ZHTTPD::API::IModuleManager*) :
+Gzip::Gzip(zhttpd::api::IModuleManager*) :
     _initialized(false)
 {
 }
@@ -19,7 +19,7 @@ Gzip::~Gzip()
         this->_unload();
 }
 
-bool Gzip::_load(ZHTTPD::API::IRequest* request)
+bool Gzip::_load(zhttpd::api::IRequest* request)
 {
     this->_stream.zalloc = Z_NULL;
     this->_stream.zfree = Z_NULL;
@@ -40,7 +40,7 @@ void Gzip::_unload()
     this->_initialized = false;
 }
 
-bool Gzip::_deflate(ZHTTPD::API::IBuffer* in_buffer, ZHTTPD::API::IBuffer* out_buffer)
+bool Gzip::_deflate(zhttpd::api::IBuffer* in_buffer, zhttpd::api::IBuffer* out_buffer)
 {
     unsigned int bytes = 1;
     unsigned int total_bytes = 0;
@@ -66,27 +66,27 @@ bool Gzip::_deflate(ZHTTPD::API::IBuffer* in_buffer, ZHTTPD::API::IBuffer* out_b
     return true;
 }
 
-bool Gzip::processRequest(ZHTTPD::API::EVENT::Type event, ZHTTPD::API::IRequest* request, ZHTTPD::API::IBuffer* in_buffer)
+bool Gzip::processRequest(zhttpd::api::event::Type event, zhttpd::api::IRequest* request, zhttpd::api::IBuffer* in_buffer)
 {
-    if (event == ZHTTPD::API::EVENT::ON_END)
+    if (event == zhttpd::api::event::ON_END)
     {
         if (this->_initialized)
             this->_unload();
         request->raiseEnd();
         return true;
     }
-    else if (event == ZHTTPD::API::EVENT::ON_RESPONSE_DATA)
+    else if (event == zhttpd::api::event::ON_RESPONSE_DATA)
     {
         if (!this->_initialized && !this->_load(request))
-            request->raiseError(ZHTTPD::API::HTTP_CODE::INTERNAL_SERVER_ERROR);
+            request->raiseError(zhttpd::api::http_code::INTERNAL_SERVER_ERROR);
         else
         {
-            ZHTTPD::API::IBuffer* out_buffer = request->getBufferManager().allocate(1);
+            zhttpd::api::IBuffer* out_buffer = request->getBufferManager().allocate(1);
             if (this->_deflate(in_buffer, out_buffer))
                 request->giveData(out_buffer);
             else
             {
-                request->raiseError(ZHTTPD::API::HTTP_CODE::INTERNAL_SERVER_ERROR);
+                request->raiseError(zhttpd::api::http_code::INTERNAL_SERVER_ERROR);
                 request->getBufferManager().release(out_buffer);
             }
         }

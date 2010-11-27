@@ -5,9 +5,9 @@
 
 #include "ModuleWrapper.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
-ModuleWrapper::ModuleWrapper(API::IModuleManager& manager, API::IModule& module) :
+ModuleWrapper::ModuleWrapper(api::IModuleManager& manager, api::IModule& module) :
     _manager(manager), _module(module), _next(0)
 {
 }
@@ -28,12 +28,12 @@ void ModuleWrapper::setNext(ModuleWrapper* next)
     this->_next = next;
 }
 
-API::IModule& ModuleWrapper::getModule()
+api::IModule& ModuleWrapper::getModule()
 {
     return this->_module;
 }
 
-API::IModuleManager& ModuleWrapper::getModuleManager()
+api::IModuleManager& ModuleWrapper::getModuleManager()
 {
     return this->_manager;
 }

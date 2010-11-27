@@ -2,7 +2,7 @@
 #include "utils/Atomic.hpp"
 #include "utils/StatsManager.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     StatsManager::StatsManager() :
         _sentBytes(0), _receivedBytes(0), _requests(0), _buffers(0), _memory(0)
@@ -15,7 +15,7 @@ namespace ZHTTPD
 
     void StatsManager::addMemory(int bytes)
     {
-        ZHTTPD::API::size_t res = Atomic::add(&this->_memory, static_cast<unsigned int>(bytes));
+        zhttpd::api::size_t res = Atomic::add(&this->_memory, static_cast<unsigned int>(bytes));
         LOG_DEBUG(Logger::toString(this) +": Memory status (" + Logger::toString(bytes) + "): " +
                   Logger::toString(res) + " bytes.");
     }
@@ -25,7 +25,7 @@ namespace ZHTTPD
         return Atomic::add(&this->_memory,(unsigned int)0);
     }
 
-    API::uint32_t StatsManager::getUptime()
+    api::uint32_t StatsManager::getUptime()
     {
         return this->_timer.getElapsedTime();
     }

@@ -17,9 +17,9 @@
 #  include "MutexUnix.hpp"
 # endif
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    typedef IMPLEMENTATION::Mutex       Mutex;
+    typedef implementation::Mutex       Mutex;
 }
 
 #endif // !__MUTEX_HPP__

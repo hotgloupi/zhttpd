@@ -9,7 +9,7 @@
 # include "utils/Logger.hpp"
 # include "utils/macros.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     template<typename Class>
     class SafeAllocator

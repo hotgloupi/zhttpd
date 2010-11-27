@@ -10,9 +10,9 @@
 
 # include "Buffer.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    class BufferManager : public API::IBufferManager
+    class BufferManager : public api::IBufferManager
     {
         typedef Buffer<BufferAllocator> buffer_t;
 
@@ -30,33 +30,33 @@ namespace ZHTTPD
             {
             }
 
-            virtual API::IBuffer* allocate(std::string const& string)
+            virtual api::IBuffer* allocate(std::string const& string)
             {
                 ZHTTPD_ASSERT_LOCK(this->_mutex);
                 char const* str = string.c_str();
-                API::size_t size = string.size();
-                API::IBuffer* ret = this->_pool.allocate(this->_allocator, str, size);
+                api::size_t size = string.size();
+                api::IBuffer* ret = this->_pool.allocate(this->_allocator, str, size);
                 ZHTTPD_ASSERT_UNLOCK(this->_mutex);
                 return ret;
             }
 
-            virtual API::IBuffer* allocate(char const* data, API::size_t size)
+            virtual api::IBuffer* allocate(char const* data, api::size_t size)
             {
                 ZHTTPD_ASSERT_LOCK(this->_mutex);
-                API::IBuffer* ret = this->_pool.allocate(this->_allocator, data, size);
+                api::IBuffer* ret = this->_pool.allocate(this->_allocator, data, size);
                 ZHTTPD_ASSERT_UNLOCK(this->_mutex);
                 return ret;
             }
 
-            virtual API::IBuffer* allocate(API::size_t size)
+            virtual api::IBuffer* allocate(api::size_t size)
             {
                 ZHTTPD_ASSERT_LOCK(this->_mutex);
-                API::IBuffer* ret = this->_pool.allocate(this->_allocator, size);
+                api::IBuffer* ret = this->_pool.allocate(this->_allocator, size);
                 ZHTTPD_ASSERT_UNLOCK(this->_mutex);
                 return ret;
             }
 
-            virtual void release(API::IBuffer* buffer)
+            virtual void release(api::IBuffer* buffer)
             {
                 ZHTTPD_ASSERT_LOCK(this->_mutex);
 #ifdef ZHTTPD_DEBUG

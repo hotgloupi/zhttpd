@@ -7,13 +7,13 @@
 # include "api/IRequest.hpp"
 # include "api/IModule.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace MOD
+    namespace mod
     {
         class ParserManager;
 
-        class Parser : public ZHTTPD::API::IModule
+        class Parser : public zhttpd::api::IModule
         {
             enum {
                 MAX_HEADER_SIZE = 10000
@@ -23,22 +23,22 @@ namespace ZHTTPD
             ParserManager*              _manager;
             unsigned int                _separator;
             bool                        _completed;
-            API::size_t                 _content_length;
-            API::size_t                 _received_length;
-            API::size_t                 _header_length;
-            ZHTTPD::API::IRequest*      _request;
-            std::list<API::IBuffer*>    _buffers;
+            api::size_t                 _content_length;
+            api::size_t                 _received_length;
+            api::size_t                 _header_length;
+            zhttpd::api::IRequest*      _request;
+            std::list<api::IBuffer*>    _buffers;
 
         public:
-            Parser(API::IModuleManager* manager);
+            Parser(api::IModuleManager* manager);
             ~Parser();
-            bool processRequest(API::EVENT::Type event, API::IRequest* request, API::IBuffer* buffer);
+            bool processRequest(api::event::Type event, api::IRequest* request, api::IBuffer* buffer);
 
         private:
-            API::size_t _parseRequest(API::IRequest* request) const;
-            void _parseLine(API::IRequest* request, std::string const& line) const;
-            void _parseMethod(API::IRequest* request, std::string const& line) const;
-            void _giveData(API::IRequest* request, API::IBuffer* buffer);
+            api::size_t _parseRequest(api::IRequest* request) const;
+            void _parseLine(api::IRequest* request, std::string const& line) const;
+            void _parseMethod(api::IRequest* request, std::string const& line) const;
+            void _giveData(api::IRequest* request, api::IBuffer* buffer);
         };
 
     }

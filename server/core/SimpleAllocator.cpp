@@ -3,14 +3,14 @@
 
 # include "SimpleAllocator.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
-char* SimpleAllocator::allocate(API::size_t size)
+char* SimpleAllocator::allocate(api::size_t size)
 {
     return new char[size];
 }
 
-char* SimpleAllocator::resize(char* data, API::size_t old_size, API::size_t new_size)
+char* SimpleAllocator::resize(char* data, api::size_t old_size, api::size_t new_size)
 {
     if (new_size <= old_size)
     {
