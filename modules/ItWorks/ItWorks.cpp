@@ -9,18 +9,18 @@
 
 ItWorks::ItWorks() : _count(0) {}
 
-bool ItWorks::processRequest(ZHTTPD::API::EVENT::Type event, ZHTTPD::API::IRequest* request, ZHTTPD::API::IBuffer*)
+bool ItWorks::processRequest(zhttpd::api::event::Type event, zhttpd::api::IRequest* request, zhttpd::api::IBuffer*)
 {
-    if (event == ZHTTPD::API::EVENT::ON_END || event == ZHTTPD::API::EVENT::ON_IDLE)
+    if (event == zhttpd::api::event::ON_END || event == zhttpd::api::event::ON_IDLE)
     {
         if (this->_count == 0)
         {
             request->setResponseHeader("Content-Type", "text/html");
-            request->setResponseCode(ZHTTPD::API::HTTP_CODE::OK);
+            request->setResponseCode(zhttpd::api::http_code::OK);
         }
-        ZHTTPD::API::IBuffer* str = request->getBufferManager().allocate(
+        zhttpd::api::IBuffer* str = request->getBufferManager().allocate(
                 "<h1>It works: " +
-                ZHTTPD::Logger::toString(this->_count) +
+                zhttpd::Logger::toString(this->_count) +
                 "</h1>"
         );
         request->giveData(str);

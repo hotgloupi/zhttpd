@@ -13,12 +13,12 @@
 
 #include "utils/Logger.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace MOD
+    namespace mod
     {
 
-        FileReader::FileReader(API::IModuleManager* manager) :
+        FileReader::FileReader(api::IModuleManager* manager) :
             _manager(reinterpret_cast<FileReaderManager*>(manager))
 #ifdef ZHTTPD_DEBUG
             , _total_bytes(0)
@@ -31,14 +31,14 @@ namespace ZHTTPD
         {
         }
 
-        bool FileReader::processRequest(API::EVENT::Type event, API::IRequest* request, API::IBuffer*)
+        bool FileReader::processRequest(api::event::Type event, api::IRequest* request, api::IBuffer*)
         {
-            if (event == API::EVENT::ON_END)
+            if (event == api::event::ON_END)
             {
                 this->_onEnd(request);
                 return true;
             }
-            else if (event == API::EVENT::ON_IDLE)
+            else if (event == api::event::ON_IDLE)
             {
                 this->_onIdle(request);
                 return true;
@@ -46,7 +46,7 @@ namespace ZHTTPD
             return false;
         }
 
-        void FileReader::_onIdle(ZHTTPD::API::IRequest* request)
+        void FileReader::_onIdle(zhttpd::api::IRequest* request)
         {
             if (this->_file.tellg() >= this->_range_end)
             {
@@ -62,7 +62,7 @@ namespace ZHTTPD
                     read_size = 4096;
                 else
                     read_size = this->_range_end - this->_file.tellg() + 1;
-                ZHTTPD::API::IBuffer* buf = request->getBufferManager().allocate(read_size);
+                zhttpd::api::IBuffer* buf = request->getBufferManager().allocate(read_size);
                 this->_file.read(buf->getRawData(), read_size);
 #ifdef ZHTTPD_DEBUG
                 this->_total_bytes += buf->getSize();
@@ -76,7 +76,7 @@ namespace ZHTTPD
                 request->raiseEnd();
             }
             else
-                request->raiseError(API::HTTP_CODE::INTERNAL_SERVER_ERROR);
+                request->raiseError(api::http_code::INTERNAL_SERVER_ERROR);
         }
 
         std::string const& FileReader::_findMimeType(std::string const& file)
@@ -133,17 +133,17 @@ namespace ZHTTPD
             }
         }
 
-        void FileReader::_writeRanges(ZHTTPD::API::IRequest* request)
+        void FileReader::_writeRanges(zhttpd::api::IRequest* request)
         {
             if (this->_range_begin != 0 || this->_range_end != 0)
             {
                 if (this->_file.good())
                     this->_file.seekg(this->_range_begin, std::ios::beg);
-                request->setResponseCode(API::HTTP_CODE::PARTIAL_CONTENT);
+                request->setResponseCode(api::http_code::PARTIAL_CONTENT);
             }
             else
             {
-                request->setResponseCode(API::HTTP_CODE::OK);
+                request->setResponseCode(api::http_code::OK);
                 this->_range_begin = 0;
                 this->_range_end = this->_file_size - 1;
             }
@@ -152,7 +152,7 @@ namespace ZHTTPD
             request->setResponseHeader("Content-Range", ss.str());
         }
 
-        void FileReader::_onEnd(ZHTTPD::API::IRequest* request)
+        void FileReader::_onEnd(zhttpd::api::IRequest* request)
         {
             if (this->_file.is_open())
                 return;
@@ -182,7 +182,7 @@ namespace ZHTTPD
             else
             {
                 LOG_INFO("File \"" + request->getFilePath() + "\" not found.");
-                request->raiseError(API::HTTP_CODE::NOT_FOUND);
+                request->raiseError(api::http_code::NOT_FOUND);
             }
         }
     }

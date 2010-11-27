@@ -33,8 +33,8 @@ public:
                 std::list<std::string> const& arguments,
                 Environment const& environment,
                 char const* root_directory);
-    ZHTTPD::API::size_t write(char const * buffer, ZHTTPD::API::size_t size);
-    ZHTTPD::API::size_t read(char* buffer, ZHTTPD::API::size_t size);
+    zhttpd::api::size_t write(char const * buffer, zhttpd::api::size_t size);
+    zhttpd::api::size_t read(char* buffer, zhttpd::api::size_t size);
     PROCESS_STATUS::Type getStatus() const;
 
 private:

@@ -8,9 +8,9 @@
 #  include "thread/ITask.hpp"
 #  include "utils/NonCopyable.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace IMPLEMENTATION
+    namespace implementation
     {
         class Thread : private NonCopyable
         {

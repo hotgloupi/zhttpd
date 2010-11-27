@@ -9,7 +9,7 @@
 # include "BufferManagerStack.hpp"
 # include "RequestManager.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     template<typename SessionAllocator>
     class _SessionManager : public Singleton< _SessionManager<SessionAllocator> >, public SessionAllocator
@@ -30,7 +30,7 @@ namespace ZHTTPD
         }
 
     public:
-        void handleNewSession(Socket* socket, API::uint16_t port)
+        void handleNewSession(Socket* socket, api::uint16_t port)
         {
             Session* session = SessionAllocator::allocate(socket, port);
             this->_request_manager->handleNewRequest(*session);
@@ -48,7 +48,7 @@ namespace ZHTTPD
 # else
 #  include "utils/LockedAllocator.hpp"
 # endif
-namespace ZHTTPD
+namespace zhttpd
 {
 # ifdef ZHTTPD_DEBUG
     typedef _SessionManager<SafeAllocator<Session> > SessionManager;

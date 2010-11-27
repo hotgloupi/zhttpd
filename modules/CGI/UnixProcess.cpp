@@ -52,7 +52,7 @@ char* const* UnixProcess::_getArguments()
     std::list<std::string>::const_iterator  ite;
     char**                                  c_argv;
     std::string                             temp;
-    ZHTTPD::API::uint32_t                      i;
+    zhttpd::api::uint32_t                      i;
 
     i = 0;
     it = this->_arguments->begin();
@@ -138,7 +138,7 @@ bool UnixProcess::_parentProcessusHandler()
     return (false);
 }
 
-ZHTTPD::API::size_t UnixProcess::write(char const* buffer, ZHTTPD::API::size_t size)
+zhttpd::api::size_t UnixProcess::write(char const* buffer, zhttpd::api::size_t size)
 {
     fd_set write_fd_set;
     struct timeval time;
@@ -166,7 +166,7 @@ ZHTTPD::API::size_t UnixProcess::write(char const* buffer, ZHTTPD::API::size_t s
     return (0);
 }
 
-ZHTTPD::API::size_t UnixProcess::read(char* buffer, ZHTTPD::API::size_t size)
+zhttpd::api::size_t UnixProcess::read(char* buffer, zhttpd::api::size_t size)
 {
     fd_set read_set;
     struct timeval time;

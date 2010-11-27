@@ -10,9 +10,9 @@
 #  include "utils/NonCopyable.hpp"
 #  include "utils/String.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace IMPLEMENTATION
+    namespace implementation
     {
         class Thread : private NonCopyable
         {

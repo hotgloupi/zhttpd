@@ -5,7 +5,7 @@
 #include "core/ServerState.hpp"
 #include "utils/StatsManager.hpp"
 
-ZHTTPD::Server* server;
+zhttpd::Server* server;
 
 #ifndef WIN32
 # include <signal.h>
@@ -29,39 +29,35 @@ int main(int argc, char **argv)
 #ifdef ZHTTPD_DEBUG
     ZHTTPD_DEBUG_init();
 #endif
-
-    std::cout << "ZHTTPD Server v0.1 "
+    std::cout << "Starting " << ZHTTPD_FULLNAME << " "
 #ifdef ZHTTPD_DEBUG
               << "(DEBUG)"
 #else
               << "(RELEASE)"
 #endif
               << std::endl;
-
 #ifndef ZHTTPD_DEBUG
-     ZHTTPD::Logger::getInstance()->setLevel(ZHTTPD::Logger::LVL_INFO);
+     zhttpd::Logger::getInstance()->setLevel(zhttpd::Logger::LVL_INFO);
 #endif
-    server = new ZHTTPD::Server();
+    server = new zhttpd::Server();
 #ifndef WIN32
     (void) signal(SIGINT, sigint);
     (void) signal(SIGPIPE, sigpipe);
 #endif
 
-
     LOG_INFO("Server is starting");
-    ZHTTPD::StatsManager::getInstance();
+    zhttpd::StatsManager::getInstance();
     int res = server->run(argc > 1 ? argv[1] : "doc/conf.xml");
-
 
 #ifdef ZHTTPD_DEBUG
     ZHTTPD_DEBUG_print_maps();
     ZHTTPD_DEBUG_release();
-    std::cout << "Uptime: " << ((double) ZHTTPD::StatsManager::getInstance()->getUptime()) / 1000.0f
+    std::cout << "Uptime: " << ((double) zhttpd::StatsManager::getInstance()->getUptime()) / 1000.0f
               << " sec" << std::endl;
 #endif
     delete server;
     server = 0;
-    ZHTTPD::StatsManager::delInstance();
-    ZHTTPD::Logger::delInstance();
+    zhttpd::StatsManager::delInstance();
+    zhttpd::Logger::delInstance();
     return res;
 }

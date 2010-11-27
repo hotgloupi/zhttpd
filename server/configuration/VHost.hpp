@@ -10,7 +10,7 @@
 # include "ModuleConfiguration.hpp"
 # include "IVHostGuideline.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class Configuration;
 
@@ -28,10 +28,10 @@ namespace ZHTTPD
     public:
         VHost(VHost* parent, Configuration& conf);
         virtual ~VHost();
-        VHost* match(API::IRequest& request);
+        VHost* match(api::IRequest& request);
 
         void addModule(ModuleConfiguration* module);
-        ZHTTPD::API::IModuleManager* getModule(std::string const& name);
+        zhttpd::api::IModuleManager* getModule(std::string const& name);
         ModuleConfiguration& getModuleConfiguration(std::string const& modname);
 
         bool moduleExists(std::string const& name);

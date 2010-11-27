@@ -8,8 +8,8 @@
 # include "FileSystemWindows.hpp"
 # include "FileType.hpp"
 
-using namespace ZHTTPD;
-using namespace ZHTTPD::IMPLEMENTATION;
+using namespace zhttpd;
+using namespace zhttpd::implementation;
 
 FileSystem::FileSystem()
 {

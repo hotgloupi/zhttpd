@@ -13,7 +13,7 @@
 
 # include "ModuleWrapper.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class Request;
     class ModuleTask;
@@ -22,7 +22,7 @@ namespace ZHTTPD
     {
     private:
         typedef std::list<ModuleTask*> tasks_t;
-        typedef std::list<API::IBuffer*> buffers_t;
+        typedef std::list<api::IBuffer*> buffers_t;
 
     private:
         Request&        _request;
@@ -30,7 +30,7 @@ namespace ZHTTPD
         volatile bool   _can_write;
         volatile bool   _has_error;
         ModuleTask*     _call_later_task;
-        API::uint32_t   _call_later_time;
+        api::uint32_t   _call_later_time;
         Timer           _call_later_timer;
         bool            _wait_read;
         bool            _wait_write;
@@ -44,10 +44,10 @@ namespace ZHTTPD
         void _register();
         void _unregister();
 
-        void _addTask(API::EVENT::Type event,
+        void _addTask(api::event::Type event,
                      Request& request,
                      ModuleWrapper& module,
-                     API::IBuffer* buffer);
+                     api::IBuffer* buffer);
     public:
         RequestTasks(Request& request);
         ~RequestTasks();
@@ -57,19 +57,19 @@ namespace ZHTTPD
         bool hasWork();
         bool hasPendingEvent();
         bool hasError();
-        void addTask(API::EVENT::Type event,
+        void addTask(api::event::Type event,
                      Request& request,
                      ModuleWrapper& module,
-                     API::IBuffer* buffer);
+                     api::IBuffer* buffer);
         void needRead();
-        void needWrite(API::IBuffer* buffer);
+        void needWrite(api::IBuffer* buffer);
         void reset();
 
         // concurrent (from the request manager)
         void notifyHasError();
-        void handleSocketEvent(SOCKET_EVENT::Type evt);
+        void handleSocketEvent(socket_event::Type evt);
         void addEndTask(Request& request, ModuleWrapper& module);
-        void addCallLaterTask(Request& request, ModuleWrapper& module, API::uint32_t delay);
+        void addCallLaterTask(Request& request, ModuleWrapper& module, api::uint32_t delay);
     };
 }
 

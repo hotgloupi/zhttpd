@@ -12,7 +12,7 @@
 
 #include "Configuration.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
 Configuration::Configuration() :
     _modules_configuration(),
@@ -72,7 +72,7 @@ ModuleConfiguration& Configuration::getModuleConfiguration(std::string const& na
     return *it->second;
 }
 
-API::IModuleManager* Configuration::getModuleManager(std::string const& name)
+api::IModuleManager* Configuration::getModuleManager(std::string const& name)
 {
     return this->_factory.getModuleManager(name);
 }
@@ -87,7 +87,7 @@ Configuration::io_modules_t const& Configuration::getListenPorts() const
     return this->_ports;
 }
 
-void Configuration::addListenPort(API::uint16_t port, std::string const& io_module)
+void Configuration::addListenPort(api::uint16_t port, std::string const& io_module)
 {
     if (this->_ports.find(port) != this->_ports.end())
         throw std::runtime_error("Cannot bind listen port twice");
@@ -110,7 +110,7 @@ void Configuration::setVHost(VHost& vhost)
     this->_vhost = &vhost;
 }
 
-API::IModuleManager& Configuration::getInputOutputModuleManager(API::uint16_t port)
+api::IModuleManager& Configuration::getInputOutputModuleManager(api::uint16_t port)
 {
     io_modules_t::iterator it = this->_ports.find(port);
     if (it == this->_ports.end())
@@ -119,7 +119,7 @@ API::IModuleManager& Configuration::getInputOutputModuleManager(API::uint16_t po
     if (conf == this->_modules_configuration.end())
         throw std::runtime_error("port '" + Logger::toString(port) + "' is binded with '" +
                                  it->second + "', which has no configuration");
-    API::IModuleManager* manager = conf->second->getModuleManager();
+    api::IModuleManager* manager = conf->second->getModuleManager();
     if (manager == 0)
         throw std::runtime_error("The module '" + it->second + "' has no manager");
     return *manager;
@@ -158,7 +158,7 @@ std::list<std::string> const& Configuration::getIndexFiles() const
 //                     this->_loadModule(*it);
 //                 ++it;
 //             }
-//             LOG_DEBUG("Modules loaded from " + ZHTTPD::IMPLEMENTATION::FileSystem::cwd() + '/' + this->_modules_directory->getPath());
+//             LOG_DEBUG("Modules loaded from " + zhttpd::implementation::FileSystem::cwd() + '/' + this->_modules_directory->getPath());
 //         }
 //         else
 //             LOG_WARN("Directory " + this->_modules_directory->getPath() + " does not exists. Cannot load modules");
@@ -184,9 +184,9 @@ std::list<std::string> const& Configuration::getIndexFiles() const
 //     try
 //     {
 //         std::string module_name = filename.substr(0, filename.find_last_of("."));
-//         ZHTTPD::Library* lib = new Library(this->_modules_directory->getPath() + module_name);
+//         zhttpd::Library* lib = new Library(this->_modules_directory->getPath() + module_name);
 //         lib_handler_t getInstance = lib->resolve<lib_handler_t>("getInstance");
-//         ZHTTPD::API::IModuleManager* manager = getInstance();
+//         zhttpd::api::IModuleManager* manager = getInstance();
 //         this->_available_modules[manager->getCategory()].push_back(manager->getName());
 //         this->_modules_handlers[manager->getName()] = lib;
 //         ZHTTPD_DELETE(manager);
@@ -199,7 +199,7 @@ std::list<std::string> const& Configuration::getIndexFiles() const
 //     return false;
 // }
 //
-// API::IModuleManager* Configuration::getModuleManager(std::string const& name)
+// api::IModuleManager* Configuration::getModuleManager(std::string const& name)
 // {
 //     if (this->_modules.find(name) != this->_modules.end() && this->_modules[name]->isEnabled())
 //         return this->_modules[name]->getModuleManager();
@@ -232,12 +232,12 @@ std::list<std::string> const& Configuration::getIndexFiles() const
 //     return 0;
 // }
 //
-// std::map<API::uint16_t, std::string> const& Configuration::getListenPorts() const
+// std::map<api::uint16_t, std::string> const& Configuration::getListenPorts() const
 // {
 //     return this->_ports;
 // }
 //
-// void Configuration::addListenPort(API::uint16_t port, std::string const& io_module)
+// void Configuration::addListenPort(api::uint16_t port, std::string const& io_module)
 // {
 //     this->_ports[port] = io_module;
 // }
@@ -271,7 +271,7 @@ std::list<std::string> const& Configuration::getIndexFiles() const
 //     return 0;
 // }
 //
-// API::IModuleManager* Configuration::getInputOutputModuleManager(API::uint16_t port)
+// api::IModuleManager* Configuration::getInputOutputModuleManager(api::uint16_t port)
 // {
 //     if (this->_io_module_managers.find(port) != this->_io_module_managers.end())
 //         return this->_io_module_managers[port];
@@ -294,13 +294,13 @@ std::list<std::string> const& Configuration::getIndexFiles() const
 //     return this->_index_files;
 // }
 //
-// API::IModuleManager* Configuration::loadIOModuleManager(API::uint16_t port, std::string const& name)
+// api::IModuleManager* Configuration::loadIOModuleManager(api::uint16_t port, std::string const& name)
 // {
 //     if (name != "")
 //     {
 //         LOG_DEBUG("loading " + name + " as io_module");
-//         API::IModuleManager* manager = this->getModuleManager(name);
-//         if (manager != 0 && manager->getCategory() == API::CATEGORY::INPUTOUTPUT)
+//         api::IModuleManager* manager = this->getModuleManager(name);
+//         if (manager != 0 && manager->getCategory() == api::category::INPUTOUTPUT)
 //         {
 //             this->_io_module_managers[port] = manager;
 //             return this->_io_module_managers[port];
@@ -308,6 +308,6 @@ std::list<std::string> const& Configuration::getIndexFiles() const
 //     }
 //
 //     LOG_DEBUG("loading default io_module");
-//     this->_io_module_managers[port] = new MOD::NetworkManager();
+//     this->_io_module_managers[port] = new mod::NetworkManager();
 //     return this->_io_module_managers[port];
 // }

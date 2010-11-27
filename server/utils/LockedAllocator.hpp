@@ -7,7 +7,7 @@
 # include "utils/macros.hpp"
 # include "utils/MemoryPool.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     template<typename Class>
     class LockedAllocator

@@ -3,7 +3,7 @@
 
 #include "LuaApi.hpp"
 
-LuaApi::LuaApi(ZHTTPD::API::IRequest* request) :
+LuaApi::LuaApi(zhttpd::api::IRequest* request) :
     _request(request)
 {
 }

@@ -11,17 +11,17 @@
 
 # include "BufferManager.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class BufferManagerStack : public Singleton<BufferManagerStack>
     {
         friend class Singleton<BufferManagerStack>;
 
     private:
-        std::list<API::IBufferManager*>   _managers;
+        std::list<api::IBufferManager*>   _managers;
         Mutex                       _mutex;
-        API::size_t                 _size;
-        API::size_t                 _max;
+        api::size_t                 _size;
+        api::size_t                 _max;
 
     protected:
         BufferManagerStack() : _managers(), _mutex(), _size(0), _max(0)
@@ -33,8 +33,8 @@ namespace ZHTTPD
             ZHTTPD_LOCK(this->_mutex);
             LOG_INFO("Max stored buffer managers number is " + Logger::toString(this->_max));
             LOG_INFO("Actual stored buffer managers number is " + Logger::toString(this->_max));
-            std::list<API::IBufferManager*>::iterator it = this->_managers.begin();
-            std::list<API::IBufferManager*>::iterator end = this->_managers.end();
+            std::list<api::IBufferManager*>::iterator it = this->_managers.begin();
+            std::list<api::IBufferManager*>::iterator end = this->_managers.end();
             for (; it != end; ++it)
             {
                 delete *it;
@@ -42,7 +42,7 @@ namespace ZHTTPD
             ZHTTPD_UNLOCK(this->_mutex);
         }
     public:
-        inline API::IBufferManager* pop()
+        inline api::IBufferManager* pop()
         {
             ZHTTPD_LOCK(this->_mutex);
             if (this->_size == 0) // TODO atomic fetch
@@ -53,14 +53,14 @@ namespace ZHTTPD
             else
             {
                 --this->_size;
-                API::IBufferManager* res = this->_managers.back();
+                api::IBufferManager* res = this->_managers.back();
                 this->_managers.pop_back();
                 ZHTTPD_UNLOCK(this->_mutex);
                 return res;
             }
         }
 
-        inline void push(API::IBufferManager* manager)
+        inline void push(api::IBufferManager* manager)
         {
 #ifdef ZHTTPD_DEBUG
             assert(dynamic_cast<BufferManager*>(manager) != 0);

@@ -6,7 +6,7 @@
 
 # include "utils/NonCopyable.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class RWLock : private NonCopyable
     {

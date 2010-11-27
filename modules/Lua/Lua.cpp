@@ -6,7 +6,7 @@
 
 #include "Lua.hpp"
 
-Lua::Lua(ZHTTPD::API::IModuleManager*)
+Lua::Lua(zhttpd::api::IModuleManager*)
 {
     this->_state = lua_open();
     lua_pushcfunction(this->_state, luaopen_base);
@@ -33,12 +33,12 @@ Lua::~Lua()
         lua_close(this->_state);
 }
 
-bool Lua::processRequest(ZHTTPD::API::EVENT::Type event, ZHTTPD::API::IRequest* request, ZHTTPD::API::IBuffer* buffer)
+bool Lua::processRequest(zhttpd::api::event::Type event, zhttpd::api::IRequest* request, zhttpd::api::IBuffer* buffer)
 {
-    if (event == ZHTTPD::API::EVENT::ON_END)
+    if (event == zhttpd::api::event::ON_END)
     {
         request->setResponseHeader("Content-Type", "text/html");
-        request->setResponseCode(ZHTTPD::API::HTTP_CODE::OK);
+        request->setResponseCode(zhttpd::api::http_code::OK);
         this->_loadApi(request);
         std::string file = request->getFilePath();
         if (this->_executeLua(file))
@@ -51,7 +51,7 @@ bool Lua::processRequest(ZHTTPD::API::EVENT::Type event, ZHTTPD::API::IRequest* 
         this->_luaError(request, file);
         return true;
     }
-    else if (event == ZHTTPD::API::EVENT::ON_REQUEST_DATA)
+    else if (event == zhttpd::api::event::ON_REQUEST_DATA)
     {
         this->_post.append(buffer->getRawData(), buffer->getSize());
         request->getBufferManager().release(buffer);
@@ -79,11 +79,11 @@ char Lua::_urlDecode(std::string::const_iterator& it, std::string::const_iterato
     return '%';
 }
 
-void Lua::_parsePost(ZHTTPD::API::IRequest* request)
+void Lua::_parsePost(zhttpd::api::IRequest* request)
 {
 }
 
-void Lua::_parseQuery(ZHTTPD::API::IRequest* request)
+void Lua::_parseQuery(zhttpd::api::IRequest* request)
 {
     bool got_question = false;
     bool got_equal = false;
@@ -115,12 +115,12 @@ void Lua::_parseQuery(ZHTTPD::API::IRequest* request)
         luabind::globals(this->_state)["_GET"][field] = value;
 }
 
-void Lua::_loadApi(ZHTTPD::API::IRequest* request)
+void Lua::_loadApi(zhttpd::api::IRequest* request)
 {
     luabind::module(this->_state)
         [
         luabind::class_<LuaApi>("__api__")
-        .def(luabind::constructor<ZHTTPD::API::IRequest*>())
+        .def(luabind::constructor<zhttpd::api::IRequest*>())
         .def("set_header", &LuaApi::set_header)
         .def("get_header", &LuaApi::get_header)
         .def("echo", &LuaApi::echo)
@@ -134,7 +134,7 @@ void Lua::_loadApi(ZHTTPD::API::IRequest* request)
     this->_parsePost(request);
 }
 
-void Lua::_luaError(ZHTTPD::API::IRequest* request, std::string const& file)
+void Lua::_luaError(zhttpd::api::IRequest* request, std::string const& file)
 {
     request->setResponseHeader("Content-Type", "text/html");
     std::string error;
@@ -143,7 +143,7 @@ void Lua::_luaError(ZHTTPD::API::IRequest* request, std::string const& file)
     error += "</p>";
     lua_close(this->_state);
     this->_state = 0;
-    ZHTTPD::API::IBuffer* str = request->getBufferManager().allocate(error.c_str());
+    zhttpd::api::IBuffer* str = request->getBufferManager().allocate(error.c_str());
     request->giveData(str);
     request->raiseEnd();
 }

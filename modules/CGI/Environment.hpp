@@ -18,7 +18,7 @@ private:
 public:
     Environment();
     ~Environment();
-    void copyHeadersToEnvironment(ZHTTPD::API::IRequest* request);
+    void copyHeadersToEnvironment(zhttpd::api::IRequest* request);
     void setEnvironmentVariable(char const* _key, char const* _value);
     char* const* getEnvironmentArray() const;
     env_t const& getEnvironmentList() const;

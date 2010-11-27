@@ -7,19 +7,19 @@
 # include "api/IModuleManager.hpp"
 # include "CGI.hpp"
 
-typedef ZHTTPD::MOD::StatefullManager<CGI, ZHTTPD::MOD::POLICIES::MapConfigurationPolicy> ConfigurableStatefullManager;
+typedef zhttpd::mod::StatefullManager<CGI, zhttpd::mod::POLICIES::MapConfigurationPolicy> ConfigurableStatefullManager;
 
 class CGIManager : public ConfigurableStatefullManager
 {
 public:
     CGIManager() :
-       ConfigurableStatefullManager("mod_cgi", ZHTTPD::API::CATEGORY::PROCESSING)
+       ConfigurableStatefullManager("mod_cgi", zhttpd::api::category::PROCESSING)
     {
     }
 
     virtual ~CGIManager() {}
 
-    virtual bool isRequired(ZHTTPD::API::IRequest const& request) const
+    virtual bool isRequired(zhttpd::api::IRequest const& request) const
     {
         std::string::size_type idx = request.getFilePath().rfind('.');
         if(idx == std::string::npos)

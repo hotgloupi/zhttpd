@@ -10,7 +10,7 @@
 #include "RequestManager.hpp"
 #include "SessionManager.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
 TaskManager::TaskManager() : _thread_pool(4)
 {
@@ -24,7 +24,7 @@ TaskManager::~TaskManager()
     unsigned int attempts = 0;
     while (true)
     {
-        API::size_t left_task = 0;
+        api::size_t left_task = 0;
 
         request_set_t::iterator it = this->_requests.begin();
         request_set_t::iterator end = this->_requests.end();
@@ -64,11 +64,11 @@ void TaskManager::startRequest(Request& request)
     ZHTTPD_UNLOCK(this->_pending_add_requests_mutex);
 }
 
-API::size_t TaskManager::_giveWork()
+api::size_t TaskManager::_giveWork()
 {
     request_set_t::iterator it = this->_requests.begin();
     request_set_t::iterator end = this->_requests.end();
-    API::size_t count = 0;
+    api::size_t count = 0;
 
     for (; it != end; ++it)
     {
@@ -97,12 +97,12 @@ API::size_t TaskManager::_giveWork()
     return count;
 }
 
-API::size_t TaskManager::_addPendingRequests()
+api::size_t TaskManager::_addPendingRequests()
 {
     ZHTTPD_LOCK(this->_pending_add_requests_mutex);
     request_set_t::iterator it = this->_pending_add_requests.begin();
     request_set_t::iterator end = this->_pending_add_requests.end();
-    API::size_t count = this->_pending_add_requests.size();
+    api::size_t count = this->_pending_add_requests.size();
 
     for (; it != end; ++it)
         this->_requests.insert(*it);
@@ -111,11 +111,11 @@ API::size_t TaskManager::_addPendingRequests()
     return count;
 }
 
-API::size_t TaskManager::_delPendingRequests()
+api::size_t TaskManager::_delPendingRequests()
 {
     request_set_t::iterator it = this->_pending_del_requests.begin();
     request_set_t::iterator end = this->_pending_del_requests.end();
-    API::size_t count = this->_pending_del_requests.size();
+    api::size_t count = this->_pending_del_requests.size();
     for (; it != end; ++it)
     {
         this->_requests.erase(*it);

@@ -11,10 +11,10 @@ typedef int socklen_t;
 
 #include "HostAddress.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
 
-HostAddress::HostAddress(API::uint32_t ip, API::uint16_t port) :
+HostAddress::HostAddress(api::uint32_t ip, api::uint16_t port) :
     _ip(ip), _port(port)
 {
 }
@@ -25,11 +25,11 @@ HostAddress::HostAddress(std::string const& host) :
     throw std::runtime_error("HostAddress::HostAddress(std::string const& host): Not implemented");
 }
 
-HostAddress::HostAddress(API::socket_t socket) :
+HostAddress::HostAddress(api::socket_t socket) :
     _ip(0), _port(0)
 {
     struct ::sockaddr_in sa;
-    API::size_t size = sizeof(sa);
+    api::size_t size = sizeof(sa);
     int res = ::getpeername(
         socket,
         reinterpret_cast<struct ::sockaddr*>(&sa),
@@ -41,12 +41,12 @@ HostAddress::HostAddress(API::socket_t socket) :
     this->_port = ntohs(sa.sin_port);
 }
 
-API::uint32_t HostAddress::getIp()
+api::uint32_t HostAddress::getIp()
 {
     return this->_ip;
 }
 
-API::uint16_t HostAddress::getPort()
+api::uint16_t HostAddress::getPort()
 {
     return this->_port;
 }

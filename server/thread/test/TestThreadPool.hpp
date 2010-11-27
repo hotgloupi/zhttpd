@@ -11,7 +11,7 @@
 #endif // _WIN32
 
 
-class TestThreadPoolTask : public ZHTTPD::ITask
+class TestThreadPoolTask : public zhttpd::ITask
 {
 private:
     int _i;
@@ -28,7 +28,7 @@ public:
     int GetI() const { return this->_i; }
 };
 
-class TestThreadPoolTask2 : public ZHTTPD::ITask
+class TestThreadPoolTask2 : public zhttpd::ITask
 {
 private:
     int _i;
@@ -52,17 +52,17 @@ private:
     {
         try
         {
-            ZHTTPD::ThreadPool *pool = new ZHTTPD::ThreadPool(5);
-            std::list<ZHTTPD::SmartPtr<TestThreadPoolTask> > list;
+            zhttpd::ThreadPool *pool = new zhttpd::ThreadPool(5);
+            std::list<zhttpd::SmartPtr<TestThreadPoolTask> > list;
             for (int i = 0; i < 50; ++i)
             {
-                ZHTTPD::SmartPtr<TestThreadPoolTask> ttp(new TestThreadPoolTask(i));
+                zhttpd::SmartPtr<TestThreadPoolTask> ttp(new TestThreadPoolTask(i));
                 list.push_back(ttp);
                 pool->queueTask(ttp);
             }
             ::sleep(2);
-            std::list<ZHTTPD::SmartPtr<TestThreadPoolTask> >::iterator it = list.begin();
-            std::list<ZHTTPD::SmartPtr<TestThreadPoolTask> >::iterator ite = list.end();
+            std::list<zhttpd::SmartPtr<TestThreadPoolTask> >::iterator it = list.begin();
+            std::list<zhttpd::SmartPtr<TestThreadPoolTask> >::iterator ite = list.end();
             for (; it != ite; ++it)
                 if ((*it)->GetI() != -1)
                     break;
@@ -79,17 +79,17 @@ private:
     {
         try
         {
-            ZHTTPD::ThreadPool *pool = new ZHTTPD::ThreadPool(100);
-            std::list<ZHTTPD::SmartPtr<TestThreadPoolTask> > list;
+            zhttpd::ThreadPool *pool = new zhttpd::ThreadPool(100);
+            std::list<zhttpd::SmartPtr<TestThreadPoolTask> > list;
             for (int i = 0; i < 1000; ++i)
             {
-                ZHTTPD::SmartPtr<TestThreadPoolTask> ttp(new TestThreadPoolTask(i));
+                zhttpd::SmartPtr<TestThreadPoolTask> ttp(new TestThreadPoolTask(i));
                 list.push_back(ttp);
                 pool->queueTask(ttp);
             }
             ::sleep(5);
-            std::list<ZHTTPD::SmartPtr<TestThreadPoolTask> >::iterator it = list.begin();
-            std::list<ZHTTPD::SmartPtr<TestThreadPoolTask> >::iterator ite = list.end();
+            std::list<zhttpd::SmartPtr<TestThreadPoolTask> >::iterator it = list.begin();
+            std::list<zhttpd::SmartPtr<TestThreadPoolTask> >::iterator ite = list.end();
             for (; it != ite; ++it)
                 if ((*it)->GetI() != -1)
                     break;
@@ -106,8 +106,8 @@ private:
     {
         try
         {
-            ZHTTPD::ThreadPool *pool = new ZHTTPD::ThreadPool(5);
-            ZHTTPD::SmartPtr<TestThreadPoolTask2> ttp(new TestThreadPoolTask2());
+            zhttpd::ThreadPool *pool = new zhttpd::ThreadPool(5);
+            zhttpd::SmartPtr<TestThreadPoolTask2> ttp(new TestThreadPoolTask2());
             for (int i = 0; i < 50; ++i)
                 pool->queueTask(ttp);
             ::sleep(2);
@@ -124,8 +124,8 @@ private:
     {
         try
         {
-            ZHTTPD::ThreadPool *pool = new ZHTTPD::ThreadPool(100);
-            ZHTTPD::SmartPtr<TestThreadPoolTask2> ttp(new TestThreadPoolTask2());
+            zhttpd::ThreadPool *pool = new zhttpd::ThreadPool(100);
+            zhttpd::SmartPtr<TestThreadPoolTask2> ttp(new TestThreadPoolTask2());
             for (int i = 0; i < 1000; ++i)
                 pool->queueTask(ttp);
             ::sleep(5);

@@ -18,7 +18,7 @@
 # include "utils/macros.hpp"
 # include "utils/NonCopyable.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class ListenerContainer
     {
@@ -27,7 +27,7 @@ namespace ZHTTPD
         bool _stopped;
 
     public:
-        ListenerContainer(API::uint16_t port) :
+        ListenerContainer(api::uint16_t port) :
             _listener(0),
             _thread(0),
             _stopped(true)
@@ -57,7 +57,7 @@ namespace ZHTTPD
     class Server : private NonCopyable
     {
 
-        typedef std::map<API::uint16_t, ListenerContainer*> listeners_t;
+        typedef std::map<api::uint16_t, ListenerContainer*> listeners_t;
 
     private:
         listeners_t _listeners;

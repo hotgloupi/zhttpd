@@ -10,7 +10,7 @@
 # include "thread/Thread.hpp"
 # include "utils/Timer.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
 class TestSocketPool2 : public Test::Suite<TestSocketPool2>
 {

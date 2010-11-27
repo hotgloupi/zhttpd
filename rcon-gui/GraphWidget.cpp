@@ -3,7 +3,7 @@
 #include <QColor>
 #include <QPainter>
 
-namespace ZHTTPD
+namespace zhttpd
 {
     namespace RCON
     {

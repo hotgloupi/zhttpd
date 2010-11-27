@@ -4,7 +4,7 @@
 
 #include <cassert>
 
-namespace ZHTTPD
+namespace zhttpd
 {
 
   /** Classe commune pour déclarer des Singleton

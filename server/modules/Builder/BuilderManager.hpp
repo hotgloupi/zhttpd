@@ -6,9 +6,9 @@
 
 # include "Builder.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace MOD
+    namespace mod
     {
         class BuilderManager : public StatefullManager<Builder>
         {

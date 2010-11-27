@@ -4,7 +4,7 @@
 
 #include "FileReaderManager.hpp"
 
-using namespace ZHTTPD::MOD;
+using namespace zhttpd::mod;
 
 FileReaderManager::FileReaderManager() : StatefullManager<FileReader>("mod_filereader"), _delay(0)
 {
@@ -57,13 +57,13 @@ void FileReaderManager::addConfigurationEntry(std::string const& key, std::strin
     }
 }
 
-ZHTTPD::API::CATEGORY::Type FileReaderManager::getCategory() const
+zhttpd::api::category::Type FileReaderManager::getCategory() const
 {
-    return ZHTTPD::API::CATEGORY::PROCESSING;
+    return zhttpd::api::category::PROCESSING;
 }
 
-bool FileReaderManager::isRequired(ZHTTPD::API::IRequest const& req) const
+bool FileReaderManager::isRequired(zhttpd::api::IRequest const& req) const
 {
-    return !ZHTTPD::Path::isDirectory(req.getFilePath());
+    return !zhttpd::Path::isDirectory(req.getFilePath());
 }
 

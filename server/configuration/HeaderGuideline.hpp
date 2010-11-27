@@ -5,7 +5,7 @@
 # include <string>
 # include "IVHostGuideline.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class HeaderGuideline : public IVHostGuideline
     {
@@ -18,7 +18,7 @@ namespace ZHTTPD
         HeaderGuideline(std::string const& key, std::string const& match, bool deny = false);
         virtual ~HeaderGuideline();
 
-        bool match(API::IRequest& request) const;
+        bool match(api::IRequest& request) const;
     };
 }
 

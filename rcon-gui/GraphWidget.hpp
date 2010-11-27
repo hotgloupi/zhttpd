@@ -7,7 +7,7 @@
 
 #include "ui_graph.h"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     namespace RCON
     {

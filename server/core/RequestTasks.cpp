@@ -6,7 +6,7 @@
 #include "RequestTasks.hpp"
 #include "RequestManager.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
 RequestTasks::RequestTasks(Request& request) :
     _request(request),
@@ -28,16 +28,16 @@ void RequestTasks::addEndTask(Request& request, ModuleWrapper& module)
     ZHTTPD_LOCK(this->_mutex);
     if (this->_end_task != 0)
         delete this->_end_task;
-    this->_end_task = new ModuleTask(API::EVENT::ON_END, request, module, 0);
+    this->_end_task = new ModuleTask(api::event::ON_END, request, module, 0);
     ZHTTPD_UNLOCK(this->_mutex);
 }
 
-void RequestTasks::addCallLaterTask(Request& request, ModuleWrapper& module, API::uint32_t delay)
+void RequestTasks::addCallLaterTask(Request& request, ModuleWrapper& module, api::uint32_t delay)
 {
     ZHTTPD_LOCK(this->_mutex);
     if (delay == 0)
     {
-        this->_tasks.push_back(new ModuleTask(API::EVENT::ON_IDLE, request, module, 0));
+        this->_tasks.push_back(new ModuleTask(api::event::ON_IDLE, request, module, 0));
         ZHTTPD_UNLOCK(this->_mutex);
         return;
     }
@@ -45,31 +45,31 @@ void RequestTasks::addCallLaterTask(Request& request, ModuleWrapper& module, API
         this->_tasks.push_back(this->_call_later_task);
     this->_call_later_timer.reset();
     this->_call_later_time = delay;
-    this->_call_later_task = new ModuleTask(API::EVENT::ON_IDLE, request, module, 0);
+    this->_call_later_task = new ModuleTask(api::event::ON_IDLE, request, module, 0);
     ZHTTPD_UNLOCK(this->_mutex);
 }
 
-void RequestTasks::addTask(API::EVENT::Type event,
+void RequestTasks::addTask(api::event::Type event,
                            Request& request,
                            ModuleWrapper& module,
-                           API::IBuffer* buffer)
+                           api::IBuffer* buffer)
 {
-    assert(event != API::EVENT::ON_END);
-    assert(event != API::EVENT::ON_IDLE);
+    assert(event != api::event::ON_END);
+    assert(event != api::event::ON_IDLE);
     ZHTTPD_LOCK(this->_mutex);
     this->_addTask(event, request, module, buffer);
     ZHTTPD_UNLOCK(this->_mutex);
 }
 
 
-void RequestTasks::_addTask(API::EVENT::Type event,
+void RequestTasks::_addTask(api::event::Type event,
                            Request& request,
                            ModuleWrapper& module,
-                           API::IBuffer* buffer)
+                           api::IBuffer* buffer)
 {
-    if (event == API::EVENT::ON_CAN_WRITE ||
-        event == API::EVENT::ON_RESPONSE_DATA ||
-        event == API::EVENT::ON_REQUEST_DATA)
+    if (event == api::event::ON_CAN_WRITE ||
+        event == api::event::ON_RESPONSE_DATA ||
+        event == api::event::ON_REQUEST_DATA)
         this->_tasks.push_front(new ModuleTask(event, request, module, buffer));
     else
         this->_tasks.push_back(new ModuleTask(event, request, module, buffer));
@@ -133,7 +133,7 @@ bool RequestTasks::hasWork()
     {
         this->_wait_read = false;
         this->_can_read = false;
-        this->_addTask(API::EVENT::ON_CAN_READ,
+        this->_addTask(api::event::ON_CAN_READ,
                       this->_request,
                       *this->_request.getInputModule(),
                       0);
@@ -144,9 +144,9 @@ bool RequestTasks::hasWork()
         LOG_DEBUG("pending buffers " + Logger::toString(this->_write_buffers.size()));
         this->_can_write = false;
         this->_wait_write = false;
-        API::IBuffer* buf = this->_write_buffers.front();
+        api::IBuffer* buf = this->_write_buffers.front();
         this->_write_buffers.pop_front();
-        this->_addTask(API::EVENT::ON_CAN_WRITE,
+        this->_addTask(api::event::ON_CAN_WRITE,
                       this->_request,
                       *this->_request.getOutputModule(),
                       buf);
@@ -198,7 +198,7 @@ void RequestTasks::needRead()
     ZHTTPD_UNLOCK(this->_mutex);
 }
 
-void RequestTasks::needWrite(API::IBuffer* buffer)
+void RequestTasks::needWrite(api::IBuffer* buffer)
 {
     ZHTTPD_LOCK(this->_mutex);
     this->_write_buffers.push_back(buffer);
@@ -219,7 +219,7 @@ void RequestTasks::notifyHasError()
     ZHTTPD_UNLOCK(this->_mutex);
 }
 
-void RequestTasks::handleSocketEvent(SOCKET_EVENT::Type evt)
+void RequestTasks::handleSocketEvent(socket_event::Type evt)
 {
 
     ZHTTPD_LOCK(this->_mutex);
@@ -230,7 +230,7 @@ void RequestTasks::handleSocketEvent(SOCKET_EVENT::Type evt)
     }
     switch (evt)
     {
-    case SOCKET_EVENT::CAN_READ:
+    case socket_event::CAN_READ:
         if (this->_can_read)
         {
             ZHTTPD_UNLOCK(this->_mutex);
@@ -240,7 +240,7 @@ void RequestTasks::handleSocketEvent(SOCKET_EVENT::Type evt)
         this->_unregister();
         this->_timer.reset();
         break;
-    case SOCKET_EVENT::CAN_WRITE:
+    case socket_event::CAN_WRITE:
         if (this->_can_write)
         {
             ZHTTPD_UNLOCK(this->_mutex);
@@ -250,7 +250,7 @@ void RequestTasks::handleSocketEvent(SOCKET_EVENT::Type evt)
         this->_unregister();
         this->_timer.reset();
         break;
-    case SOCKET_EVENT::HAS_ERROR:
+    case socket_event::HAS_ERROR:
         this->_can_read = false;
         this->_can_write = false;
         this->_has_error = true;

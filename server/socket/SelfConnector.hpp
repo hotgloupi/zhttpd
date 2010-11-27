@@ -7,17 +7,17 @@
 #include "thread/ITask.hpp"
 #include "thread/Mutex.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class SelfConnector : public ITask
     {
     private:
-        API::uint16_t _port;
+        api::uint16_t _port;
         Socket* _socket;
         Mutex _mutex;
 
     public:
-        SelfConnector(API::uint16_t port);
+        SelfConnector(api::uint16_t port);
         ~SelfConnector();
         void run();
         Socket* getSocket();

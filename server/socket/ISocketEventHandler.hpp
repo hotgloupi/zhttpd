@@ -2,9 +2,9 @@
 #ifndef __ISOCKETEVENTHANDLER_HPP__
 # define __ISOCKETEVENTHANDLER_HPP__
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace SOCKET_EVENT
+    namespace socket_event
     {
         enum Type
         {
@@ -19,7 +19,7 @@ namespace ZHTTPD
     {
     public:
         virtual ~ISocketEventHandler() {}
-        virtual void handleSocketEvent(SOCKET_EVENT::Type evt) = 0;
+        virtual void handleSocketEvent(socket_event::Type evt) = 0;
     };
 }
 

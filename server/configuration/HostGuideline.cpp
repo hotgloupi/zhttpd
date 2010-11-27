@@ -3,7 +3,7 @@
 #include "utils/Logger.hpp"
 #include "HostGuideline.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
 HostGuideline::HostGuideline(std::string const& match, bool deny) :
     _match(match),
@@ -17,7 +17,7 @@ HostGuideline::~HostGuideline()
 
 }
 
-bool HostGuideline::match(API::IRequest& request) const
+bool HostGuideline::match(api::IRequest& request) const
 {
     std::string const& host = request.getRequestHeader("Host");
     bool result;

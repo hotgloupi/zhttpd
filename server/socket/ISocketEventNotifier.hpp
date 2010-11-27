@@ -4,13 +4,13 @@
 
 # include "api/types.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class ISocketEventNotifier
     {
     public:
         virtual ~ISocketEventNotifier() {}
-        virtual void notify(API::socket_t fd, SOCKET_EVENT::Type evt) = 0;
+        virtual void notify(api::socket_t fd, socket_event::Type evt) = 0;
     };
 }
 

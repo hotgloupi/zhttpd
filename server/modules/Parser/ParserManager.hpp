@@ -12,34 +12,34 @@
 # undef DELETE
 #endif
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace MOD
+    namespace mod
     {
         class ParserManager : public StatefullManager<Parser>
         {
             private:
-                std::map<std::string, API::HTTP_METHOD::Type> _methods;
+                std::map<std::string, api::http_method::Type> _methods;
 
             public:
                 ParserManager() :
-                    StatefullManager<Parser>("mod_parser", ZHTTPD::API::CATEGORY::POSTINPUT)
+                    StatefullManager<Parser>("mod_parser", zhttpd::api::category::POSTINPUT)
                 {
-                    this->_methods["GET"] = API::HTTP_METHOD::GET;
-                    this->_methods["POST"] = API::HTTP_METHOD::POST;
-                    this->_methods["PUT"] = API::HTTP_METHOD::PUT;
-                    this->_methods["DELETE"] = API::HTTP_METHOD::DELETE;
-                    this->_methods["TRACE"] = API::HTTP_METHOD::TRACE;
-                    this->_methods["OPTIONS"] = API::HTTP_METHOD::OPTIONS;
-                    this->_methods["CONNECT"] = API::HTTP_METHOD::CONNECT;
-                    this->_methods["HEAD"] = API::HTTP_METHOD::HEAD;
+                    this->_methods["GET"] = api::http_method::GET;
+                    this->_methods["POST"] = api::http_method::POST;
+                    this->_methods["PUT"] = api::http_method::PUT;
+                    this->_methods["DELETE"] = api::http_method::DELETE;
+                    this->_methods["TRACE"] = api::http_method::TRACE;
+                    this->_methods["OPTIONS"] = api::http_method::OPTIONS;
+                    this->_methods["CONNECT"] = api::http_method::CONNECT;
+                    this->_methods["HEAD"] = api::http_method::HEAD;
                 }
 
-                API::HTTP_METHOD::Type getMethod(std::string const& str) const
+                api::http_method::Type getMethod(std::string const& str) const
                 {
-                    std::map<std::string, API::HTTP_METHOD::Type>::const_iterator it = this->_methods.find(str);
+                    std::map<std::string, api::http_method::Type>::const_iterator it = this->_methods.find(str);
                     if (it == this->_methods.end())
-                        return API::HTTP_METHOD::UNDEFINED;
+                        return api::http_method::UNDEFINED;
                     return it->second;
                 }
         };

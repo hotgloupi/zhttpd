@@ -13,12 +13,12 @@
 #include "SSLNetworkManager.hpp"
 #include "utils/Logger.hpp"
 
-using namespace ZHTTPD;
-using namespace ZHTTPD::MOD;
+using namespace zhttpd;
+using namespace zhttpd::mod;
 
-API::size_t const SSLNetwork::BUFFER_SIZE = 2048;
+api::size_t const SSLNetwork::BUFFER_SIZE = 2048;
 
-SSLNetwork::action_t const SSLNetwork::_actions[API::EVENT::ON_ERROR] = {
+SSLNetwork::action_t const SSLNetwork::_actions[api::event::ON_ERROR] = {
     &SSLNetwork::_processOnCanRead,             // ON_CAN_READ          = 1,
     &SSLNetwork::_processOnCanWrite,            // ON_CAN_WRITE         = 2,
     0,
@@ -28,7 +28,7 @@ SSLNetwork::action_t const SSLNetwork::_actions[API::EVENT::ON_ERROR] = {
     0,
 };
 
-bool    SSLNetwork::processRequest(API::EVENT::Type event, API::IRequest* request, API::IBuffer* buffer)
+bool    SSLNetwork::processRequest(api::event::Type event, api::IRequest* request, api::IBuffer* buffer)
 {
     if (SSLNetwork::_actions[event - 1] == 0)
         return false;
@@ -47,20 +47,20 @@ bool    SSLNetwork::processRequest(API::EVENT::Type event, API::IRequest* reques
     return (this->*SSLNetwork::_actions[event - 1])(request, buffer);
 }
 
-bool    SSLNetwork::_processOnCanRead(API::IRequest* request, API::IBuffer* buf)
+bool    SSLNetwork::_processOnCanRead(api::IRequest* request, api::IBuffer* buf)
 {
     assert(buf == 0);
 
-    ZHTTPD::API::IBuffer* buffer = request->getBufferManager().allocate(SSLNetwork::BUFFER_SIZE);
+    zhttpd::api::IBuffer* buffer = request->getBufferManager().allocate(SSLNetwork::BUFFER_SIZE);
 
-    ZHTTPD::API::ssize_t r = SSL_read(this->_ssl, buffer->getRawData(), SSLNetwork::BUFFER_SIZE);
+    zhttpd::api::ssize_t r = SSL_read(this->_ssl, buffer->getRawData(), SSLNetwork::BUFFER_SIZE);
     if (r <= 0)
     {
         request->getBufferManager().release(buffer);
         throw std::runtime_error(Logger::toString("SSL_read error") + ERR_error_string(ERR_get_error(), 0));
     }
 
-    ZHTTPD::API::size_t bytes_read = r;
+    zhttpd::api::size_t bytes_read = r;
     if (bytes_read < SSLNetwork::BUFFER_SIZE)
         buffer->setSize(bytes_read);
     request->giveData(buffer);
@@ -68,16 +68,16 @@ bool    SSLNetwork::_processOnCanRead(API::IRequest* request, API::IBuffer* buf)
     return (true);
 }
 
-bool    SSLNetwork::_processOnCanWrite(API::IRequest* request, API::IBuffer* buffer)
+bool    SSLNetwork::_processOnCanWrite(api::IRequest* request, api::IBuffer* buffer)
 {
     assert(buffer != 0);
     assert(buffer->getSize() > 0);
 
-    ZHTTPD::API::ssize_t r = SSL_write(this->_ssl, buffer->getRawData(), buffer->getSize());
+    zhttpd::api::ssize_t r = SSL_write(this->_ssl, buffer->getRawData(), buffer->getSize());
     if (r <= 0)
         throw std::runtime_error(Logger::toString("SSL_write error") + ERR_error_string(ERR_get_error(), 0));
 
-    ZHTTPD::API::size_t bytes_sent = r;
+    zhttpd::api::size_t bytes_sent = r;
     if (bytes_sent < buffer->getSize())
     {
         buffer->setSize(bytes_sent, buffer->getSize() - bytes_sent);
@@ -89,7 +89,7 @@ bool    SSLNetwork::_processOnCanWrite(API::IRequest* request, API::IBuffer* buf
     return (true);
 }
 
-bool    SSLNetwork::_processOnResponseData(API::IRequest* request, API::IBuffer* buffer)
+bool    SSLNetwork::_processOnResponseData(api::IRequest* request, api::IBuffer* buffer)
 {
     assert(buffer != 0);
     assert(buffer->getSize() > 0);
@@ -97,7 +97,7 @@ bool    SSLNetwork::_processOnResponseData(API::IRequest* request, API::IBuffer*
     return (true);
 }
 
-bool    SSLNetwork::_processOnEnd(API::IRequest* request, API::IBuffer*)
+bool    SSLNetwork::_processOnEnd(api::IRequest* request, api::IBuffer*)
 {
     if (this->_resp == true && this->_ssl != 0)
     {
@@ -109,7 +109,7 @@ bool    SSLNetwork::_processOnEnd(API::IRequest* request, API::IBuffer*)
     return false;
 }
 
-bool    SSLNetwork::_initSsl(API::socket_t fd)
+bool    SSLNetwork::_initSsl(api::socket_t fd)
 {
     this->_ssl = SSL_new(this->_manager.getCtx());
     if (this->_ssl == 0)
@@ -122,7 +122,7 @@ bool    SSLNetwork::_initSsl(API::socket_t fd)
     return true;
 }
 
-SSLNetwork::SSLNetwork(API::IModuleManager* manager, bool resp) :
+SSLNetwork::SSLNetwork(api::IModuleManager* manager, bool resp) :
     _manager(*reinterpret_cast<SSLNetworkManager*>(manager)),
     _ssl(0),
     _resp(resp)

@@ -8,8 +8,8 @@
 #include "ConfigurationParserException.hpp"
 #include "ModuleParser.hpp"
 
-using namespace ZHTTPD;
-using namespace ZHTTPD::PARSER;
+using namespace zhttpd;
+using namespace zhttpd::parser;
 
 VHostParser::VHostParser()
 {
@@ -147,7 +147,7 @@ void VHostParser::_parseListen(ticpp::Node* node, VHost* vhost)
 {
     try
     {
-        ZHTTPD::API::uint16_t port;
+        zhttpd::api::uint16_t port;
         node->ToElement()->GetAttribute("port", &port);
         std::string denyStr = node->ToElement()->GetAttribute("deny");
         bool deny = false;

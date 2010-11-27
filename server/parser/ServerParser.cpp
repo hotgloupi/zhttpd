@@ -5,8 +5,8 @@
 #include "ServerParser.hpp"
 #include "ConfigurationParserException.hpp"
 
-using namespace ZHTTPD;
-using namespace ZHTTPD::PARSER;
+using namespace zhttpd;
+using namespace zhttpd::parser;
 
 ServerParser::ServerParser()
 {
@@ -35,7 +35,7 @@ void ServerParser::_parseListen(ticpp::Node* node, Configuration* conf)
 {
     try
     {
-        API::uint16_t port;
+        api::uint16_t port;
         node->ToElement()->GetAttribute("port", &port);
         std::string iomodule = node->ToElement()->GetAttribute("io-module");
         conf->addListenPort(port, iomodule);

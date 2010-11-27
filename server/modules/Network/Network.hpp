@@ -12,28 +12,28 @@
 # include "socket/Socket.hpp"
 
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace MOD
+    namespace mod
     {
-        class Network : public API::IModule
+        class Network : public api::IModule
         {
         private:
-            typedef bool (Network::*action_t)(API::IRequest* request, API::IBuffer* buffer);
-            static action_t const _actions[API::EVENT::ON_END + 1];
+            typedef bool (Network::*action_t)(api::IRequest* request, api::IBuffer* buffer);
+            static action_t const _actions[api::event::ON_END + 1];
 
         private:
-            bool        _processOnCanRead(API::IRequest* request, API::IBuffer* buffer);
-            bool        _processOnCanWrite(API::IRequest* request, API::IBuffer* buffer);
-            bool        _processOnResponseData(API::IRequest* request, API::IBuffer* buffer);
+            bool        _processOnCanRead(api::IRequest* request, api::IBuffer* buffer);
+            bool        _processOnCanWrite(api::IRequest* request, api::IBuffer* buffer);
+            bool        _processOnResponseData(api::IRequest* request, api::IBuffer* buffer);
 
         public:
-            static API::size_t const                BUFFER_SIZE;
+            static api::size_t const                BUFFER_SIZE;
 
         public:
-            Network(API::IModuleManager* manager);
+            Network(api::IModuleManager* manager);
             ~Network();
-            bool processRequest(API::EVENT::Type event, API::IRequest* request, API::IBuffer* buffer);
+            bool processRequest(api::event::Type event, api::IRequest* request, api::IBuffer* buffer);
         };
     }
 }

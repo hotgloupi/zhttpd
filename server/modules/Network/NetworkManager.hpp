@@ -10,9 +10,9 @@
 
 # include "Network.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace MOD
+    namespace mod
     {
         class NetworkManager : public StatelessManager<Network>
         {
@@ -25,13 +25,13 @@ namespace ZHTTPD
             {
             }
 
-            API::CATEGORY::Type getCategory() const
+            api::category::Type getCategory() const
             {
-                return API::CATEGORY::INPUTOUTPUT;
+                return api::category::INPUTOUTPUT;
             }
 
 
-            bool isRequired(API::IRequest const&) const
+            bool isRequired(api::IRequest const&) const
             {
                 return true;
             }

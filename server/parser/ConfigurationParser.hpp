@@ -7,9 +7,9 @@
 # include "configuration/Configuration.hpp"
 # include "parser/ticpp/ticpp.h"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace PARSER
+    namespace parser
     {
         class ConfigurationParser
         {

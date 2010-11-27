@@ -7,7 +7,7 @@
 
 # include "SessionManager.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     /**
      * Cette classe écoute sur une socket et donne la nouvelle socket
@@ -16,15 +16,15 @@ namespace ZHTTPD
     class Listener : public ITask
     {
     private:
-        API::uint32_t _ip;
-        API::uint16_t _port;
+        api::uint32_t _ip;
+        api::uint16_t _port;
         Socket* _socket;
         SessionManager* _session_manager;
         volatile bool _is_running;
         volatile bool _stopped;
 
     public:
-        Listener(API::uint32_t ip, API::uint16_t port);
+        Listener(api::uint32_t ip, api::uint16_t port);
         ~Listener();
         void run();
         void stop();

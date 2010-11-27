@@ -6,17 +6,17 @@
 #include "api/IRequest.hpp"
 #include "api/IModule.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace MOD
+    namespace mod
     {
-        class DirListing : public ZHTTPD::API::IModule
+        class DirListing : public zhttpd::api::IModule
         {
             private:
             public:
-                DirListing(API::IModuleManager* manager);
+                DirListing(api::IModuleManager* manager);
                 ~DirListing();
-                bool processRequest(API::EVENT::Type event, API::IRequest* request, API::IBuffer* buffer);
+                bool processRequest(api::event::Type event, api::IRequest* request, api::IBuffer* buffer);
         };
 
     }

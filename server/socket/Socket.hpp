@@ -11,31 +11,31 @@
 # include "utils/Logger.hpp"
 # include "api/types.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    class Socket : public IMPLEMENTATION::Socket
+    class Socket : public implementation::Socket
     {
     private:
         Socket();
         Socket(Socket const&);
 
     public:
-        Socket(API::socket_t socket) : IMPLEMENTATION::Socket(socket)
+        Socket(api::socket_t socket) : implementation::Socket(socket)
         {
         }
 
-        Socket(API::uint32_t ip, API::uint16_t port) : IMPLEMENTATION::Socket(ip, port)
+        Socket(api::uint32_t ip, api::uint16_t port) : implementation::Socket(ip, port)
         {
         }
 
-        API::socket_t getSocket() const
+        api::socket_t getSocket() const
         {
             return this->_socket;
         }
 
         Socket* accept()
         {
-            return new Socket(IMPLEMENTATION::Socket::accept());
+            return new Socket(implementation::Socket::accept());
         }
 
         virtual ~Socket()

@@ -2,7 +2,7 @@
 #include "api/types.hpp"
 #include "Path.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
 Path::Path(std::string const& path) : _path(path)
 {
@@ -30,29 +30,29 @@ Path const& Path::operator =(std::string const& p)
 
 bool Path::isAbsolute() const
 {
-    return IMPLEMENTATION::Path::isAbsolute(this->_path);
+    return implementation::Path::isAbsolute(this->_path);
 }
 
 std::string Path::getAbsolutePath() const
 {
     if (this->isAbsolute())
         return this->_path;
-    return IMPLEMENTATION::Path::cwd() + "/" + this->_path;
+    return implementation::Path::cwd() + "/" + this->_path;
 }
 
 bool Path::exists() const
 {
-    return IMPLEMENTATION::Path::exists(this->_path);
+    return implementation::Path::exists(this->_path);
 }
 
 bool Path::isDirectory() const
 {
-    return IMPLEMENTATION::Path::isDirectory(this->_path);
+    return implementation::Path::isDirectory(this->_path);
 }
 
 std::list<std::string> Path::getDirectoryContent() const
 {
-    return IMPLEMENTATION::Path::getDirectoryContent(this->_path);
+    return implementation::Path::getDirectoryContent(this->_path);
 }
 
 std::set<std::string> Path::getDirectoryContentSet() const
@@ -69,7 +69,7 @@ std::set<std::string> Path::getDirectoryContentSet() const
 std::string Path::getBasePath() const
 {
     std::string res = this->getAbsolutePath();
-    if (IMPLEMENTATION::Path::isDirectory(res))
+    if (implementation::Path::isDirectory(res))
         return res;
     std::size_t last = res.find_last_of('/');
     return res.substr(0, last);
@@ -77,7 +77,7 @@ std::string Path::getBasePath() const
 
 std::string Path::getFileName() const
 {
-    if (IMPLEMENTATION::Path::isDirectory(this->_path))
+    if (implementation::Path::isDirectory(this->_path))
         return "";
     std::size_t last = this->_path.find_last_of('/');
     return this->_path.substr(last + 1);

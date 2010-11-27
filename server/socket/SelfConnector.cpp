@@ -21,9 +21,9 @@
 #include "thread/ScopeLock.hpp"
 #include "utils/macros.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
-SelfConnector::SelfConnector(API::uint16_t port) : _port(port), _socket(0)
+SelfConnector::SelfConnector(api::uint16_t port) : _port(port), _socket(0)
 {
 }
 
@@ -44,7 +44,7 @@ void SelfConnector::run()
     struct protoent *pe;
     struct sockaddr_in sin;
     struct hostent *h;
-    API::socket_t fd;
+    api::socket_t fd;
 
     ScopeLock lock(this->_mutex);
     if ((h = gethostbyname("localhost")) == NULL)
@@ -70,7 +70,7 @@ void SelfConnector::run()
     struct protoent *pe;
     struct sockaddr_in sin;
     struct hostent *h;
-    API::socket_t fd;
+    api::socket_t fd;
 
     ScopeLock lock(this->_mutex);
 

@@ -16,7 +16,7 @@
 #include "thread/Thread.hpp"
 #include "socket/ISocketEventNotifier.hpp"
 
-using namespace ZHTTPD::POLICIES;
+using namespace zhttpd::POLICIES;
 
 BasicSocketSelector::BasicSocketSelector() :
     _write_interrupt_socket(0),
@@ -31,14 +31,14 @@ BasicSocketSelector::~BasicSocketSelector()
     ZHTTPD_DELETE(this->_read_interrupt_socket);
 }
 
-void BasicSocketSelector::watchSockets(ZHTTPD::ISocketEventNotifier& notifier)
+void BasicSocketSelector::watchSockets(zhttpd::ISocketEventNotifier& notifier)
 {
-    FD_ZERO(&this->_sets[ZHTTPD::SOCKET_EVENT::CAN_READ]);
-    FD_ZERO(&this->_sets[ZHTTPD::SOCKET_EVENT::CAN_WRITE]);
+    FD_ZERO(&this->_sets[zhttpd::socket_event::CAN_READ]);
+    FD_ZERO(&this->_sets[zhttpd::socket_event::CAN_WRITE]);
     this->_max_fd = 0;
 
     FD_SET(this->_read_interrupt_socket->getSocket(),
-           &this->_sets[ZHTTPD::SOCKET_EVENT::CAN_READ]);
+           &this->_sets[zhttpd::socket_event::CAN_READ]);
     this->_max_fd = this->_read_interrupt_socket->getSocket();
     ZHTTPD_LOCK(this->_mutex);
     fdset_t fdlist = this->_fdlist;
@@ -47,8 +47,8 @@ void BasicSocketSelector::watchSockets(ZHTTPD::ISocketEventNotifier& notifier)
     this->_prepareSockets(notifier, fdlist);
 
     int res = select(this->_max_fd + 1,
-                     &this->_sets[ZHTTPD::SOCKET_EVENT::CAN_READ],
-                     &this->_sets[ZHTTPD::SOCKET_EVENT::CAN_WRITE],
+                     &this->_sets[zhttpd::socket_event::CAN_READ],
+                     &this->_sets[zhttpd::socket_event::CAN_WRITE],
                      0,
                      0);
 #ifndef _WIN32
@@ -66,7 +66,7 @@ void BasicSocketSelector::watchSockets(ZHTTPD::ISocketEventNotifier& notifier)
 #endif // !WIN32
 
     if (FD_ISSET(this->_read_interrupt_socket->getSocket(),
-                 &this->_sets[ZHTTPD::SOCKET_EVENT::CAN_READ]))
+                 &this->_sets[zhttpd::socket_event::CAN_READ]))
     {
         char buf[4096];
         this->_read_interrupt_socket->read(buf, 4096);
@@ -75,7 +75,7 @@ void BasicSocketSelector::watchSockets(ZHTTPD::ISocketEventNotifier& notifier)
     this->_updateEvents(notifier, fdlist);
 }
 
-void BasicSocketSelector::registerFileDescriptor(ZHTTPD::API::socket_t fd)
+void BasicSocketSelector::registerFileDescriptor(zhttpd::api::socket_t fd)
 {
     ZHTTPD_LOCK(this->_mutex);
     if (this->_fdlist.find(fd) == this->_fdlist.end())
@@ -86,7 +86,7 @@ void BasicSocketSelector::registerFileDescriptor(ZHTTPD::API::socket_t fd)
     ZHTTPD_UNLOCK(this->_mutex);
 }
 
-void BasicSocketSelector::unregisterFileDescriptor(ZHTTPD::API::socket_t fd)
+void BasicSocketSelector::unregisterFileDescriptor(zhttpd::api::socket_t fd)
 {
     ZHTTPD_LOCK(this->_mutex);
     if (this->_fdlist.find(fd) != this->_fdlist.end())
@@ -110,7 +110,7 @@ void BasicSocketSelector::unregisterFileDescriptor(ZHTTPD::API::socket_t fd)
             {                                                               \
                 LOG_WARN("fd = " + Logger::toString(fd) +                   \
                          " >= " + Logger::toString(FD_SETSIZE - 1));        \
-                notifier.notify(fd, SOCKET_EVENT::HAS_ERROR);               \
+                notifier.notify(fd, socket_event::HAS_ERROR);               \
                 continue;                                                   \
             }                                                               \
             this->_max_fd = fd;                                             \
@@ -118,18 +118,18 @@ void BasicSocketSelector::unregisterFileDescriptor(ZHTTPD::API::socket_t fd)
         FD_SET(fd, &this->_sets[event]);
 #endif // !_WIN32
 
-void BasicSocketSelector::_prepareSockets(ZHTTPD::ISocketEventNotifier& notifier,
+void BasicSocketSelector::_prepareSockets(zhttpd::ISocketEventNotifier& notifier,
                                           fdset_t& fdlist)
 {
-    ZHTTPD::API::socket_t fd;
+    zhttpd::api::socket_t fd;
 
     fdset_t::iterator it = fdlist.begin();
     fdset_t::iterator end = fdlist.end();
     for (; it != end ; ++it)
     {
         fd = *it;
-        PREPARE_SOCKET(ZHTTPD::SOCKET_EVENT::CAN_READ)
-        PREPARE_SOCKET(ZHTTPD::SOCKET_EVENT::CAN_WRITE)
+        PREPARE_SOCKET(zhttpd::socket_event::CAN_READ)
+        PREPARE_SOCKET(zhttpd::socket_event::CAN_WRITE)
     }
 }
 
@@ -137,10 +137,10 @@ void BasicSocketSelector::_prepareSockets(ZHTTPD::ISocketEventNotifier& notifier
 
 
 
-void BasicSocketSelector::_updateEvents(ZHTTPD::ISocketEventNotifier& notifier,
+void BasicSocketSelector::_updateEvents(zhttpd::ISocketEventNotifier& notifier,
                                         fdset_t& fdlist)
 {
-    ZHTTPD::API::socket_t fd;
+    zhttpd::api::socket_t fd;
 
     fdset_t::iterator it = fdlist.begin();
     fdset_t::iterator end = fdlist.end();
@@ -154,8 +154,8 @@ void BasicSocketSelector::_updateEvents(ZHTTPD::ISocketEventNotifier& notifier,
             notifier.notify(fd, event);              \
         }                                            \
 
-        UPDATE_EVENT(ZHTTPD::SOCKET_EVENT::CAN_READ)
-        UPDATE_EVENT(ZHTTPD::SOCKET_EVENT::CAN_WRITE)
+        UPDATE_EVENT(zhttpd::socket_event::CAN_READ)
+        UPDATE_EVENT(zhttpd::socket_event::CAN_WRITE)
 #undef UPDATE_EVENT
     }
 }
@@ -163,15 +163,15 @@ void BasicSocketSelector::_updateEvents(ZHTTPD::ISocketEventNotifier& notifier,
 void BasicSocketSelector::_initInterruptors()
 {
     bool ok = false;
-    for (API::uint16_t port = 9000 ; port < 10000 && ok == false ; ++port)
+    for (api::uint16_t port = 9000 ; port < 10000 && ok == false ; ++port)
     {
         try
         {
-            ZHTTPD::Socket sl(0x7F000001, port);
-            ZHTTPD::SelfConnector connector(port);
+            zhttpd::Socket sl(0x7F000001, port);
+            zhttpd::SelfConnector connector(port);
 
             {
-                ZHTTPD::Thread t(&connector);
+                zhttpd::Thread t(&connector);
                 this->_write_interrupt_socket = sl.accept();
                 this->_read_interrupt_socket = connector.getSocket();
             }

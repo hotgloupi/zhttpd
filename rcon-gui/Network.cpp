@@ -1,7 +1,7 @@
 #include "Network.hpp"
 #include "Rcon.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     namespace RCON
     {

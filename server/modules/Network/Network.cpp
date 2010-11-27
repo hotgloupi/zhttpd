@@ -11,11 +11,11 @@
 
 #include "Network.hpp"
 
-using namespace ZHTTPD::MOD;
+using namespace zhttpd::mod;
 
-ZHTTPD::API::size_t const Network::BUFFER_SIZE = 2048;
+zhttpd::api::size_t const Network::BUFFER_SIZE = 2048;
 
-Network::action_t const Network::_actions[ZHTTPD::API::EVENT::ON_ERROR] = {
+Network::action_t const Network::_actions[zhttpd::api::event::ON_ERROR] = {
     &Network::_processOnCanRead,            // ON_CAN_READ         = 1,
     &Network::_processOnCanWrite,           // ON_CAN_WRITE        = 2,
     0,
@@ -25,7 +25,7 @@ Network::action_t const Network::_actions[ZHTTPD::API::EVENT::ON_ERROR] = {
     0,
 };
 
-Network::Network(ZHTTPD::API::IModuleManager*)
+Network::Network(zhttpd::api::IModuleManager*)
 {
 }
 
@@ -33,7 +33,7 @@ Network::~Network()
 {
 }
 
-bool Network::processRequest(ZHTTPD::API::EVENT::Type event, ZHTTPD::API::IRequest* request, ZHTTPD::API::IBuffer* buffer)
+bool Network::processRequest(zhttpd::api::event::Type event, zhttpd::api::IRequest* request, zhttpd::api::IBuffer* buffer)
 {
     if (Network::_actions[event - 1] != 0)
     {
@@ -43,12 +43,12 @@ bool Network::processRequest(ZHTTPD::API::EVENT::Type event, ZHTTPD::API::IReque
     return (false);
 }
 
-bool Network::_processOnCanRead(ZHTTPD::API::IRequest* request, ZHTTPD::API::IBuffer* buf)
+bool Network::_processOnCanRead(zhttpd::api::IRequest* request, zhttpd::api::IBuffer* buf)
 {
-    ZHTTPD::Socket& socket = reinterpret_cast<Request*>(request)->getServerSession().getServerSocket();
+    zhttpd::Socket& socket = reinterpret_cast<Request*>(request)->getServerSession().getServerSocket();
     assert(buf == 0);
-    ZHTTPD::API::IBuffer* buffer = request->getBufferManager().allocate(Network::BUFFER_SIZE);
-    ZHTTPD::API::size_t bytes_read = socket.read(buffer->getRawData(), Network::BUFFER_SIZE);
+    zhttpd::api::IBuffer* buffer = request->getBufferManager().allocate(Network::BUFFER_SIZE);
+    zhttpd::api::size_t bytes_read = socket.read(buffer->getRawData(), Network::BUFFER_SIZE);
     if (bytes_read < Network::BUFFER_SIZE)
     {
         buffer->setSize(bytes_read);
@@ -59,13 +59,13 @@ bool Network::_processOnCanRead(ZHTTPD::API::IRequest* request, ZHTTPD::API::IBu
     return (true);
 }
 
-bool Network::_processOnCanWrite(ZHTTPD::API::IRequest* request, ZHTTPD::API::IBuffer* buffer)
+bool Network::_processOnCanWrite(zhttpd::api::IRequest* request, zhttpd::api::IBuffer* buffer)
 {
     assert(buffer != 0);
     assert(buffer->getSize() > 0);
-    ZHTTPD::Socket& socket = reinterpret_cast<Request*>(request)->getServerSession().getServerSocket();
+    zhttpd::Socket& socket = reinterpret_cast<Request*>(request)->getServerSession().getServerSocket();
     LOG_FATAL("Write '" + std::string(buffer->getRawData(), buffer->getSize()) + "'");
-    ZHTTPD::API::size_t bytes_sent = socket.write(buffer->getRawData(), buffer->getSize());
+    zhttpd::api::size_t bytes_sent = socket.write(buffer->getRawData(), buffer->getSize());
     StatsManager::getInstance()->addSentBytes(buffer->getSize());
     if (bytes_sent < buffer->getSize())
     {
@@ -79,7 +79,7 @@ bool Network::_processOnCanWrite(ZHTTPD::API::IRequest* request, ZHTTPD::API::IB
     return (true);
 }
 
-bool Network::_processOnResponseData(ZHTTPD::API::IRequest* request, ZHTTPD::API::IBuffer* buffer)
+bool Network::_processOnResponseData(zhttpd::api::IRequest* request, zhttpd::api::IBuffer* buffer)
 {
     assert(buffer != 0);
     assert(buffer->getSize() > 0);

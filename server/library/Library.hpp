@@ -10,15 +10,15 @@
 #  include "LibraryUnix.hpp"
 # endif
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    class Library : public IMPLEMENTATION::Library
+    class Library : public implementation::Library
     {
     private:
         std::string _path;
 
     public:
-        Library(std::string const& path) : IMPLEMENTATION::Library(path), _path(path)
+        Library(std::string const& path) : implementation::Library(path), _path(path)
         {
         }
 
@@ -30,7 +30,7 @@ namespace ZHTTPD
         template<typename Cast>
         Cast resolve(char const* name)
         {
-            return reinterpret_cast<Cast>(IMPLEMENTATION::Library::resolve(name));
+            return reinterpret_cast<Cast>(implementation::Library::resolve(name));
         }
     };
 }

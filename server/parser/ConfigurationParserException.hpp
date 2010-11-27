@@ -4,9 +4,9 @@
 
 # include <stdexcept>
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace PARSER
+    namespace parser
     {
         class ConfigurationParserException : public std::runtime_error
         {

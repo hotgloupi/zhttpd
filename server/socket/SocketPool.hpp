@@ -19,7 +19,7 @@
 # include "ISocketEventNotifier.hpp"
 # include "Socket.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
 
     template<typename SocketSelector>
@@ -54,7 +54,7 @@ namespace ZHTTPD
             delete [] this->_events;
         }
 
-        void registerHandler(API::socket_t fd, ISocketEventHandler& object)
+        void registerHandler(api::socket_t fd, ISocketEventHandler& object)
         {
             ScopeLock sl(this->_events_mutex);
             if (this->_events[fd] == 0)
@@ -68,7 +68,7 @@ namespace ZHTTPD
             SocketSelector::registerFileDescriptor(fd);
         }
 
-        void unregisterHandler(API::socket_t fd)
+        void unregisterHandler(api::socket_t fd)
         {
             assert(this->_events[fd] != 0);
             if (this->_events[fd]->isEnabled())
@@ -76,7 +76,7 @@ namespace ZHTTPD
             this->_events[fd]->disable();
         }
 
-        void destroyHandler(API::socket_t fd)
+        void destroyHandler(api::socket_t fd)
         {
             ScopeLock sl(this->_events_mutex);
             assert(this->_events[fd] != 0);
@@ -85,7 +85,7 @@ namespace ZHTTPD
             this->_events[fd]->destroy();
         }
 
-        void notify(API::socket_t fd, SOCKET_EVENT::Type evt)
+        void notify(api::socket_t fd, socket_event::Type evt)
         {
             assert(this->_events[fd] != 0);
             this->_events[fd]->notify(evt);
@@ -115,7 +115,7 @@ namespace ZHTTPD
 #  include "BasicSocketSelector.hpp"
 # endif
 
-namespace ZHTTPD
+namespace zhttpd
 {
     typedef _SocketPool<POLICIES::Selector> SocketPool;
 }
