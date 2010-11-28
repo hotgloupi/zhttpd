@@ -144,6 +144,8 @@ bool            CGI::_processOnIdle(CGI::request_t* request, CGI::buffer_t*)
         this->_end = false;
     if (this->_end)
     {
+        if (request->getResponseHeader("Location") != "")
+            request->setResponseCode(zhttpd::api::http_code::FOUND);
         request->raiseEnd();
         return true;
     }
@@ -195,35 +197,13 @@ void CGI::_fillEnvironment(request_t* request)
     delete [] path;
 }
 
-void            CGI::_debug(request_t* request, buffer_t*)
-{
-    std::string                                                         to_send;
-    std::map<std::string, std::string>::const_iterator                  it;
-    std::map<std::string, std::string>::const_iterator                  ite;
-
-    it = this->_environment.getEnvironmentList().begin();
-    ite = this->_environment.getEnvironmentList().end();
-    to_send = "<html><body><h3>debug:</h3>";
-    for (; it != ite; it++)
-    {
-        to_send.append("<pre>" + it->first + " = " + it->second + "</pre>");
-    }
-    to_send.append("</body></html>");
-    request->setResponseHeader("Content-Type", "text/html");
-    request->setResponseCode(zhttpd::api::http_code::OK);
-    buffer_t* buf_to_send =
-            request->getBufferManager().allocate(to_send.c_str(), to_send.size());
-    request->giveData(buf_to_send);
-    request->raiseEnd();
-}
-
-bool            CGI::_checkContentLength(zhttpd::api::uint32_t request_content_length)
+bool CGI::_checkContentLength(zhttpd::api::uint32_t request_content_length)
 {
     this->_request_content_length = request_content_length;
     return (true);
 }
 
-void            CGI::_parseHeaders(request_t* request, buffer_t* headers)
+void CGI::_parseHeaders(request_t* request, buffer_t* headers)
 {
     bool carriage_return = false;
     std::string line;
@@ -246,14 +226,14 @@ void            CGI::_parseHeaders(request_t* request, buffer_t* headers)
     }
 }
 
-void            CGI::_parseHeadersLine(request_t* request, std::string const & line)
+void CGI::_parseHeadersLine(request_t* request, std::string const & line)
 {
     if (!line.size())
         return;
-    bool                        got_directive = false;
-    bool                        got_separator = false;
-    std::string                 directive;
-    std::string                 params;
+    bool got_directive = false;
+    bool got_separator = false;
+    std::string directive;
+    std::string params;
     std::string::const_iterator it = line.begin();
     std::string::const_iterator ite = line.end();
     for (; it != ite; ++it)
@@ -270,11 +250,11 @@ void            CGI::_parseHeadersLine(request_t* request, std::string const & l
     request->setResponseHeader(directive.c_str(), params.c_str());
 }
 
-CGI::buffer_t*      CGI::_extractHeaders(request_t* request, buffer_t* buffer)
+CGI::buffer_t* CGI::_extractHeaders(request_t* request, buffer_t* buffer)
 {
-    CGI::buffer_t*  data = NULL;
-    CGI::buffer_t*  headers = NULL;
-    unsigned int    separator = 0;
+    CGI::buffer_t* data = NULL;
+    CGI::buffer_t* headers = NULL;
+    unsigned int separator = 0;
 
     for (zhttpd::api::size_t i = 0; i < buffer->getSize(); ++i)
     {
