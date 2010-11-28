@@ -2,6 +2,8 @@
 #ifndef __CONSTANTS_HPP__
 # define __CONSTANTS_HPP__
 
+#undef DELETE /* Microsoft platform defines a macro DELETE */
+
 namespace zhttpd
 {
     namespace api
@@ -57,7 +59,6 @@ namespace zhttpd
 
         namespace http_method
         {
-#undef DELETE
             /**
              * Toutes les méthodes HTTP.
              */
