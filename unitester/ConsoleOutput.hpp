@@ -34,7 +34,11 @@ namespace Test
                     nbSuccess++;
                 ++it;
             }
-            std::cout << std::endl << "\033[01;34m" << name  << ": " << std::setprecision(0) << nbSuccess << "/" << nbTests << " (" << (nbSuccess / nbTests * 100) << "%) successful tests in " << std::setprecision(6) << totalTime << " s\033[22;37m" << std::endl;
+            std::cout << std::endl
+                      << "\033[01;34m" << name  << ": "
+                      << std::setprecision(0) << nbSuccess << "/" << nbTests
+                      << " (" << (nbSuccess / nbTests * 100) << "%) successful tests in "
+                      << std::setprecision(6) << totalTime << " s\033[22;37m" << std::endl;
         }
 
         void print_before_test(TestInfo const & ti)
@@ -45,7 +49,9 @@ namespace Test
         void print_after_test(TestInfo const & ti)
         {
             if (ti.is_successful)
-                std::cout << "\033[22;32m\tOK in " << std::fixed << std::setprecision(6) << ti.execution_time << " s\033[22;37m" << std::endl;
+                std::cout << "\033[22;32m\tOK in " << std::fixed
+                          << std::setprecision(6) << ti.execution_time
+                          << " s\033[22;37m" << std::endl;
         }
 
         void print_failure(std::list<std::string>& failure_msgs, TestInfo const & ti)
@@ -53,7 +59,8 @@ namespace Test
             std::list<std::string>::iterator it = failure_msgs.begin();
             std::list<std::string>::iterator ite = failure_msgs.end();
 
-            std::cout << "\033[22;31m\tFAIL in " << std::fixed << std::setprecision(6) << ti.execution_time << " s" << std::endl;
+            std::cout << "\033[22;31m\tFAIL in " << std::fixed
+                      << std::setprecision(6) << ti.execution_time << " s" << std::endl;
             while (it != ite)
             {
                 std::cout << "\tfailure: " << *it << std::endl;
