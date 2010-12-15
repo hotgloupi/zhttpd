@@ -1,0 +1,4 @@
+
+Dependencies:
+    You have to install liblua >= 5.1 and c++ bindings
+    on Debian like systems, installing `libluabind-dev` will do the work
