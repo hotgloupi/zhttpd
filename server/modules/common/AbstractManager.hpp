@@ -15,7 +15,7 @@ namespace zhttpd
 {
     namespace mod
     {
-        namespace POLICIES
+        namespace policies
         {
             class NoConfigurationPolicy : public zhttpd::api::IModuleManager
             {
@@ -161,20 +161,29 @@ namespace zhttpd
             }
         };
 
-# define ZHTTPD_MOD_ABSTRACTMANAGER_HELPER(state)                                                              \
-        template<typename ManagedClass, typename ConfigurationPolicy = POLICIES::NoConfigurationPolicy>     \
-        class state##Manager :                                                                              \
-            public AbstractManager< POLICIES::state##ManagementPolicy<ManagedClass, ConfigurationPolicy> >  \
-        {                                                                                                   \
-        public:                                                                                             \
-            state##Manager(std::string const& name,                                                         \
-                           zhttpd::api::category::Type category = zhttpd::api::category::UNDEFINED) :             \
-                AbstractManager< POLICIES::state##ManagementPolicy<ManagedClass, ConfigurationPolicy> >(name, category) {}       \
-        }
+        template<typename ManagedClass, typename ConfigurationPolicy = policies::NoConfigurationPolicy>
+        class StatefullManager :
+            public AbstractManager< policies::StatefullManagementPolicy<ManagedClass, ConfigurationPolicy> >
+        {
+            typedef policies::StatefullManagementPolicy<ManagedClass, ConfigurationPolicy> management_t;
+        public:
+            StatefullManager(std::string const& name,
+                             zhttpd::api::category::Type category = zhttpd::api::category::UNDEFINED) :
+                AbstractManager<management_t>(name, category)
+            {}
+        };
 
-        ZHTTPD_MOD_ABSTRACTMANAGER_HELPER(Statefull);
-        ZHTTPD_MOD_ABSTRACTMANAGER_HELPER(Stateless);
-#undef ZHTTPD_MOD_ABSTRACTMANAGER_HELPER
+        template<typename ManagedClass, typename ConfigurationPolicy = policies::NoConfigurationPolicy>
+        class StatelessManager :
+            public AbstractManager< policies::StatelessManagementPolicy<ManagedClass, ConfigurationPolicy> >
+        {
+            typedef policies::StatelessManagementPolicy<ManagedClass, ConfigurationPolicy> management_t;
+        public:
+            StatelessManager(std::string const& name,
+                             zhttpd::api::category::Type category = zhttpd::api::category::UNDEFINED) :
+                AbstractManager<management_t>(name, category)
+            {}
+        };
 
     }
 }

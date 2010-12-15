@@ -29,7 +29,7 @@ public:
 
 private:
     static action_t const                   _actions[zhttpd::api::event::ON_END + 1];
-    zhttpd::mod::POLICIES::MapConfigurationPolicy& _module_manager;
+    zhttpd::mod::policies::MapConfigurationPolicy& _module_manager;
     zhttpd::api::http_method::Type             _method;
     ProcessHandler                          _process;
     std::list<std::string>                  _process_arguments;
@@ -43,7 +43,7 @@ private:
     bool                                    _headers;
 
 public:
-    CGI(zhttpd::mod::POLICIES::MapConfigurationPolicy* manager);
+    CGI(zhttpd::mod::policies::MapConfigurationPolicy* manager);
     ~CGI();
     bool processRequest(zhttpd::api::event::Type event, request_t* request, buffer_t* buffer);
     bool isStarted() const;
