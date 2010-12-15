@@ -55,7 +55,12 @@ VHost* VHost::match(API::IRequest& request)
 
 void VHost::addModule(ModuleConfiguration* module)
 {
-    this->_modules[module->getName()] = module;
+    std::string const& modname = module->getName();
+    this->_modules[modname] = module;
+    ModuleConfiguration& base_conf = (this->_parent != 0 ?
+                                      this->_parent->getModuleConfiguration(modname) :
+                                      this->_configuration.getModuleConfiguration(modname));
+    this->_modules[modname]->merge(base_conf);
 }
 
 ZHTTPD::API::IModuleManager* VHost::getModule(std::string const& name)
