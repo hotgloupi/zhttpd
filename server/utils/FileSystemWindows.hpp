@@ -6,9 +6,9 @@
 #include <string>
 #include "FileType.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace IMPLEMENTATION
+    namespace implementation
     {
         class FileSystem
         {

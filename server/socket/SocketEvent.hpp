@@ -8,14 +8,14 @@
 # include "ISocketEventHandler.hpp"
 # include "Socket.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class SocketEvent
     {
     private:
         ISocketEventHandler*    _object;
         volatile bool           _enabled;
-        bool                    _events[SOCKET_EVENT::NB_SOCKET_EVENT];
+        bool                    _events[socket_event::NB_SOCKET_EVENT];
         Mutex                   _mutex;
         Mutex                   _process_mutex;
 
@@ -44,24 +44,24 @@ namespace ZHTTPD
                 ZHTTPD_UNLOCK(this->_process_mutex);
                 return;
             }
-            if (this->_events[SOCKET_EVENT::HAS_ERROR])
+            if (this->_events[socket_event::HAS_ERROR])
             {
                 ::memset(this->_events, 0, sizeof(this->_events));
                 if (this->_enabled)
                 {
-                    this->_object->handleSocketEvent(SOCKET_EVENT::HAS_ERROR);
+                    this->_object->handleSocketEvent(socket_event::HAS_ERROR);
                 }
             }
             else
             {
-                for (unsigned int i = 0; i < SOCKET_EVENT::NB_SOCKET_EVENT - 1; ++i)
+                for (unsigned int i = 0; i < socket_event::NB_SOCKET_EVENT - 1; ++i)
                 {
                     if (this->_events[i] == true)
                     {
                         this->_events[i] = false;
                         if (this->_enabled && this->_object != 0)
                         {
-                            this->_object->handleSocketEvent(static_cast<SOCKET_EVENT::Type>(i));
+                            this->_object->handleSocketEvent(static_cast<socket_event::Type>(i));
                         }
                     }
                 }
@@ -94,9 +94,9 @@ namespace ZHTTPD
         }
 
         // From the Selector
-        inline void notify(SOCKET_EVENT::Type evt)
+        inline void notify(socket_event::Type evt)
         {
-            assert(evt >= 0 && evt < SOCKET_EVENT::NB_SOCKET_EVENT);
+            assert(evt >= 0 && evt < socket_event::NB_SOCKET_EVENT);
             this->_events[evt] = true;
         }
     };

@@ -11,11 +11,11 @@ private:
     void _listenerCreate()
     {
         try {
-            ZHTTPD::Socket(0, 1);
+            zhttpd::Socket(0, 1);
             this->assert_test(false, "Should throw with stupid port 1");
         } catch (...) {}
         try {
-            ZHTTPD::Socket(0, 4000);
+            zhttpd::Socket(0, 4000);
         } catch (...) {
             this->assert_test(false, "Should work with port 4000");
         }

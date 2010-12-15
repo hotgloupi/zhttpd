@@ -6,9 +6,9 @@
 # include "IRequest.hpp"
 # include "IModule.hpp"
 
-using namespace ZHTTPD::API;
+using namespace zhttpd::api;
 
-namespace ZHTTPD
+namespace zhttpd
 {
     namespace Module
     {
@@ -22,7 +22,7 @@ namespace ZHTTPD
              * @param request La requête
              * @param buffer Un pointeur vers le buffer à traiter (possiblement 0)
              */
-            void processRequest(EVENT::Type event, IRequest* request, IBuffer* buffer);
+            void processRequest(event::Type event, IRequest* request, IBuffer* buffer);
 
             UrlRewrite();
             ~UrlRewrite();

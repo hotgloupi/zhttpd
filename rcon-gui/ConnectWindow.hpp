@@ -3,7 +3,7 @@
 
 #include "ui_connect.h"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     namespace RCON
     {

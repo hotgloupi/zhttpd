@@ -6,24 +6,24 @@
 # include "api/IModule.hpp"
 # include "configuration/Configuration.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace MOD
+    namespace mod
     {
-        class Builder : public ZHTTPD::API::IModule
+        class Builder : public zhttpd::api::IModule
         {
         private:
             bool _builded;
 
-            void _findModules(ZHTTPD::API::IRequest* request, Configuration* config, VHost* vhost);
-            void _addModule(ZHTTPD::API::CATEGORY::Type category, Configuration* config, VHost* vhost, ZHTTPD::API::IRequest* request);
-            void _setPath(ZHTTPD::API::IRequest* request, Configuration* config, VHost* vhost);
+            void _findModules(zhttpd::api::IRequest* request, Configuration* config, VHost* vhost);
+            void _addModule(zhttpd::api::category::Type category, Configuration* config, VHost* vhost, zhttpd::api::IRequest* request);
+            void _setPath(zhttpd::api::IRequest* request, Configuration* config, VHost* vhost);
 
         public:
-            Builder(ZHTTPD::API::IModuleManager* manager);
-            bool processRequest(ZHTTPD::API::EVENT::Type event,
-                                ZHTTPD::API::IRequest* request,
-                                ZHTTPD::API::IBuffer* buffer);
+            Builder(zhttpd::api::IModuleManager* manager);
+            bool processRequest(zhttpd::api::event::Type event,
+                                zhttpd::api::IRequest* request,
+                                zhttpd::api::IBuffer* buffer);
         };
     }
 }

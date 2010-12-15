@@ -10,9 +10,9 @@
 # include "IBufferManager.hpp"
 # include "ISession.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace API
+    namespace api
     {
         class IRequest
         {
@@ -45,12 +45,12 @@ namespace ZHTTPD
              * Si la chaîne n'est pas fournie, le serveur devra placer le
              * message par défaut.
              */
-            virtual void raiseError(HTTP_CODE::Type code, std::string error = "") = 0;
+            virtual void raiseError(http_code::Type code, std::string error = "") = 0;
 
             /**
              * Le module signale que la requête est terminée. Le serveur devra
              * supprimer la requête dès que possible. Tous les modules suivant vont
-             * donc recevoir dans l'ordre le signal EVENT::ON_END.
+             * donc recevoir dans l'ordre le signal event::ON_END.
              */
             virtual void raiseEnd() = 0;
 
@@ -101,12 +101,12 @@ namespace ZHTTPD
             /**
              * Affecte la méthode HTTP à la requête.
              */
-            virtual void setRequestMethod(HTTP_METHOD::Type method) = 0;
+            virtual void setRequestMethod(http_method::Type method) = 0;
 
             /**
              * Retourne la méthode HTTP de la requête.
              */
-            virtual HTTP_METHOD::Type getRequestMethod() const = 0;
+            virtual http_method::Type getRequestMethod() const = 0;
 
             /**
              * Affecte l'argument de la méthode HTTP (la query) à
@@ -127,13 +127,13 @@ namespace ZHTTPD
             /**
              * Affecte le code de retour pour la réponse HTTP.
              */
-            virtual void setResponseCode(HTTP_CODE::Type code, std::string const& reason = "") = 0;
+            virtual void setResponseCode(http_code::Type code, std::string const& reason = "") = 0;
 
             /**
              * Récupère le code de retour pour la réponse HTTP. S'il n'est pas défini,
-             * retourne la valeur ZHTTPD::API::HTTP_CODE::UNDEFINED
+             * retourne la valeur zhttpd::api::http_code::UNDEFINED
              */
-            virtual HTTP_CODE::Type getResponseCode() const = 0;
+            virtual http_code::Type getResponseCode() const = 0;
 
 
             /**

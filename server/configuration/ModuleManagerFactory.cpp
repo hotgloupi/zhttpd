@@ -11,18 +11,18 @@
 
 #include "ModuleManagerFactory.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
 ModuleManagerFactory::ModuleManagerFactory()
 {
     this->_builders["mod_network"] = &ModuleManagerFactory::_createNetworkModuleManager;
-    this->_available_modules[ZHTTPD::API::CATEGORY::INPUTOUTPUT].push_back("mod_network");
+    this->_available_modules[zhttpd::api::category::INPUTOUTPUT].push_back("mod_network");
     this->_builders["mod_filereader"] = &ModuleManagerFactory::_createFileReaderModuleManager;
-    this->_available_modules[ZHTTPD::API::CATEGORY::PROCESSING].push_back("mod_filereader");
+    this->_available_modules[zhttpd::api::category::PROCESSING].push_back("mod_filereader");
     this->_builders["mod_error"] = &ModuleManagerFactory::_createModErrorModuleManager;
-    this->_available_modules[ZHTTPD::API::CATEGORY::PROCESSING].push_back("mod_error");
+    this->_available_modules[zhttpd::api::category::PROCESSING].push_back("mod_error");
     this->_builders["mod_dirlisting"] = &ModuleManagerFactory::_createDirListingModuleManager;
-    this->_available_modules[ZHTTPD::API::CATEGORY::PROCESSING].push_back("mod_dirlisting");
+    this->_available_modules[zhttpd::api::category::PROCESSING].push_back("mod_dirlisting");
 }
 
 ModuleManagerFactory::~ModuleManagerFactory()
@@ -49,7 +49,7 @@ void ModuleManagerFactory::findModules(std::string const& modules_directory)
         if (this->_isDynamicLibrary(*it))
         {
             Library* lib = 0;
-            ZHTTPD::API::IModuleManager* manager = 0;
+            zhttpd::api::IModuleManager* manager = 0;
             try
             {
                 lib = new Library(dir + *it);
@@ -79,7 +79,7 @@ void ModuleManagerFactory::findModules(std::string const& modules_directory)
     }
 }
 
-API::IModuleManager* ModuleManagerFactory::getModuleManager(std::string const& name) const
+api::IModuleManager* ModuleManagerFactory::getModuleManager(std::string const& name) const
 {
     std::map<std::string, creator_t>::const_iterator it = this->_builders.find(name);
     if (it != this->_builders.end())
@@ -96,27 +96,27 @@ ModuleManagerFactory::available_modules_t const& ModuleManagerFactory::getAvaila
 }
 
 
-API::IModuleManager* ModuleManagerFactory::_createNetworkModuleManager(std::string const&) const
+api::IModuleManager* ModuleManagerFactory::_createNetworkModuleManager(std::string const&) const
 {
-    return new MOD::NetworkManager();
+    return new mod::NetworkManager();
 }
 
-API::IModuleManager* ModuleManagerFactory::_createFileReaderModuleManager(std::string const&) const
+api::IModuleManager* ModuleManagerFactory::_createFileReaderModuleManager(std::string const&) const
 {
-    return new MOD::FileReaderManager();
+    return new mod::FileReaderManager();
 }
 
-API::IModuleManager* ModuleManagerFactory::_createModErrorModuleManager(std::string const&) const
+api::IModuleManager* ModuleManagerFactory::_createModErrorModuleManager(std::string const&) const
 {
-    return new MOD::ModErrorManager();
+    return new mod::ModErrorManager();
 }
 
-API::IModuleManager* ModuleManagerFactory::_createDirListingModuleManager(std::string const&) const
+api::IModuleManager* ModuleManagerFactory::_createDirListingModuleManager(std::string const&) const
 {
-    return new MOD::DirListingManager();
+    return new mod::DirListingManager();
 }
 
-API::IModuleManager* ModuleManagerFactory::_createFromLibrary(std::string const& name) const
+api::IModuleManager* ModuleManagerFactory::_createFromLibrary(std::string const& name) const
 {
     std::map<std::string, Library*>::const_iterator it = this->_libraries.find(name);
     assert(it != this->_libraries.end());

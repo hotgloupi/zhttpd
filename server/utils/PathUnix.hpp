@@ -9,9 +9,9 @@
 # include <dirent.h>
 # include <cstring>
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace IMPLEMENTATION
+    namespace implementation
     {
         class Path
         {

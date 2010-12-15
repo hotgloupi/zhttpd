@@ -5,7 +5,7 @@
 #include <QDate>
 #include <QDateTime>
 
-namespace ZHTTPD
+namespace zhttpd
 {
     namespace RCON
     {

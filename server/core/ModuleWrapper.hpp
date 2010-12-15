@@ -5,22 +5,22 @@
 # include "api/IModule.hpp"
 # include "api/IModuleManager.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class ModuleWrapper
     {
     private:
-        API::IModuleManager& _manager;
-        API::IModule& _module;
+        api::IModuleManager& _manager;
+        api::IModule& _module;
         ModuleWrapper* _next;
 
     public:
-        ModuleWrapper(API::IModuleManager& manager, API::IModule& module);
+        ModuleWrapper(api::IModuleManager& manager, api::IModule& module);
         virtual ~ModuleWrapper();
         ModuleWrapper* getNext();
         void setNext(ModuleWrapper* next);
-        API::IModule& getModule();
-        API::IModuleManager& getModuleManager();
+        api::IModule& getModule();
+        api::IModuleManager& getModuleManager();
     };
 }
 

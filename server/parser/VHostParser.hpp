@@ -7,9 +7,9 @@
 # include "configuration/Configuration.hpp"
 # include "configuration/IVHostGuideline.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace PARSER
+    namespace parser
     {
         class VHostParser
         {

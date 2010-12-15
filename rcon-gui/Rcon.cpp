@@ -1,6 +1,6 @@
 #include "Rcon.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     namespace RCON
     {

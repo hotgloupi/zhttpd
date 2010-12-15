@@ -6,9 +6,9 @@
 
 #include "Rcon.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
-Rcon::Rcon(Server& server, API::uint16_t port) :
+Rcon::Rcon(Server& server, api::uint16_t port) :
     _server(server), _socket(new Socket(0x7f000001, port))
 {
 }
@@ -40,7 +40,7 @@ void Rcon::_readCommands(Socket* socket)
 
 void Rcon::_sendString(Socket* socket, std::string const& line)
 {
-    API::size_t bytes = 0;
+    api::size_t bytes = 0;
     while (bytes < line.size())
         bytes += socket->write(line.c_str() + bytes, line.size() - bytes);
 }

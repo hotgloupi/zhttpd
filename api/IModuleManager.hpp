@@ -6,9 +6,9 @@
 
 # include "IModule.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace API
+    namespace api
     {
         class IModuleManager
         {
@@ -37,7 +37,7 @@ namespace ZHTTPD
             /**
              * Informe sur la catégorie à laquelle ce module appartient
              */
-            virtual CATEGORY::Type getCategory() const = 0;
+            virtual category::Type getCategory() const = 0;
 
             /**
              * Retourne le nom du module.

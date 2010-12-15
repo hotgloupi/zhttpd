@@ -5,9 +5,9 @@
 # include "modules/common/AbstractManager.hpp"
 # include "PreOutputBuilder.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace MOD
+    namespace mod
     {
         class PreOutputBuilderManager : public StatefullManager<PreOutputBuilder>
         {
@@ -15,7 +15,7 @@ namespace ZHTTPD
 
             public:
                 PreOutputBuilderManager() :
-                    StatefullManager<PreOutputBuilder>("mod_preoutputbuilder", ZHTTPD::API::CATEGORY::PREOUTPUT)
+                    StatefullManager<PreOutputBuilder>("mod_preoutputbuilder", zhttpd::api::category::PREOUTPUT)
             {
             }
         };

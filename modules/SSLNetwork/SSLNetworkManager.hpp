@@ -13,9 +13,9 @@
 # include "thread/Mutex.hpp"
 # include "SSLNetwork.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace MOD
+    namespace mod
     {
         class SSLNetworkManager : public StatefullManager<SSLNetwork>
         {
@@ -23,15 +23,15 @@ namespace ZHTTPD
             SSLNetworkManager();
             ~SSLNetworkManager();
             virtual void addConfigurationEntry(std::string const& key, std::string const& value);
-            virtual API::CATEGORY::Type getCategory() const;
-            virtual bool isRequired(API::IRequest const&) const;
-            virtual ZHTTPD::API::IModule* getInstance(bool in_response = false);
-            virtual void releaseInstance(API::IModule* module);
+            virtual api::category::Type getCategory() const;
+            virtual bool isRequired(api::IRequest const&) const;
+            virtual zhttpd::api::IModule* getInstance(bool in_response = false);
+            virtual void releaseInstance(api::IModule* module);
 
             SSL_CTX* getCtx() const;
 
-            void addSsl(API::socket_t fd, SSL* ssl);
-            SSL* getSsl(API::socket_t fd);
+            void addSsl(api::socket_t fd, SSL* ssl);
+            SSL* getSsl(api::socket_t fd);
             void delSsl(SSL* ssl);
 
         private:
@@ -44,7 +44,7 @@ namespace ZHTTPD
 
             SSL_CTX* _ctx;
 
-            std::map<API::socket_t, SSL*> _ssl;
+            std::map<api::socket_t, SSL*> _ssl;
             Mutex _ssl_mutex;
         };
     }

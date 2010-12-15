@@ -3,9 +3,9 @@
 
 extern "C"
 {
-    ZHTTPD_EXPORT ZHTTPD::API::IModuleManager* getInstance()
+    ZHTTPD_EXPORT zhttpd::api::IModuleManager* getInstance()
     {
-        return new ZHTTPD::MOD::SSLNetworkManager();
+        return new zhttpd::mod::SSLNetworkManager();
     }
 }
 

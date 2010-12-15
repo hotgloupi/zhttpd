@@ -13,9 +13,9 @@
 #include "ParserManager.hpp"
 
 
-using namespace ZHTTPD::MOD;
+using namespace zhttpd::mod;
 
-Parser::Parser(ZHTTPD::API::IModuleManager* manager) :
+Parser::Parser(zhttpd::api::IModuleManager* manager) :
     _manager(reinterpret_cast<ParserManager*>(manager)),
     _separator(0),
     _completed(false),
@@ -30,8 +30,8 @@ Parser::~Parser()
 {
     if (this->_request != 0 && this->_completed == false)
     {
-        std::list<API::IBuffer*>::iterator it = this->_buffers.begin();
-        std::list<API::IBuffer*>::iterator it_end = this->_buffers.end();
+        std::list<api::IBuffer*>::iterator it = this->_buffers.begin();
+        std::list<api::IBuffer*>::iterator it_end = this->_buffers.end();
         for (; it != it_end; ++it)
         {
             this->_request->getBufferManager().release(*it);
@@ -39,7 +39,7 @@ Parser::~Parser()
     }
 }
 
-void Parser::_parseLine(ZHTTPD::API::IRequest* request, std::string const& line) const
+void Parser::_parseLine(zhttpd::api::IRequest* request, std::string const& line) const
 {
     if (!line.size())
         return;
@@ -61,7 +61,7 @@ void Parser::_parseLine(ZHTTPD::API::IRequest* request, std::string const& line)
     request->setRequestHeader(directive, params);
 }
 
-void Parser::_parseMethod(API::IRequest* request, std::string const& line) const
+void Parser::_parseMethod(api::IRequest* request, std::string const& line) const
 {
     bool gotMethod = false;
     std::string method;
@@ -89,16 +89,16 @@ void Parser::_parseMethod(API::IRequest* request, std::string const& line) const
     request->setRequestQuery(path);
 }
 
-ZHTTPD::API::size_t Parser::_parseRequest(ZHTTPD::API::IRequest* request) const
+zhttpd::api::size_t Parser::_parseRequest(zhttpd::api::IRequest* request) const
 {
     bool methodParsed = false;
     bool carriageReturn = false;
     std::string line;
-    std::list<API::IBuffer*>::const_iterator it = this->_buffers.begin();
-    std::list<API::IBuffer*>::const_iterator itEnd = this->_buffers.end();
+    std::list<api::IBuffer*>::const_iterator it = this->_buffers.begin();
+    std::list<api::IBuffer*>::const_iterator itEnd = this->_buffers.end();
     for (; it != itEnd; ++it)
     {
-        for (API::size_t i = 0; i < (*it)->getSize(); ++i)
+        for (api::size_t i = 0; i < (*it)->getSize(); ++i)
         {
             if ((*it)->getRawData()[i] == '\r')
                 carriageReturn = true;
@@ -123,14 +123,14 @@ ZHTTPD::API::size_t Parser::_parseRequest(ZHTTPD::API::IRequest* request) const
         request->getBufferManager().release(*it);
     }
     request->setResponseHeader("Server", ZHTTPD_FULLNAME);
-    API::size_t len = 0;
+    api::size_t len = 0;
     std::stringstream ss;
     ss << request->getRequestHeader("Content-Length");
     ss >> len;
     return len;
 }
 
-void Parser::_giveData(API::IRequest* request, API::IBuffer* buffer)
+void Parser::_giveData(api::IRequest* request, api::IBuffer* buffer)
 {
     request->giveData(buffer);
     std::string s(buffer->getRawData(), buffer->getSize());
@@ -139,19 +139,19 @@ void Parser::_giveData(API::IRequest* request, API::IBuffer* buffer)
         request->raiseEnd();
 }
 
-bool Parser::processRequest(API::EVENT::Type event, API::IRequest* request, API::IBuffer* buffer)
+bool Parser::processRequest(api::event::Type event, api::IRequest* request, api::IBuffer* buffer)
 {
     if (this->_request == 0)
         this->_request = request;
     assert(request == this->_request);
-    if (event == API::EVENT::ON_REQUEST_DATA)
+    if (event == api::event::ON_REQUEST_DATA)
     {
         if (this->_completed)
         {
             this->_giveData(request, buffer);
             return true;
         }
-        for (API::size_t i = 0; i < buffer->getSize(); ++i)
+        for (api::size_t i = 0; i < buffer->getSize(); ++i)
         {
             if (((this->_separator == 0 || this->_separator == 2) && buffer->getRawData()[i] == '\r') ||
                 ((this->_separator == 1 || this->_separator == 3) && buffer->getRawData()[i] == '\n'))
@@ -160,7 +160,7 @@ bool Parser::processRequest(API::EVENT::Type event, API::IRequest* request, API:
                 this->_separator = 0;
             if (this->_separator == 4)
             {
-                API::IBuffer* next = 0;
+                api::IBuffer* next = 0;
                 if (i + 1 < buffer->getSize())
                     next = request->getBufferManager().allocate(buffer->getRawData() + i + 1, buffer->getSize() - (i + 1));
                 buffer->setSize(i + 1);

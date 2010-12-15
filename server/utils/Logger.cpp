@@ -3,7 +3,7 @@
 
 #include "Logger.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
 Logger::Level const Logger::_default_level = Logger::LVL_DEBUG;
 std::ostream* const Logger::_default_output = &std::cerr;

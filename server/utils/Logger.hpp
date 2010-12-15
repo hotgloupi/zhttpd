@@ -14,14 +14,14 @@
 # include "utils/Singleton.hpp"
 # include "api/constants.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     namespace LOGGER
     {
         inline std::string cleanFunctionName(char const* str)
         {
             std::string s(str);
-            size_t start = s.find(" ZHTTPD::");
+            size_t start = s.find(" zhttpd::");
             if (start != std::string::npos && start < s.find_first_of('('))
                 start += 9;
             else
@@ -80,29 +80,29 @@ namespace ZHTTPD
         };
 
         template<>
-        struct Stringify<API::HTTP_METHOD::Type>
+        struct Stringify<api::http_method::Type>
         {
-            static std::string toString(API::HTTP_METHOD::Type const& method)
+            static std::string toString(api::http_method::Type const& method)
             {
                 switch (method)
                 {
-                case API::HTTP_METHOD::UNDEFINED:
+                case api::http_method::UNDEFINED:
                     return "UNDEFINED";
-                case API::HTTP_METHOD::GET:
+                case api::http_method::GET:
                     return "GET";
-                case API::HTTP_METHOD::POST:
+                case api::http_method::POST:
                     return "POST";
-                case API::HTTP_METHOD::PUT:
+                case api::http_method::PUT:
                     return "PUT";
-                case API::HTTP_METHOD::DELETE:
+                case api::http_method::DELETE:
                     return "DELETE";
-                case API::HTTP_METHOD::TRACE:
+                case api::http_method::TRACE:
                     return "TRACE";
-                case API::HTTP_METHOD::OPTIONS:
+                case api::http_method::OPTIONS:
                     return "OPTIONS";
-                case API::HTTP_METHOD::CONNECT:
+                case api::http_method::CONNECT:
                     return "CONNECT";
-                case API::HTTP_METHOD::HEAD:
+                case api::http_method::HEAD:
                     return "HEAD";
                 default:
                     return "Unknown method!";
@@ -113,26 +113,26 @@ namespace ZHTTPD
 }
 
 # ifndef _WIN32
-#  define ZHTTPD_LOGGER_FUNC_NAME (ZHTTPD::LOGGER::cleanFunctionName(__PRETTY_FUNCTION__))
+#  define ZHTTPD_LOGGER_FUNC_NAME (zhttpd::LOGGER::cleanFunctionName(__PRETTY_FUNCTION__))
 # else
 #  define ZHTTPD_LOGGER_FUNC_NAME (std::string(__FUNCTION__) + "(): ")
 # endif
 
-# define ZHTTPD_LOGGER_FILE (::ZHTTPD::LOGGER::cleanFileName(__FILE__))
+# define ZHTTPD_LOGGER_FILE (::zhttpd::LOGGER::cleanFileName(__FILE__))
 
-# define LOG_INFO(m) ::ZHTTPD::Logger::getInstance()->info(ZHTTPD_LOGGER_FUNC_NAME + m)
-# define LOG_WARN(m) ::ZHTTPD::Logger::getInstance()->warn(ZHTTPD_LOGGER_FUNC_NAME + m)
-# define LOG_ERROR(m) ::ZHTTPD::Logger::getInstance()->error(ZHTTPD_LOGGER_FUNC_NAME + m)
-# define LOG_FATAL(m) ::ZHTTPD::Logger::getInstance()->fatal(ZHTTPD_LOGGER_FUNC_NAME + m)
+# define LOG_INFO(m) ::zhttpd::Logger::getInstance()->info(ZHTTPD_LOGGER_FUNC_NAME + m)
+# define LOG_WARN(m) ::zhttpd::Logger::getInstance()->warn(ZHTTPD_LOGGER_FUNC_NAME + m)
+# define LOG_ERROR(m) ::zhttpd::Logger::getInstance()->error(ZHTTPD_LOGGER_FUNC_NAME + m)
+# define LOG_FATAL(m) ::zhttpd::Logger::getInstance()->fatal(ZHTTPD_LOGGER_FUNC_NAME + m)
 
 # ifdef ZHTTPD_DEBUG
-#  define LOG_DEBUG(m) ::ZHTTPD::Logger::getInstance()->debug(ZHTTPD_LOGGER_FILE + ": " + ZHTTPD::Logger::toString<int>(__LINE__) + ": " + ZHTTPD_LOGGER_FUNC_NAME + m)
+#  define LOG_DEBUG(m) ::zhttpd::Logger::getInstance()->debug(ZHTTPD_LOGGER_FILE + ": " + zhttpd::Logger::toString<int>(__LINE__) + ": " + ZHTTPD_LOGGER_FUNC_NAME + m)
 # else
 #  define LOG_DEBUG(m) (static_cast<void>(0))
 # endif
 
 // TODO : logger thread safe ?
-namespace ZHTTPD
+namespace zhttpd
 {
     /**
      * \class Logger

@@ -6,10 +6,10 @@
 
 #include "UrlRewrite.hpp"
 
-using namespace ZHTTPD::Module;
-using namespace ZHTTPD::API;
+using namespace zhttpd::Module;
+using namespace zhttpd::api;
 
-void UrlRewrite::processRequest(EVENT::Type event, IRequest* request, IBuffer* buffer)
+void UrlRewrite::processRequest(event::Type event, IRequest* request, IBuffer* buffer)
 {
 
 }

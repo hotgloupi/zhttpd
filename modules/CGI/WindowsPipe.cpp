@@ -51,7 +51,7 @@ void WindowsPipe::CloseWritePipe()
     this->_write_closed = true;
 }
 
-API::size_t WindowsPipe::read(char* buffer, API::size_t length)
+api::size_t WindowsPipe::read(char* buffer, api::size_t length)
 {
     DWORD bytesRead;
     if (!::ReadFile(this->_read, buffer, length, &bytesRead, 0) && ::GetLastError() != ERROR_BROKEN_PIPE)
@@ -59,7 +59,7 @@ API::size_t WindowsPipe::read(char* buffer, API::size_t length)
     return bytesRead;
 }
 
-API::size_t WindowsPipe::write(char const* buffer, API::size_t length)
+api::size_t WindowsPipe::write(char const* buffer, api::size_t length)
 {
     DWORD bytesWrote;
     if (!::WriteFile(this->_write, buffer, length, &bytesWrote, 0))

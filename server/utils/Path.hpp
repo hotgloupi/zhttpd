@@ -12,9 +12,9 @@
 #  include "PathUnix.hpp"
 # endif
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    class Path : public IMPLEMENTATION::Path
+    class Path : public implementation::Path
     {
     private:
         std::string _path;
@@ -46,26 +46,26 @@ namespace ZHTTPD
 
         static inline bool exists(std::string const& path)
         {
-            return IMPLEMENTATION::Path::exists(path);
+            return implementation::Path::exists(path);
         }
 
         static inline bool isDirectory(std::string const& path)
         {
-            return IMPLEMENTATION::Path::isDirectory(path);
+            return implementation::Path::isDirectory(path);
         }
 
         static inline std::list<std::string> getDirectoryContent(std::string const& path)
         {
-            return IMPLEMENTATION::Path::getDirectoryContent(path);
+            return implementation::Path::getDirectoryContent(path);
         }
         static inline std::string cwd()
         {
-            return IMPLEMENTATION::Path::cwd();
+            return implementation::Path::cwd();
         }
 
         static inline bool isAbsolute(std::string const& path)
         {
-            return IMPLEMENTATION::Path::isAbsolute(path);
+            return implementation::Path::isAbsolute(path);
         }
 
     private:

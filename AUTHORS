@@ -6,8 +6,8 @@ Main author and maintainer
 Authors
  Jérémy Virant <dre.jere@gmail.com>             (server/thread)
  Martin Tapia <paps.owns@gmail.com>             (modules parser, filereader, dirlisting, lua, preoutputbuilder)
- Pierre Bertran <bertran.pierre@gmail.com>      (server/parser, server/configuration)
+ Pierre Bertran <bertran.pierre@gmail.com>      (server/parser, server/configuration, unitester)
 
 Contributors
  David Garyga <plugzy@gmail.com>                (module ssl, uml)
- Aurelien Lebrun <aurelien.lebrun@gmail.com>    (module cgi)
+ Aurelien Lebrun <aurelien.lebrun@gmail.com>    (module cgi (first version))

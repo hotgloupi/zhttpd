@@ -18,11 +18,9 @@
             <option key=".jpg" value="image/jpeg" />
             <option key=".so" value="octet/stream" />
         </module>
-
-        <module name="mod_cgi" enabled="true">
-            <option key="php" value="/usr/bin/php-cgi" /> <!-- key: file extention -->
-            <option key="php3" value="/usr/bin/php-cgi" /> <!-- value: associated command/program -->
-            <option key="pl" value="/usr/bin/perl" />
+        <module name="mod_cgi">
+            <option key="sh" value="/bin/sh" />
+            <option key="php" value="/usr/bin/php-cgi" />
         </module>
     </modules>
 

@@ -5,14 +5,14 @@
 
 # include "WindowsSocket.hpp"
 
-using namespace ZHTTPD;
-using namespace ZHTTPD::IMPLEMENTATION;
+using namespace zhttpd;
+using namespace zhttpd::implementation;
 
-WindowsSocket::WindowsSocket(API::socket_t socket) : _socket(socket)
+WindowsSocket::WindowsSocket(api::socket_t socket) : _socket(socket)
 {
 }
 
-WindowsSocket::WindowsSocket(ZHTTPD::API::uint32_t ip, ZHTTPD::API::uint16_t port)
+WindowsSocket::WindowsSocket(zhttpd::api::uint32_t ip, zhttpd::api::uint16_t port)
 {
     WSADATA wsaData;
     int err = ::WSAStartup(MAKEWORD(2,2), &wsaData);
@@ -48,17 +48,17 @@ void WindowsSocket::close()
     ::closesocket(this->_socket);
 }
 
-ZHTTPD::API::size_t WindowsSocket::write(char const* data, size_t len)
+zhttpd::api::size_t WindowsSocket::write(char const* data, size_t len)
 {
-    ZHTTPD::API::ssize_t res = ::send(this->_socket, data, len, 0);
+    zhttpd::api::ssize_t res = ::send(this->_socket, data, len, 0);
     if (res < 0)
         throw std::runtime_error("write() failure");
     return res;
 }
 
-ZHTTPD::API::size_t WindowsSocket::read(char* data, size_t len)
+zhttpd::api::size_t WindowsSocket::read(char* data, size_t len)
 {
-    ZHTTPD::API::ssize_t res = ::recv(this->_socket, data, len, 0);
+    zhttpd::api::ssize_t res = ::recv(this->_socket, data, len, 0);
     // TODO
     // Je m'appelle Martin et je viens de changer ca
     // ca throw quand ca deco (c'est mieux ? ou pas)
@@ -68,11 +68,11 @@ ZHTTPD::API::size_t WindowsSocket::read(char* data, size_t len)
     return res;
 }
 
-ZHTTPD::API::socket_t WindowsSocket::accept()
+zhttpd::api::socket_t WindowsSocket::accept()
 {
     struct ::sockaddr_in csin;
     unsigned int len = sizeof(csin);
-    ZHTTPD::API::socket_t socket = ::accept(this->_socket,
+    zhttpd::api::socket_t socket = ::accept(this->_socket,
                                          reinterpret_cast<struct ::sockaddr*>(&csin),
                                          reinterpret_cast<int *>(&len));
     if (socket < 0)

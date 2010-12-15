@@ -8,7 +8,7 @@
 
 #include "Timer.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
 Timer::Timer()
 {
@@ -31,7 +31,7 @@ void Timer::reset()
 #endif
 }
 
-API::uint32_t Timer::getElapsedTime() const
+api::uint32_t Timer::getElapsedTime() const
 {
 #ifdef _WIN32 //windows
     LARGE_INTEGER curCount;
@@ -48,7 +48,7 @@ API::uint32_t Timer::getElapsedTime() const
 #endif
 }
 
-API::uint64_t Timer::getPreciseElapsedTime() const
+api::uint64_t Timer::getPreciseElapsedTime() const
 {
 #ifdef _WIN32 //windows
     LARGE_INTEGER curCount;
@@ -66,7 +66,7 @@ API::uint64_t Timer::getPreciseElapsedTime() const
 #endif
 }
 
-void Timer::sleep(API::uint32_t ms)
+void Timer::sleep(api::uint32_t ms)
 {
 #ifdef _WIN32
     ::Sleep(ms);

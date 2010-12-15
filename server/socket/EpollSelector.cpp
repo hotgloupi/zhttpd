@@ -12,9 +12,9 @@
 #include "SelfConnector.hpp"
 #include "EpollSelector.hpp"
 
-using namespace ZHTTPD::POLICIES;
+using namespace zhttpd::POLICIES;
 
-ZHTTPD::API::size_t const EpollSelector::EPOLL_SIZE = 5000;
+zhttpd::api::size_t const EpollSelector::EPOLL_SIZE = 5000;
 
 EpollSelector::EpollSelector() :
     _epfd(-1),
@@ -44,7 +44,7 @@ EpollSelector::~EpollSelector()
 void EpollSelector::watchSockets(ISocketEventNotifier& notifier)
 {
     static char buf[4096];
-    ZHTTPD::API::socket_t intfd = this->_read_interrupt_socket->getSocket();
+    zhttpd::api::socket_t intfd = this->_read_interrupt_socket->getSocket();
 #ifdef ZHTTPD_DEBUG
     if (this->_nfds == 0)
     {
@@ -74,7 +74,7 @@ void EpollSelector::watchSockets(ISocketEventNotifier& notifier)
     for (int i = 0; i < nfsd; ++i)
     {
         epoll_event_t* ev = &this->_events[i];
-        ZHTTPD::API::socket_t fd = ev->data.fd;
+        zhttpd::api::socket_t fd = ev->data.fd;
 
         if (fd == intfd)
         {
@@ -87,24 +87,24 @@ void EpollSelector::watchSockets(ISocketEventNotifier& notifier)
         {
             if (ev->events & EPOLLERR || ev->events & EPOLLRDHUP)
             {
-                notifier.notify(fd, ZHTTPD::SOCKET_EVENT::HAS_ERROR);
+                notifier.notify(fd, zhttpd::socket_event::HAS_ERROR);
             }
             else
             {
                 if (ev->events & EPOLLIN)
                 {
-                    notifier.notify(fd, ZHTTPD::SOCKET_EVENT::CAN_READ);
+                    notifier.notify(fd, zhttpd::socket_event::CAN_READ);
                 }
                 if (ev->events & EPOLLOUT)
                 {
-                    notifier.notify(fd, ZHTTPD::SOCKET_EVENT::CAN_WRITE);
+                    notifier.notify(fd, zhttpd::socket_event::CAN_WRITE);
                 }
             }
         }
     }
 }
 
-void EpollSelector::registerFileDescriptor(ZHTTPD::API::socket_t fd)
+void EpollSelector::registerFileDescriptor(zhttpd::api::socket_t fd)
 {
     epoll_event_t ev;
     ::memset(&ev, 0, sizeof(ev));
@@ -115,31 +115,31 @@ void EpollSelector::registerFileDescriptor(ZHTTPD::API::socket_t fd)
         LOG_ERROR("epoll_ctl(ADD): " + std::string(strerror(errno)));
         return ;
     }
-    ZHTTPD::Atomic::increment(&this->_nfds);
+    zhttpd::Atomic::increment(&this->_nfds);
 }
 
-void EpollSelector::unregisterFileDescriptor(ZHTTPD::API::socket_t fd)
+void EpollSelector::unregisterFileDescriptor(zhttpd::api::socket_t fd)
 {
     static epoll_event_t ev; // linux kernel < 2.6.9 requires non-NULL pointer in event
     if (epoll_ctl(this->_epfd, EPOLL_CTL_DEL, fd, &ev) == -1)
     {
        LOG_ERROR("epoll_ctl(DEL): " + std::string(strerror(errno)));
     }
-    ZHTTPD::Atomic::decrement(&this->_nfds);
+    zhttpd::Atomic::decrement(&this->_nfds);
 }
 
 void EpollSelector::_initInterruptors()
 {
     bool ok = false;
-    for (API::uint16_t port = 9000 ; port < 10000 && ok == false ; ++port)
+    for (api::uint16_t port = 9000 ; port < 10000 && ok == false ; ++port)
     {
         try
         {
-            ZHTTPD::Socket sl(0x7F000001, port);
-            ZHTTPD::SelfConnector connector(port);
+            zhttpd::Socket sl(0x7F000001, port);
+            zhttpd::SelfConnector connector(port);
 
             {
-                ZHTTPD::Thread t(&connector);
+                zhttpd::Thread t(&connector);
                 this->_write_interrupt_socket = sl.accept();
                 this->_read_interrupt_socket = connector.getSocket();
             }

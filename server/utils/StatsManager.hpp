@@ -7,7 +7,7 @@
 #include "thread/Mutex.hpp"
 #include "utils/macros.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class StatsManager : public Singleton<StatsManager>
     {
@@ -23,7 +23,7 @@ namespace ZHTTPD
         public:
             StatsManager();
             ~StatsManager();
-            API::uint32_t getUptime();
+            api::uint32_t getUptime();
             unsigned int getSentBytes();
             void addSentBytes(unsigned int bytes);
             unsigned int getReceivedBytes();

@@ -12,7 +12,7 @@
 #include "ServerState.hpp"
 #include "Server.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
 Server::Server() :
     _rcon(0)
@@ -27,11 +27,11 @@ Server::~Server()
 
 void Server::_loadListeners(Configuration* config)
 {
-    typedef std::map<API::uint16_t, std::string> ports_t;
+    typedef std::map<api::uint16_t, std::string> ports_t;
     ports_t const& ports = config->getListenPorts();
     ports_t::const_iterator it = ports.begin();
     ports_t::const_iterator ite = ports.end();
-    API::size_t errors = 0;
+    api::size_t errors = 0;
     while (it != ite)
     {
         try
@@ -49,7 +49,7 @@ void Server::_loadListeners(Configuration* config)
     }
     if (this->_listeners.size() > 0)
     {
-        std::list<API::uint16_t> to_delete;
+        std::list<api::uint16_t> to_delete;
 
         listeners_t::iterator it = this->_listeners.begin();
         listeners_t::iterator end = this->_listeners.end();
@@ -63,7 +63,7 @@ void Server::_loadListeners(Configuration* config)
             }
         }
 
-        std::list<API::uint16_t>::iterator it_del = to_delete.begin();
+        std::list<api::uint16_t>::iterator it_del = to_delete.begin();
         for (; it_del != to_delete.end(); ++it_del)
         {
             this->_listeners.erase(*it_del);
@@ -152,7 +152,7 @@ bool Server::reload()
     try
     {
         Configuration *conf = 0;
-        PARSER::ConfigurationParser parser;
+        parser::ConfigurationParser parser;
         parser.loadFile(this->_configuration_path);
         conf = parser.parse();
         ConfigurationManager::getInstance()->setConfiguration(conf);
@@ -183,7 +183,7 @@ bool Server::_loadDefaultConfiguration()
     try
     {
         Configuration* conf = 0;
-        PARSER::ConfigurationParser parser;
+        parser::ConfigurationParser parser;
         parser.loadString(str_conf);
         conf = parser.parse();
         ConfigurationManager::getInstance()->setConfiguration(conf);

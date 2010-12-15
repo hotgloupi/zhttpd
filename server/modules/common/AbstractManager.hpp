@@ -11,13 +11,13 @@
 # include "thread/ScopeLock.hpp"
 # include "thread/Mutex.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace MOD
+    namespace mod
     {
         namespace POLICIES
         {
-            class NoConfigurationPolicy : public ZHTTPD::API::IModuleManager
+            class NoConfigurationPolicy : public zhttpd::api::IModuleManager
             {
             public:
                 virtual void addConfigurationEntry(std::string const&, std::string const&)
@@ -25,7 +25,7 @@ namespace ZHTTPD
                 }
             };
 
-            class MapConfigurationPolicy : public ZHTTPD::API::IModuleManager
+            class MapConfigurationPolicy : public zhttpd::api::IModuleManager
             {
             protected:
                 std::map<std::string, std::string> _configuration;
@@ -57,22 +57,22 @@ namespace ZHTTPD
                     MemoryPool<ManagedClass>    _memory_pool;
                     Mutex                       _memory_mutex;
 #ifdef ZHTTPD_DEBUG
-                    std::set<ZHTTPD::API::IModule*> _allocated_modules;
+                    std::set<zhttpd::api::IModule*> _allocated_modules;
 #endif
 
                 public:
-                    virtual ZHTTPD::API::IModule* getInstance(bool in_response = false)
+                    virtual zhttpd::api::IModule* getInstance(bool in_response = false)
                     {
                         (void) in_response;
                         this->_memory_mutex.lock();
-                        ZHTTPD::API::IModule* module = this->_memory_pool.allocate(this);
+                        zhttpd::api::IModule* module = this->_memory_pool.allocate(this);
 #ifdef ZHTTPD_DEBUG
-                        this->_allocated_modules.insert(static_cast<ZHTTPD::API::IModule*>(module));
+                        this->_allocated_modules.insert(static_cast<zhttpd::api::IModule*>(module));
 #endif
                         this->_memory_mutex.unlock();
                         return module;
                     }
-                    virtual void releaseInstance(ZHTTPD::API::IModule* module)
+                    virtual void releaseInstance(zhttpd::api::IModule* module)
                     {
                         this->_memory_mutex.lock();
                         this->_memory_pool.release(reinterpret_cast<ManagedClass*>(module));
@@ -89,7 +89,7 @@ namespace ZHTTPD
                         {
                             LOG_WARN("Not all modules are released: " +
                                      Logger::toString(this->_allocated_modules.size()) + " left");
-                            std::set<ZHTTPD::API::IModule*>::iterator it = this->_allocated_modules.begin(),
+                            std::set<zhttpd::api::IModule*>::iterator it = this->_allocated_modules.begin(),
                                                                    end = this->_allocated_modules.end();
                             for (; it != end; ++it)
                             {
@@ -104,7 +104,7 @@ namespace ZHTTPD
             class StatelessManagementPolicy : public ConfigurationPolicy
             {
             private:
-                API::IModule* _module;
+                api::IModule* _module;
 
             public:
                 StatelessManagementPolicy() : _module(0)
@@ -121,13 +121,13 @@ namespace ZHTTPD
                     }
                 }
 
-                virtual ZHTTPD::API::IModule* getInstance(bool in_response = false)
+                virtual zhttpd::api::IModule* getInstance(bool in_response = false)
                 {
                     (void) in_response;
                     return this->_module;
                 }
 
-                virtual void releaseInstance(ZHTTPD::API::IModule*) {}
+                virtual void releaseInstance(zhttpd::api::IModule*) {}
             };
         }
 
@@ -136,11 +136,11 @@ namespace ZHTTPD
         {
         private:
             std::string _name;
-            ZHTTPD::API::CATEGORY::Type _category;
+            zhttpd::api::category::Type _category;
 
         public:
             AbstractManager(std::string const& name,
-                            ZHTTPD::API::CATEGORY::Type category) :
+                            zhttpd::api::category::Type category) :
                 ManagementPolicy(), _name(name), _category(category)
             {
             }
@@ -150,12 +150,12 @@ namespace ZHTTPD
                 return this->_name;
             }
 
-            virtual ZHTTPD::API::CATEGORY::Type getCategory() const
+            virtual zhttpd::api::category::Type getCategory() const
             {
                 return this->_category;
             }
 
-            virtual bool isRequired(ZHTTPD::API::IRequest const&) const
+            virtual bool isRequired(zhttpd::api::IRequest const&) const
             {
                 return true;
             }
@@ -168,7 +168,7 @@ namespace ZHTTPD
         {                                                                                                   \
         public:                                                                                             \
             state##Manager(std::string const& name,                                                         \
-                           ZHTTPD::API::CATEGORY::Type category = ZHTTPD::API::CATEGORY::UNDEFINED) :             \
+                           zhttpd::api::category::Type category = zhttpd::api::category::UNDEFINED) :             \
                 AbstractManager< POLICIES::state##ManagementPolicy<ManagedClass, ConfigurationPolicy> >(name, category) {}       \
         }
 

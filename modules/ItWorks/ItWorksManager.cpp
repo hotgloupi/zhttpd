@@ -5,13 +5,13 @@
 ItWorksManager::ItWorksManager() : _name("mod_itworks") {}
 
 // Retourne une nouvelle instance (nous pourrions retourner la même dans ce cas)
-ZHTTPD::API::IModule* ItWorksManager::getInstance(bool)
+zhttpd::api::IModule* ItWorksManager::getInstance(bool)
 {
     return new ItWorks();
 }
 
 // Le serveur redonne une instance quand il n'en a plus besoin
-void ItWorksManager::releaseInstance(ZHTTPD::API::IModule* module)
+void ItWorksManager::releaseInstance(zhttpd::api::IModule* module)
 {
     delete module;
 }
@@ -22,9 +22,9 @@ void ItWorksManager::addConfigurationEntry(std::string const&, std::string const
 }
 
 // Notre module est de type PROCESSING
-ZHTTPD::API::CATEGORY::Type ItWorksManager::getCategory() const
+zhttpd::api::category::Type ItWorksManager::getCategory() const
 {
-    return ZHTTPD::API::CATEGORY::PROCESSING;
+    return zhttpd::api::category::PROCESSING;
 }
 
 // Tout les modules ont un nom
@@ -35,7 +35,7 @@ std::string const& ItWorksManager::getName() const
 
 // Utile pour les modules de type filtre (comme gzip),
 // Nous renvoyons toujours true
-bool ItWorksManager::isRequired(ZHTTPD::API::IRequest const&) const
+bool ItWorksManager::isRequired(zhttpd::api::IRequest const&) const
 {
     return true;
 }

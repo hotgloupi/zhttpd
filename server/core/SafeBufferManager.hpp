@@ -9,19 +9,19 @@
 # include "thread/ScopeLock.hpp"
 # include "utils/Logger.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    class SafeBufferManager : public API::IBufferManager
+    class SafeBufferManager : public api::IBufferManager
     {
-        typedef std::set<API::IBuffer*> buffers_t;
+        typedef std::set<api::IBuffer*> buffers_t;
 
     private:
-        API::IBufferManager&    _manager;
+        api::IBufferManager&    _manager;
         buffers_t               _buffers;
         Mutex                   _mutex;
 
     public:
-        SafeBufferManager(API::IBufferManager& manager) : _manager(manager) {}
+        SafeBufferManager(api::IBufferManager& manager) : _manager(manager) {}
         virtual ~SafeBufferManager()
         {
             if (this->_buffers.size() > 0)
@@ -36,46 +36,46 @@ namespace ZHTTPD
             }
         }
 
-        virtual API::IBuffer* allocate(std::string const& string)
+        virtual api::IBuffer* allocate(std::string const& string)
         {
             if (this->_mutex.tryLock() == false)
             {
                 LOG_WARN("Concurrent access detected");
                 this->_mutex.lock();
             }
-            API::IBuffer* res = this->_manager.allocate(string);
+            api::IBuffer* res = this->_manager.allocate(string);
             this->_buffers.insert(res);
             this->_mutex.unlock();
             return res;
         }
 
-        virtual API::IBuffer* allocate(char const* data, size_t size)
+        virtual api::IBuffer* allocate(char const* data, size_t size)
         {
             if (this->_mutex.tryLock() == false)
             {
                 LOG_WARN("Concurrent access detected");
                 this->_mutex.lock();
             }
-            API::IBuffer* res = this->_manager.allocate(data, size);
+            api::IBuffer* res = this->_manager.allocate(data, size);
             this->_buffers.insert(res);
             this->_mutex.unlock();
             return res;
         }
 
-        virtual API::IBuffer* allocate(size_t size)
+        virtual api::IBuffer* allocate(size_t size)
         {
             if (this->_mutex.tryLock() == false)
             {
                 LOG_WARN("Concurrent access detected");
                 this->_mutex.lock();
             }
-            API::IBuffer* res = this->_manager.allocate(size);
+            api::IBuffer* res = this->_manager.allocate(size);
             this->_buffers.insert(res);
             this->_mutex.unlock();
             return res;
         }
 
-        virtual void release(API::IBuffer* buffer)
+        virtual void release(api::IBuffer* buffer)
         {
             if (this->_mutex.tryLock() == false)
             {
@@ -87,7 +87,7 @@ namespace ZHTTPD
             this->_mutex.unlock();
         }
 
-        API::IBufferManager& getBufferManager()
+        api::IBufferManager& getBufferManager()
         {
             return this->_manager;
         }

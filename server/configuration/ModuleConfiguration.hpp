@@ -7,7 +7,7 @@
 
 # include "api/IModuleManager.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class Configuration;
 
@@ -18,13 +18,13 @@ namespace ZHTTPD
     private:
         std::string                         _name;
         options_t                           _options;
-        API::IModuleManager*                _manager;
+        api::IModuleManager*                _manager;
         bool                                _merged;
         bool                                _loaded;
         bool                                _enabled;
         Configuration&                      _config;
 
-        void _setConfiguration(ZHTTPD::API::IModuleManager* manager);
+        void _setConfiguration(zhttpd::api::IModuleManager* manager);
 
     public:
         ModuleConfiguration(std::string const& name, bool enabled, Configuration& config);
@@ -33,7 +33,7 @@ namespace ZHTTPD
         void addConfigurationEntry(std::string const& key, std::string const& value);
         std::string const& getConfigurationEntry(std::string const& key);
         std::string const& getName() const;
-        API::IModuleManager* getModuleManager();
+        api::IModuleManager* getModuleManager();
         options_t const& getOptions() const;
 
         void merge(ModuleConfiguration const& parent);

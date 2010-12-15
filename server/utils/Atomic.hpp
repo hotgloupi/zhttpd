@@ -8,9 +8,9 @@
 # include "AtomicUnix.hpp"
 #endif // !_WIN32
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    typedef IMPLEMENTATION::Atomic      Atomic;
+    typedef implementation::Atomic      Atomic;
 }
 
 #endif // !__ATOMIC_HPP__

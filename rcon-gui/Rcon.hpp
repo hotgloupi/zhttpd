@@ -7,7 +7,7 @@
 #include "ConnectWindow.hpp"
 #include "Network.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     namespace RCON
     {

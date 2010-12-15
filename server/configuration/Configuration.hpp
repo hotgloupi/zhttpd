@@ -12,14 +12,14 @@
 # include "ModuleConfiguration.hpp"
 # include "ModuleManagerFactory.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class Configuration : public NonCopyable
     {
     public:
-        typedef std::map<API::CATEGORY::Type, std::list<std::string> > available_modules_t;
+        typedef std::map<api::category::Type, std::list<std::string> > available_modules_t;
         typedef std::map<std::string, ModuleConfiguration*> modules_configuration_t;
-        typedef std::map<API::uint16_t, std::string> io_modules_t;
+        typedef std::map<api::uint16_t, std::string> io_modules_t;
 
     private:
         modules_configuration_t         _modules_configuration;
@@ -35,12 +35,12 @@ namespace ZHTTPD
         void                            addModuleConfiguration(ModuleConfiguration& module_configuration);
         modules_configuration_t const&  getModulesConfiguration() const;
         ModuleConfiguration&            getModuleConfiguration(std::string const& name);
-        API::IModuleManager*            getModuleManager(std::string const& name);
+        api::IModuleManager*            getModuleManager(std::string const& name);
         available_modules_t const&      getAvailableModules() const;
         io_modules_t const&             getListenPorts() const;
-        void                            addListenPort(API::uint16_t port, std::string const& io_module);
+        void                            addListenPort(api::uint16_t port, std::string const& io_module);
         void                            setVHost(VHost& vhost);
-        API::IModuleManager&            getInputOutputModuleManager(API::uint16_t port);
+        api::IModuleManager&            getInputOutputModuleManager(api::uint16_t port);
         void                            addModuleDirectory(std::string const& path);
         void                            addIndexFile(std::string const& filename);
         std::list<std::string> const&   getIndexFiles() const;

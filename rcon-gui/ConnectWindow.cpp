@@ -2,7 +2,7 @@
 #include "Rcon.hpp"
 #include <QMessageBox>
 
-namespace ZHTTPD
+namespace zhttpd
 {
     namespace RCON
     {

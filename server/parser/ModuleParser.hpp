@@ -6,9 +6,9 @@
 # include "configuration/Configuration.hpp"
 # include "configuration/VHost.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace PARSER
+    namespace parser
     {
         class ModuleParser
         {

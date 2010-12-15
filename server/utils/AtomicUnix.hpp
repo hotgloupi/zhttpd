@@ -16,9 +16,9 @@
 #   define ZHTTPD_ATOMIC_READANDCLEAR(ptr) ::__sync_fetch_and_and(reinterpret_cast<volatile unsigned int*>(ptr), 0)
 #  endif
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace IMPLEMENTATION
+    namespace implementation
     {
         struct Atomic
         {

@@ -15,7 +15,7 @@
 # include "ScopeLock.hpp"
 # include "ICondition.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class ThreadPool : private NonCopyable
     {

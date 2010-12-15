@@ -10,9 +10,9 @@
 
 # include "utils/Logger.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace IMPLEMENTATION
+    namespace implementation
     {
         class Library
         {

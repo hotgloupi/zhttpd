@@ -7,8 +7,8 @@
 
 #include "thread/ThreadUnix.hpp"
 
-using namespace ZHTTPD;
-using namespace ZHTTPD::IMPLEMENTATION;
+using namespace zhttpd;
+using namespace zhttpd::implementation;
 
 
 void* Thread::_run(Thread* thread)

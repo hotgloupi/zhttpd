@@ -7,22 +7,22 @@
 
 # include "DirListing.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace MOD
+    namespace mod
     {
         class DirListingManager : public StatefullManager<DirListing>
         {
             private:
             public:
                 DirListingManager() :
-                    StatefullManager<DirListing>("mod_dirlisting", ZHTTPD::API::CATEGORY::PROCESSING)
+                    StatefullManager<DirListing>("mod_dirlisting", zhttpd::api::category::PROCESSING)
                 {
                 }
 
-                bool isRequired(ZHTTPD::API::IRequest const& req) const
+                bool isRequired(zhttpd::api::IRequest const& req) const
                 {
-                    if (ZHTTPD::Path(req.getFilePath()).isDirectory())
+                    if (zhttpd::Path(req.getFilePath()).isDirectory())
                     {
                         LOG_DEBUG("It is a directory !");
                     }
@@ -30,7 +30,7 @@ namespace ZHTTPD
                     {
                         LOG_DEBUG("It is NOT a directory !");
                     }
-                    return ZHTTPD::Path(req.getFilePath()).isDirectory();
+                    return zhttpd::Path(req.getFilePath()).isDirectory();
                 }
         };
     }

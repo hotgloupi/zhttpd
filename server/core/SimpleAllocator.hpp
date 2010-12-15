@@ -4,13 +4,13 @@
 
 # include "api/types.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class SimpleAllocator
     {
     public:
-        char* allocate(API::size_t size);
-        char* resize(char* data, API::size_t old_size, API::size_t new_size);
+        char* allocate(api::size_t size);
+        char* resize(char* data, api::size_t old_size, api::size_t new_size);
         void release(char* data);
     };
 }

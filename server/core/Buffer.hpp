@@ -8,19 +8,19 @@
 # include "utils/NonCopyable.hpp"
 # include "utils/StatsManager.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     template<typename Allocator>
-    class Buffer : public API::IBuffer, public NonCopyable
+    class Buffer : public api::IBuffer, public NonCopyable
     {
     private:
         Allocator* _allocator;
         char* _data;
-        API::size_t _size;
-        API::size_t _offset;
+        api::size_t _size;
+        api::size_t _offset;
 
     public:
-        Buffer(Allocator& allocator, char const* data, API::size_t size) :
+        Buffer(Allocator& allocator, char const* data, api::size_t size) :
             _allocator(&allocator),
             _data(0),
             _size(size),
@@ -31,7 +31,7 @@ namespace ZHTTPD
             StatsManager::getInstance()->addBuffer();
         }
 
-        Buffer(Allocator& allocator, API::size_t size) :
+        Buffer(Allocator& allocator, api::size_t size) :
             _allocator(&allocator),
             _data(0),
             _size(size),
@@ -52,18 +52,18 @@ namespace ZHTTPD
             return this->_data + this->_offset;
         }
 
-        API::size_t getSize() const
+        api::size_t getSize() const
         {
             return this->_size;
         }
 
-        void setSize(API::size_t size)
+        void setSize(api::size_t size)
         {
             this->_data = this->_allocator->resize(this->_data, this->_offset + this->_size, this->_offset + size);
             this->_size = size;
         }
 
-        void setSize(API::size_t start, API::size_t size)
+        void setSize(api::size_t start, api::size_t size)
         {
             this->_offset += start;
             this->setSize(start + size);

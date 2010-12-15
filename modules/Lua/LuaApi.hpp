@@ -8,10 +8,10 @@
 class LuaApi
 {
     private:
-        ZHTTPD::API::IRequest* _request;
+        zhttpd::api::IRequest* _request;
         std::string _buffer;
     public:
-        LuaApi(ZHTTPD::API::IRequest* _request);
+        LuaApi(zhttpd::api::IRequest* _request);
         LuaApi(LuaApi const& api);
         ~LuaApi();
         LuaApi& operator =(LuaApi const& api);

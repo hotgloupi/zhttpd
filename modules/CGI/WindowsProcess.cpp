@@ -73,12 +73,12 @@ bool WindowsProcess::create(std::string const & executable, std::list<std::strin
     return true;
 }
 
-ZHTTPD::API::size_t WindowsProcess::write(char const* buffer, ZHTTPD::API::size_t length)
+zhttpd::api::size_t WindowsProcess::write(char const* buffer, zhttpd::api::size_t length)
 {
     return this->_stdin.write(buffer, length);
 }
 
-ZHTTPD::API::size_t WindowsProcess::read(char* buffer, ZHTTPD::API::size_t length)
+zhttpd::api::size_t WindowsProcess::read(char* buffer, zhttpd::api::size_t length)
 {
     return this->_stdout.read(buffer, length);
 }

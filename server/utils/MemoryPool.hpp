@@ -13,7 +13,7 @@
 # include "utils/StatsManager.hpp"
 # include "thread/Mutex.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     template <typename C>
     class MemoryPool
@@ -30,7 +30,7 @@ namespace ZHTTPD
 # endif
 
     public:
-        MemoryPool(API::size_t size = 1000)
+        MemoryPool(api::size_t size = 1000)
         {
             this->_free_blocks.reserve(size);
             this->_blocks.reserve(size);

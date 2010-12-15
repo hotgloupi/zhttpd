@@ -5,9 +5,9 @@
 #include <cstring> // memcpy
 #include <algorithm> // find
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    BufferAllocator::BufferAllocator(API::size_t size)
+    BufferAllocator::BufferAllocator(api::size_t size)
     {
         this->_free_blocks.reserve(size);
         this->_blocks.reserve(size);
@@ -48,7 +48,7 @@ namespace ZHTTPD
         LOG_INFO("Deleted " + Logger::toString(count) + " blocks.");
     }
 
-    char* BufferAllocator::allocate(API::size_t size)
+    char* BufferAllocator::allocate(api::size_t size)
     {
         if (size > BLOCK_SIZE)
         {
@@ -73,7 +73,7 @@ namespace ZHTTPD
         return ret;
     }
 
-    char* BufferAllocator::resize(char* data, API::size_t old_size, API::size_t new_size)
+    char* BufferAllocator::resize(char* data, api::size_t old_size, api::size_t new_size)
     {
 #ifdef ZHTTPD_DEBUG
         if (this->_debug.count(data) == 0)
@@ -112,7 +112,7 @@ namespace ZHTTPD
         return data;
     }
 
-    void BufferAllocator::release(char* data, API::size_t size)
+    void BufferAllocator::release(char* data, api::size_t size)
     {
 #ifdef ZHTTPD_DEBUG
         if (this->_debug.count(data) == 0)

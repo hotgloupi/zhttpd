@@ -4,44 +4,41 @@
 
 # include "types.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace API
+    namespace api
     {
         class IBuffer
         {
         public:
-            virtual ~IBuffer() {}
-
             /**
-             * Retourne les données brutes. Le pointeur n'est jamais NULL.
+             * Get buffer raw data. The returned pointer is never null.
              */
             virtual char* getRawData() = 0;
 
             /**
-             * Retourne la taille du buffer (toujours > 0).
+             * Returns the buffer size (always > 0).
              */
-            virtual API::size_t getSize() const = 0;
+            virtual api::size_t getSize() const = 0;
 
             /**
-             * Redimensionne le buffer à la taille spécifiée.
-             * Les données présentes sont conservées (fonctionne comme realloc)
-             * @param size Taille totale voulue en octet.
+             * Resize the buffer to the specified size.
+             * It acts exactly like realloc, so data are preserved.
+             * @param size Size wanted.
              */
-            virtual void setSize(API::size_t size) = 0;
+            virtual void setSize(api::size_t size) = 0;
 
             /**
-             * Redimensionne le buffer à la taille spécifiée.
-             * Les données comprisent entre l'offset `start` et `start + old_size` sont conservées
-             * et le nouveau buffer commence à l'offset `start`.
-             * @param start Offset de départ.
-             * @param size Taille totale voulue en octet.
-             * \exemple
+             * Resize the buffer to the specified size.
+             * @param start Start offset (data before are lost)
+             * @param size Total new size
+             * @example
              *  b = buffer_manager.allocate("abcdef");
-             *  b.setSize(2, 4); // b contient "cdef"
+             *  b.setSize(2, 4); // b contains "cdef"
              */
-            virtual void setSize(API::size_t start, API::size_t size) = 0;
+            virtual void setSize(api::size_t start, api::size_t size) = 0;
 
+            virtual ~IBuffer() {}
         };
     }
 }

@@ -4,7 +4,7 @@
 
 #include "Mutex.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class ScopeLock
     {

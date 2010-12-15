@@ -6,7 +6,7 @@
 #include "Configuration.hpp"
 #include "ModuleConfiguration.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
 ModuleConfiguration::ModuleConfiguration(std::string const& name, bool enabled, Configuration& config) :
     _name(name),
@@ -45,7 +45,7 @@ bool ModuleConfiguration::isEnabled() const
     return this->_enabled;
 }
 
-ZHTTPD::API::IModuleManager* ModuleConfiguration::getModuleManager()
+zhttpd::api::IModuleManager* ModuleConfiguration::getModuleManager()
 {
     if (this->_loaded == false && this->_enabled)
     {
@@ -65,7 +65,7 @@ ZHTTPD::API::IModuleManager* ModuleConfiguration::getModuleManager()
     return this->_manager;
 }
 
-void ModuleConfiguration::_setConfiguration(ZHTTPD::API::IModuleManager* manager)
+void ModuleConfiguration::_setConfiguration(zhttpd::api::IModuleManager* manager)
 {
     std::map<std::string, std::string>::iterator it = this->_options.begin();
     std::map<std::string, std::string>::iterator ite = this->_options.end();

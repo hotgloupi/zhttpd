@@ -6,7 +6,7 @@
 
 #include "api/types.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
 class WindowsPipe
 {
@@ -26,8 +26,8 @@ public:
     void CloseReadPipe();
     void CloseWritePipe();
 
-    API::size_t read(char* buffer, API::size_t length);
-    API::size_t write(char const* buffer, API::size_t length);
+    api::size_t read(char* buffer, api::size_t length);
+    api::size_t write(char const* buffer, api::size_t length);
 };
 
 #endif // WINDOWSPIPE_HPP

@@ -7,17 +7,17 @@
 
 #include "Lua.hpp"
 
-class LuaManager : public ZHTTPD::MOD::StatefullManager<Lua>
+class LuaManager : public zhttpd::mod::StatefullManager<Lua>
 {
     private:
         std::string _name;
     public:
         LuaManager() :
-            ZHTTPD::MOD::StatefullManager<Lua>("mod_lua", ZHTTPD::API::CATEGORY::PROCESSING)
+            zhttpd::mod::StatefullManager<Lua>("mod_lua", zhttpd::api::category::PROCESSING)
         {
         }
 
-        bool isRequired(ZHTTPD::API::IRequest const& request) const
+        bool isRequired(zhttpd::api::IRequest const& request) const
         {
             std::string ext;
             std::string::const_reverse_iterator it = request.getFilePath().rbegin();

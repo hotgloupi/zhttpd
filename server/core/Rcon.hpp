@@ -6,7 +6,7 @@
 # include "thread/ITask.hpp"
 # include "socket/Socket.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class Server;
 
@@ -26,7 +26,7 @@ namespace ZHTTPD
             Socket* _socket;
             std::string _buffer;
         public:
-            Rcon(Server& server, API::uint16_t port);
+            Rcon(Server& server, api::uint16_t port);
             ~Rcon();
             virtual void run();
     };

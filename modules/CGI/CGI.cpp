@@ -19,9 +19,9 @@
 #include "Utils.hpp"
 #include "Process.hpp"
 
-ZHTTPD::API::size_t const  CGI::BUFFER_SIZE = 4096;
+zhttpd::api::size_t const  CGI::BUFFER_SIZE = 4096;
 
-CGI::action_t const CGI::_actions[ZHTTPD::API::EVENT::ON_ERROR] = {
+CGI::action_t const CGI::_actions[zhttpd::api::event::ON_ERROR] = {
     0,
     0,
     &CGI::_processOnRequestData,
@@ -31,7 +31,7 @@ CGI::action_t const CGI::_actions[ZHTTPD::API::EVENT::ON_ERROR] = {
     0
 };
 
-CGI::CGI(ZHTTPD::MOD::POLICIES::MapConfigurationPolicy* module_manager) :
+CGI::CGI(zhttpd::mod::POLICIES::MapConfigurationPolicy* module_manager) :
         _module_manager(*module_manager)
 {
     this->_started = false;
@@ -44,7 +44,7 @@ CGI::~CGI()
 
 }
 
-bool CGI::processRequest(ZHTTPD::API::EVENT::Type event, request_t* request, buffer_t* buffer)
+bool CGI::processRequest(zhttpd::api::event::Type event, request_t* request, buffer_t* buffer)
 {
     action_t action = CGI::_actions[event - 1];
     if (!this->_started)
@@ -55,7 +55,7 @@ bool CGI::processRequest(ZHTTPD::API::EVENT::Type event, request_t* request, buf
             this->_process.create(this->_module_manager.getConfigurationValue(this->_extension),
                                   this->_process_arguments,
                                   this->_environment,
-                                  ZHTTPD::Path(request->getFilePath()).getBasePath().c_str());
+                                  zhttpd::Path(request->getFilePath()).getBasePath().c_str());
             this->_started = true;
         }
         catch (std::exception& e)
@@ -63,7 +63,7 @@ bool CGI::processRequest(ZHTTPD::API::EVENT::Type event, request_t* request, buf
             if (buffer != 0)
                 request->getBufferManager().release(buffer);
             LOG_ERROR("CGI Error: " + e.what());
-            request->raiseError(ZHTTPD::API::HTTP_CODE::INTERNAL_SERVER_ERROR);
+            request->raiseError(zhttpd::api::http_code::INTERNAL_SERVER_ERROR);
             return (true);
         }
     }
@@ -102,7 +102,7 @@ void CGI::_initialize(request_t* request)
 
 bool CGI::_processOnRequestData(request_t *request, buffer_t *buffer)
 {
-    ZHTTPD::API::size_t nwrite = this->_process.write(buffer->getRawData(), buffer->getSize());
+    zhttpd::api::size_t nwrite = this->_process.write(buffer->getRawData(), buffer->getSize());
     if (nwrite < buffer->getSize())
     {
         LOG_ERROR("Lost post data, cannot give it to the child process");
@@ -118,9 +118,10 @@ bool            CGI::_processOnIdle(CGI::request_t* request, CGI::buffer_t*)
     buffer_t*   to_send = 0;
     char        read_buffer[CGI::BUFFER_SIZE];
 
-    ZHTTPD::API::size_t n_read = this->_process.read(read_buffer, CGI::BUFFER_SIZE);
+    zhttpd::api::size_t n_read = this->_process.read(read_buffer, CGI::BUFFER_SIZE - 1);
     if (n_read > 0)
     {
+        read_buffer[n_read] = '\0';
         temp_buffer = request->getBufferManager().allocate(read_buffer, n_read);
         if (this->_headers == true)
         {
@@ -134,7 +135,7 @@ bool            CGI::_processOnIdle(CGI::request_t* request, CGI::buffer_t*)
             request->giveData(to_send);
         }
         else
-            LOG_DEBUG("Only headers found !");
+            LOG_DEBUG("Only headers found: " + read_buffer);
 
     }
     else
@@ -143,6 +144,8 @@ bool            CGI::_processOnIdle(CGI::request_t* request, CGI::buffer_t*)
         this->_end = false;
     if (this->_end)
     {
+        if (request->getResponseHeader("Location") != "")
+            request->setResponseCode(zhttpd::api::http_code::FOUND);
         request->raiseEnd();
         return true;
     }
@@ -169,7 +172,7 @@ void CGI::_fillEnvironment(request_t* request)
     ::memcpy(path, request_uri, request_uri_size);
     path[request_uri_size] = '\0';
     std::size_t i = 0;
-    while (path[i] != '\0' && path[i] != '&' && path[i] != '#')
+    while (path[i] != '\0' && path[i] != '?' && path[i] != '#')
         ++i;
     std::size_t query_pos = (path[i] == '?' ? i + 1 : i);
     path[i] = '\0';
@@ -184,50 +187,28 @@ void CGI::_fillEnvironment(request_t* request)
     this->_environment.setEnvironmentVariable("SERVER_PORT",
                                               std::string(ss_itoa<char>(request->getSession().getPort())).c_str());
     this->_environment.setEnvironmentVariable("REDIRECT_STATUS", "200");
-    if (this->_method == ZHTTPD::API::HTTP_METHOD::GET)
+    if (this->_method == zhttpd::api::http_method::GET)
         this->_environment.setEnvironmentVariable("REQUEST_METHOD", "GET");
-    else if (this->_method == ZHTTPD::API::HTTP_METHOD::POST)
+    else if (this->_method == zhttpd::api::http_method::POST)
         this->_environment.setEnvironmentVariable("REQUEST_METHOD", "POST");
     else
-        request->raiseError(ZHTTPD::API::HTTP_CODE::METHOD_NOT_ALLOWED);
+        request->raiseError(zhttpd::api::http_code::METHOD_NOT_ALLOWED);
     this->_environment.setEnvironmentVariable("QUERY_STRING", &request_uri[query_pos]);
     delete [] path;
 }
 
-void            CGI::_debug(request_t* request, buffer_t*)
-{
-    std::string                                                         to_send;
-    std::map<std::string, std::string>::const_iterator                  it;
-    std::map<std::string, std::string>::const_iterator                  ite;
-
-    it = this->_environment.getEnvironmentList().begin();
-    ite = this->_environment.getEnvironmentList().end();
-    to_send = "<html><body><h3>debug:</h3>";
-    for (; it != ite; it++)
-    {
-        to_send.append("<pre>" + it->first + " = " + it->second + "</pre>");
-    }
-    to_send.append("</body></html>");
-    request->setResponseHeader("Content-Type", "text/html");
-    request->setResponseCode(ZHTTPD::API::HTTP_CODE::OK);
-    buffer_t* buf_to_send =
-            request->getBufferManager().allocate(to_send.c_str(), to_send.size());
-    request->giveData(buf_to_send);
-    request->raiseEnd();
-}
-
-bool            CGI::_checkContentLength(ZHTTPD::API::uint32_t request_content_length)
+bool CGI::_checkContentLength(zhttpd::api::uint32_t request_content_length)
 {
     this->_request_content_length = request_content_length;
     return (true);
 }
 
-void            CGI::_parseHeaders(request_t* request, buffer_t* headers)
+void CGI::_parseHeaders(request_t* request, buffer_t* headers)
 {
     bool carriage_return = false;
     std::string line;
 
-    for (ZHTTPD::API::size_t i = 0; i < headers->getSize(); ++i)
+    for (zhttpd::api::size_t i = 0; i < headers->getSize(); ++i)
     {
         if (headers->getRawData()[i] == '\r')
             carriage_return = true;
@@ -245,14 +226,14 @@ void            CGI::_parseHeaders(request_t* request, buffer_t* headers)
     }
 }
 
-void            CGI::_parseHeadersLine(request_t* request, std::string const & line)
+void CGI::_parseHeadersLine(request_t* request, std::string const & line)
 {
     if (!line.size())
         return;
-    bool                        got_directive = false;
-    bool                        got_separator = false;
-    std::string                 directive;
-    std::string                 params;
+    bool got_directive = false;
+    bool got_separator = false;
+    std::string directive;
+    std::string params;
     std::string::const_iterator it = line.begin();
     std::string::const_iterator ite = line.end();
     for (; it != ite; ++it)
@@ -269,13 +250,13 @@ void            CGI::_parseHeadersLine(request_t* request, std::string const & l
     request->setResponseHeader(directive.c_str(), params.c_str());
 }
 
-CGI::buffer_t*      CGI::_extractHeaders(request_t* request, buffer_t* buffer)
+CGI::buffer_t* CGI::_extractHeaders(request_t* request, buffer_t* buffer)
 {
-    CGI::buffer_t*  data = NULL;
-    CGI::buffer_t*  headers = NULL;
-    unsigned int    separator = 0;
+    CGI::buffer_t* data = NULL;
+    CGI::buffer_t* headers = NULL;
+    unsigned int separator = 0;
 
-    for (ZHTTPD::API::size_t i = 0; i < buffer->getSize(); ++i)
+    for (zhttpd::api::size_t i = 0; i < buffer->getSize(); ++i)
     {
         if (((separator == 0 || separator == 2) && buffer->getRawData()[i] == '\r') ||
             ((separator == 1 || separator == 3) && buffer->getRawData()[i] == '\n'))

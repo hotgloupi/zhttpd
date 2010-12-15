@@ -13,8 +13,8 @@
 
 #include "CryptoLock.hpp"
 
-using namespace ZHTTPD;
-using namespace ZHTTPD::MOD;
+using namespace zhttpd;
+using namespace zhttpd::mod;
 
 SSLNetworkManager::SSLNetworkManager() :
     StatefullManager<SSLNetwork>("mod_ssl"),
@@ -38,17 +38,17 @@ void SSLNetworkManager::addConfigurationEntry(std::string const& key, std::strin
         this->_certif_file = value;
 }
 
-API::CATEGORY::Type SSLNetworkManager::getCategory() const
+api::category::Type SSLNetworkManager::getCategory() const
 {
-    return API::CATEGORY::INPUTOUTPUT;
+    return api::category::INPUTOUTPUT;
 }
 
-bool SSLNetworkManager::isRequired(API::IRequest const&) const
+bool SSLNetworkManager::isRequired(api::IRequest const&) const
 {
     return true;
 }
 
-API::IModule* SSLNetworkManager::getInstance(bool in_response)
+api::IModule* SSLNetworkManager::getInstance(bool in_response)
 {
     if (this->_ctx == 0)
     {
@@ -66,7 +66,7 @@ API::IModule* SSLNetworkManager::getInstance(bool in_response)
     return new SSLNetwork(this, in_response);
 }
 
-void SSLNetworkManager::releaseInstance(API::IModule* module)
+void SSLNetworkManager::releaseInstance(api::IModule* module)
 {
     delete module;
 }
@@ -126,13 +126,13 @@ void SSLNetworkManager::_initSsl()
     RAND_seed(rrr, 1024 * sizeof(int));
 }
 
-void SSLNetworkManager::addSsl(API::socket_t fd, SSL* ssl)
+void SSLNetworkManager::addSsl(api::socket_t fd, SSL* ssl)
 {
     ScopeLock lock(this->_ssl_mutex);
     this->_ssl[fd] = ssl;
 }
 
-SSL* SSLNetworkManager::getSsl(API::socket_t fd)
+SSL* SSLNetworkManager::getSsl(api::socket_t fd)
 {
     ScopeLock lock(this->_ssl_mutex);
     if (this->_ssl.find(fd) != this->_ssl.end())
@@ -143,7 +143,7 @@ SSL* SSLNetworkManager::getSsl(API::socket_t fd)
 void SSLNetworkManager::delSsl(SSL* ssl)
 {
     ScopeLock lock(this->_ssl_mutex);
-    for (std::map<API::socket_t, SSL*>::iterator it = this->_ssl.begin(),
+    for (std::map<api::socket_t, SSL*>::iterator it = this->_ssl.begin(),
          ite = this->_ssl.end() ; it != ite ; ++it)
     {
         if (it->second == ssl)

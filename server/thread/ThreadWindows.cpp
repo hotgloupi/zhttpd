@@ -9,8 +9,8 @@
 
 #include "thread/ThreadWindows.hpp"
 
-using namespace ZHTTPD;
-using namespace ZHTTPD::IMPLEMENTATION;
+using namespace zhttpd;
+using namespace zhttpd::implementation;
 
 DWORD Thread::_run(Thread* thread)
 {

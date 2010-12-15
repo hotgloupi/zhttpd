@@ -21,7 +21,7 @@
 # include "TaskManager.hpp"
 # include "Request.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
     template<typename Allocator>
     class _RequestManager :
@@ -33,10 +33,10 @@ namespace ZHTTPD
 
     private:
         ConfigurationManager*           _configuration_manager;
-        MOD::ParserManager*             _parser_manager;
-        MOD::BuilderManager*            _builder_manager;
-        MOD::PreOutputBuilderManager*   _preoutputbuilder_manager;
-        ZHTTPD::SocketPool*                _socket_pool;
+        mod::ParserManager*             _parser_manager;
+        mod::BuilderManager*            _builder_manager;
+        mod::PreOutputBuilderManager*   _preoutputbuilder_manager;
+        zhttpd::SocketPool*                _socket_pool;
         Thread*                         _socket_pool_thread;
 
     private:
@@ -44,9 +44,9 @@ namespace ZHTTPD
             _configuration_manager(0), _parser_manager(0)
         {
             this->_configuration_manager = ConfigurationManager::getInstance();
-            this->_parser_manager = new MOD::ParserManager();
-            this->_builder_manager = new MOD::BuilderManager();
-            this->_preoutputbuilder_manager = new MOD::PreOutputBuilderManager();
+            this->_parser_manager = new mod::ParserManager();
+            this->_builder_manager = new mod::BuilderManager();
+            this->_preoutputbuilder_manager = new mod::PreOutputBuilderManager();
             this->_socket_pool = new SocketPool();
             this->_socket_pool_thread = new Thread(this->_socket_pool);
         }
@@ -74,7 +74,7 @@ namespace ZHTTPD
                 config
             );
             LOG_DEBUG("CREATING REQUEST "+Logger::toString(request));
-            API::IModuleManager& io = config->getInputOutputModuleManager(session.getPort());
+            api::IModuleManager& io = config->getInputOutputModuleManager(session.getPort());
             request->append(io, *io.getInstance(false));
             request->append(*this->_parser_manager, *this->_parser_manager->getInstance());
             request->append(*this->_builder_manager, *this->_builder_manager->getInstance());
@@ -103,7 +103,7 @@ namespace ZHTTPD
         {
             LOG_DEBUG("ENDING REQUEST "+Logger::toString(request));
             assert(!request->isQueued() && "must not be queued");
-            API::IBufferManager* buffer_manager = &request->getBufferManager();
+            api::IBufferManager* buffer_manager = &request->getBufferManager();
 #ifdef ZHTTPD_DEBUG
             SafeBufferManager* safe_buffer_manager = dynamic_cast<SafeBufferManager*>(buffer_manager);
             assert(safe_buffer_manager != 0);
@@ -122,7 +122,7 @@ namespace ZHTTPD
 # else
 #  include "utils/LockedAllocator.hpp"
 # endif
-namespace ZHTTPD
+namespace zhttpd
 {
 # ifdef ZHTTPD_DEBUG
     typedef _RequestManager<SafeAllocator<Request> >  RequestManager;

@@ -22,7 +22,7 @@ Environment::~Environment()
 {
     if (this->_c_env != 0)
     {
-        ZHTTPD::API::size_t i = 0;
+        zhttpd::api::size_t i = 0;
         while (this->_c_env[i] != 0)
         {
             delete [] this->_c_env[i];
@@ -34,7 +34,7 @@ Environment::~Environment()
     }
 }
 
-void Environment::copyHeadersToEnvironment(ZHTTPD::API::IRequest* request)
+void Environment::copyHeadersToEnvironment(zhttpd::api::IRequest* request)
 {
     typedef std::list<std::string const*> header_keys_t;
     header_keys_t header_keys = request->getRequestHeaderKeys();
@@ -44,7 +44,15 @@ void Environment::copyHeadersToEnvironment(ZHTTPD::API::IRequest* request)
     for (; it != end; ++it)
     {
         std::string const& value = request->getRequestHeader(*(*it));
-        this->setEnvironmentVariable((*it)->c_str(), value.c_str());
+        std::string key = *(*it);
+        std::replace(key.begin(), key.end(), '-', '_');
+        std::transform(key.begin(), key.end(), key.begin(), toupper);
+        if (key != "CONTENT_LENGTH" && key != "CONTENT_TYPE")
+        {
+            key = "HTTP_" + key;
+        }
+        this->_environment[key] = value;
+        this->setEnvironmentVariable(key.c_str(), value.c_str());
     }
     this->_fillEnvironment();
 }
@@ -59,16 +67,8 @@ Environment::env_t const& Environment::getEnvironmentList() const
     return this->_environment;
 }
 
-void Environment::setEnvironmentVariable(char const* _key, char const* value)
+void Environment::setEnvironmentVariable(char const* key, char const* value)
 {
-    std::string    key(_key);
-
-    std::replace(key.begin(), key.end(), '-', '_');
-    std::transform(key.begin(), key.end(), key.begin(), toupper);
-    if (key == "CONTENT_LENGHT" || key == "CONTENT_TYPE")
-    {
-        key = "HTTP_" + key;
-    }
     this->_environment[key] = value;
 }
 
@@ -77,7 +77,7 @@ void   Environment::_fillEnvironment()
     std::map<std::string, std::string>::const_iterator          it;
     std::map<std::string, std::string>::const_iterator          ite;
     std::string                                                 temp_str;
-    ZHTTPD::API::uint32_t                                          i;
+    zhttpd::api::uint32_t                                          i;
 
     i = 0;
     it = this->_environment.begin();

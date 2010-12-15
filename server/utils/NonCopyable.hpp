@@ -2,7 +2,7 @@
 #ifndef __NONCOPYABLE_HPP__
 # define __NONCOPYABLE_HPP__
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class NonCopyable
     {

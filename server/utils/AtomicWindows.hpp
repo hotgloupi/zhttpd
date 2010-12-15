@@ -6,9 +6,9 @@
 #  include <Windows.h>
 #  include <cassert>
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace IMPLEMENTATION
+    namespace implementation
     {
         struct Atomic
         {

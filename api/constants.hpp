@@ -2,14 +2,16 @@
 #ifndef __CONSTANTS_HPP__
 # define __CONSTANTS_HPP__
 
-namespace ZHTTPD
+#undef DELETE /* Microsoft platform defines a macro DELETE */
+
+namespace zhttpd
 {
-    namespace API
+    namespace api
     {
-        namespace EVENT
+        namespace event
         {
             /**
-             * @enum ZHTTPD::API::EVENT::Type
+             * @enum zhttpd::api::event::Type
              * Évènement reçu en premier argument par la
              * méthode IModule::processRequest.
              */
@@ -55,9 +57,8 @@ namespace ZHTTPD
             };
         }
 
-        namespace HTTP_METHOD
+        namespace http_method
         {
-#undef DELETE
             /**
              * Toutes les méthodes HTTP.
              */
@@ -75,7 +76,7 @@ namespace ZHTTPD
             };
         }
 
-        namespace HTTP_CODE
+        namespace http_code
         {
             /**
              * Tous les codes de retour standards.
@@ -137,7 +138,7 @@ namespace ZHTTPD
             };
         }
 
-        namespace CATEGORY
+        namespace category
         {
             /**
              * Catégorie à laquelle appartient un module.

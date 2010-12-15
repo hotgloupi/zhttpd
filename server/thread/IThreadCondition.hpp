@@ -2,7 +2,7 @@
 #ifndef __ITHREADCONDITION_HPP__
 # define __ITHREADCONDITION_HPP__
 
-namespace ZHTTPD
+namespace zhttpd
 {
     class IThreadCondition
     {

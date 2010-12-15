@@ -6,9 +6,9 @@
 # include "IBuffer.hpp"
 # include "IRequest.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace API
+    namespace api
     {
         class IModule
         {
@@ -23,7 +23,7 @@ namespace ZHTTPD
              * d'évènement :
 \verbatim
     _________________________________________________________________________
-   | EVENT::Type      |       Actions faites sur le serveur                  |
+   | event::Type      |       Actions faites sur le serveur                  |
    --------------------------------------------------------------------------|
    | ON_CAN_READ      | Met fin à la requête                                 |
    --------------------------------------------------------------------------|
@@ -50,7 +50,7 @@ namespace ZHTTPD
              * @param request La requête
              * @param buffer Un pointeur vers le buffer à traiter
              */
-            virtual bool processRequest(EVENT::Type event,
+            virtual bool processRequest(event::Type event,
                                         IRequest* request,
                                         IBuffer* buffer) = 0;
         };

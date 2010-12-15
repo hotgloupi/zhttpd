@@ -3,7 +3,7 @@
 
 #include "ModuleList.hpp"
 
-using namespace ZHTTPD;
+using namespace zhttpd;
 
 ModuleList::ModuleList() : _head(0), _tail(0)
 {
@@ -22,7 +22,7 @@ ModuleList::~ModuleList()
     }
 }
 
-ModuleWrapper* ModuleList::append(API::IModuleManager& manager, API::IModule& module)
+ModuleWrapper* ModuleList::append(api::IModuleManager& manager, api::IModule& module)
 {
     if (this->_tail == 0)
     {
@@ -37,8 +37,8 @@ ModuleWrapper* ModuleList::append(API::IModuleManager& manager, API::IModule& mo
     return this->_tail;
 }
 
-ModuleWrapper* ModuleList::setProcessingModule(API::IModuleManager& manager,
-                                   API::IModule& module)
+ModuleWrapper* ModuleList::setProcessingModule(api::IModuleManager& manager,
+                                   api::IModule& module)
 {
     ModuleWrapper* node = this->_head;
     ModuleWrapper* next;
@@ -46,7 +46,7 @@ ModuleWrapper* ModuleList::setProcessingModule(API::IModuleManager& manager,
     while (node != 0)
     {
         next = node->getNext();
-        if (next->getModuleManager().getCategory() == API::CATEGORY::PROCESSING)
+        if (next->getModuleManager().getCategory() == api::category::PROCESSING)
         {
             ModuleWrapper* backup = next->getNext();
             delete next;
@@ -56,7 +56,7 @@ ModuleWrapper* ModuleList::setProcessingModule(API::IModuleManager& manager,
             node->setNext(next);
             return next;
         }
-        else if (next->getModuleManager().getCategory() == API::CATEGORY::INPUTOUTPUT)
+        else if (next->getModuleManager().getCategory() == api::category::INPUTOUTPUT)
         {
             ModuleWrapper* m = new ModuleWrapper(manager, module);
             node->setNext(0);
@@ -85,7 +85,7 @@ bool ModuleList::isInResponsePart(ModuleWrapper* wrapper)
 
     while (node != 0)
     {
-        if (node->getModuleManager().getCategory() == API::CATEGORY::PROCESSING)
+        if (node->getModuleManager().getCategory() == api::category::PROCESSING)
             return true;
         else if (node == wrapper)
             return false;

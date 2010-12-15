@@ -5,28 +5,28 @@
 # include <iostream>
 # include <iomanip>
 
-std::map<std::string, ZHTTPD::API::uint64_t>* __ZHTTPD_LOCK_times;
-ZHTTPD::Mutex*                                __ZHTTPD_LOCK_times_mutex;
-std::map<std::string, ZHTTPD::API::uint64_t>* __ZHTTPD_MOD_times;
-std::map<std::string, ZHTTPD::API::uint32_t>* __ZHTTPD_MOD_counts;
-ZHTTPD::Mutex* __ZHTTPD_MOD_mutex;
-ZHTTPD::Timer* __ZHTTPD_timer;
+std::map<std::string, zhttpd::api::uint64_t>* __ZHTTPD_LOCK_times;
+zhttpd::Mutex*                                __ZHTTPD_LOCK_times_mutex;
+std::map<std::string, zhttpd::api::uint64_t>* __ZHTTPD_MOD_times;
+std::map<std::string, zhttpd::api::uint32_t>* __ZHTTPD_MOD_counts;
+zhttpd::Mutex* __ZHTTPD_MOD_mutex;
+zhttpd::Timer* __ZHTTPD_timer;
 
 void ZHTTPD_DEBUG_init()
 {
-    __ZHTTPD_LOCK_times = new std::map<std::string, ZHTTPD::API::uint64_t>();
-    __ZHTTPD_LOCK_times_mutex = new ZHTTPD::Mutex();
-    __ZHTTPD_MOD_times = new std::map<std::string, ZHTTPD::API::uint64_t>();
-    __ZHTTPD_MOD_counts = new std::map<std::string, ZHTTPD::API::uint32_t>();
-    __ZHTTPD_MOD_mutex = new ZHTTPD::Mutex();
-    __ZHTTPD_timer = new ZHTTPD::Timer();
+    __ZHTTPD_LOCK_times = new std::map<std::string, zhttpd::api::uint64_t>();
+    __ZHTTPD_LOCK_times_mutex = new zhttpd::Mutex();
+    __ZHTTPD_MOD_times = new std::map<std::string, zhttpd::api::uint64_t>();
+    __ZHTTPD_MOD_counts = new std::map<std::string, zhttpd::api::uint32_t>();
+    __ZHTTPD_MOD_mutex = new zhttpd::Mutex();
+    __ZHTTPD_timer = new zhttpd::Timer();
 }
 
 void ZHTTPD_DEBUG_print_maps()
 {
-    std::map<std::string, ZHTTPD::API::uint64_t>::iterator it;
-    std::map<std::string, ZHTTPD::API::uint64_t>::iterator end;
-    ZHTTPD::API::uint64_t total;
+    std::map<std::string, zhttpd::api::uint64_t>::iterator it;
+    std::map<std::string, zhttpd::api::uint64_t>::iterator end;
+    zhttpd::api::uint64_t total;
 
     std::cout << std::endl << "***********************************************************" << std::endl;
     std::cout << "\t* Lock times" << std::endl;

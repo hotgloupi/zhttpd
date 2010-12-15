@@ -5,25 +5,25 @@
 # include "socket/Socket.hpp"
 # include "api/ISession.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    class Session : public API::ISession
+    class Session : public api::ISession
     {
     private:
         Socket* _socket;
-        mutable API::uint32_t _ip;
-        API::uint16_t _port;
-        API::size_t _processed_request_count;
-        API::socket_t _fd;
+        mutable api::uint32_t _ip;
+        api::uint16_t _port;
+        api::size_t _processed_request_count;
+        api::socket_t _fd;
 
     public:
-        Session(Socket* socket, API::uint16_t port);
+        Session(Socket* socket, api::uint16_t port);
         ~Session();
-        API::socket_t getSocket() const;
-        API::uint32_t getIp() const;
-        API::uint16_t getPort() const;
+        api::socket_t getSocket() const;
+        api::uint32_t getIp() const;
+        api::uint16_t getPort() const;
         void incrProcessedRequestCount();
-        API::size_t getProcessedRequestCount() const;
+        api::size_t getProcessedRequestCount() const;
 
         // méthodes non présentes dans l'API
         Socket& getServerSocket();

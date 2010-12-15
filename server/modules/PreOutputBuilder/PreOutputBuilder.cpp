@@ -1,9 +1,9 @@
 #include "PreOutputBuilder.hpp"
 #include "PreOutputBuilderManager.hpp"
 
-namespace ZHTTPD
+namespace zhttpd
 {
-    namespace MOD
+    namespace mod
     {
 
         void my_putnbr_base_rec(std::string& out, unsigned int nbr, int base, const char *str)
@@ -23,7 +23,7 @@ namespace ZHTTPD
                 my_putnbr_base_rec(out, nbr, base, str);
         }
 
-        PreOutputBuilder::PreOutputBuilder(API::IModuleManager* manager) :
+        PreOutputBuilder::PreOutputBuilder(api::IModuleManager* manager) :
             _manager(reinterpret_cast<PreOutputBuilderManager*>(manager)),
             _chunked(false),
             _headers(false)
@@ -34,12 +34,12 @@ namespace ZHTTPD
         {
         }
 
-        void PreOutputBuilder::_sendHeaders(API::IRequest* request)
+        void PreOutputBuilder::_sendHeaders(api::IRequest* request, bool has_data /* = true */)
         {
             std::string buffer;
             buffer += "HTTP/1.1 ";
-            if (request->getResponseCode() == ZHTTPD::API::HTTP_CODE::UNDEFINED)
-                request->setResponseCode(ZHTTPD::API::HTTP_CODE::OK);
+            if (request->getResponseCode() == zhttpd::api::http_code::UNDEFINED)
+                request->setResponseCode(zhttpd::api::http_code::OK);
             my_putnbr_base(buffer, request->getResponseCode(), 10, "0123456789");
             buffer += " ";
             buffer += request->getResponseMessage();
@@ -59,7 +59,7 @@ namespace ZHTTPD
                 if (val.size() > 0)
                     buffer += *key + ": " + val + "\r\n";
             }
-            if (request->getResponseHeader("Content-Length") == "")
+            if (has_data && request->getResponseHeader("Content-Length") == "")
             {
                 buffer += "Transfer-Encoding: chunked\r\n";
                 this->_chunked = true;
@@ -70,7 +70,7 @@ namespace ZHTTPD
             this->_headers = true;
         }
 
-        void PreOutputBuilder::_sendChunkInfo(API::IRequest* request, API::IBuffer* buffer)
+        void PreOutputBuilder::_sendChunkInfo(api::IRequest* request, api::IBuffer* buffer)
         {
             std::string buf;
             buf += "\r\n";
@@ -79,9 +79,9 @@ namespace ZHTTPD
             request->giveData(request->getBufferManager().allocate(buf.data(), buf.size()));
         }
 
-        bool PreOutputBuilder::processRequest(API::EVENT::Type event, API::IRequest* request, API::IBuffer* buffer)
+        bool PreOutputBuilder::processRequest(api::event::Type event, api::IRequest* request, api::IBuffer* buffer)
         {
-            if (event == API::EVENT::ON_RESPONSE_DATA)
+            if (event == api::event::ON_RESPONSE_DATA)
             {
                 if (!this->_headers)
                     this->_sendHeaders(request);
@@ -90,9 +90,11 @@ namespace ZHTTPD
                 request->giveData(buffer);
                 return true;
             }
-            else if (event == API::EVENT::ON_END)
+            else if (event == api::event::ON_END)
             {
-                if (this->_chunked)
+                if (!this->_headers)
+                    this->_sendHeaders(request, false);
+                else if (this->_chunked)
                     request->giveData(request->getBufferManager().allocate("\r\n0\r\n\r\n")); // final chunk
                 request->raiseEnd();
                 return true;
