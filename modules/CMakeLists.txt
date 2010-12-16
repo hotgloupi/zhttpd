@@ -1,16 +1,6 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-
-if(UNIX)
-    set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -DZHTTPD_DEBUG -DDEBUG -g")
-    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -UDEBUG -UZHTTPD_DEBUG -DNDEBUG")
-else(UNIX)
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /D ZHTTPD_DEBUG")
-endif(UNIX)
-
-set(CMAKE_BUILD_TYPE "Debug")
-
 find_package(PkgConfig)
 
 # mod_itworks
@@ -30,6 +20,8 @@ file(GLOB mod_lua_src "Lua/*.[ch]pp")
 list(APPEND mod_lua_src ${api_hpp} ${server_utils_src})
 add_library(mod_lua MODULE ${mod_lua_src})
 
+INSTALL(TARGETS mod_lua LIBRARY DESTINATION ${MODULES_PATH})
+
 if(UNIX)
     find_package(PkgConfig)
     pkg_check_modules(LUA lua5.1)
@@ -46,6 +38,7 @@ target_link_libraries(mod_lua ${LUA_LIBRARIES} ${LUABIND_LIBRARIES})
 file(GLOB mod_gzip_src "Gzip/*.[ch]pp")
 list(APPEND mod_gzip_src ${api_hpp} ${server_utils_src})
 add_library(mod_gzip MODULE ${mod_gzip_src})
+install(TARGETS mod_gzip LIBRARY DESTINATION ${MODULES_PATH})
 
 if(UNIX)
     target_link_libraries(mod_gzip -lz)
@@ -68,6 +61,7 @@ if(WIN32)
                        POST_BUILD
                        COMMAND copy \"$(TargetPath)\" .)
 endif(WIN32)
+install(TARGETS mod_cgi LIBRARY DESTINATION ${MODULES_PATH})
 
 # mod_ssl
 file(GLOB mod_ssl_src "SSLNetwork/*.[ch]pp")
@@ -81,5 +75,6 @@ else(UNIX)
                        POST_BUILD
                        COMMAND copy \"$(TargetPath)\" .)
 endif(UNIX)
+install(TARGETS mod_ssl LIBRARY DESTINATION ${MODULES_PATH})
 
 

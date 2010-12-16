@@ -7,6 +7,7 @@
 #include "utils/Path.hpp"
 #include "utils/Logger.hpp"
 #include "utils/macros.hpp"
+#include "config.hpp"
 
 #include "DirListing.hpp"
 

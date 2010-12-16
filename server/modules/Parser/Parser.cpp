@@ -8,6 +8,7 @@
 #include "api/IModuleManager.hpp"
 #include "api/IModule.hpp"
 #include "core/Request.hpp"
+#include "config.hpp"
 
 #include "Parser.hpp"
 #include "ParserManager.hpp"

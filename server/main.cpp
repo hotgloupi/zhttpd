@@ -4,6 +4,7 @@
 #include "core/Server.hpp"
 #include "core/ServerState.hpp"
 #include "utils/StatsManager.hpp"
+#include "config.hpp"
 
 zhttpd::Server* server;
 
@@ -47,7 +48,7 @@ int main(int argc, char **argv)
 
     LOG_INFO("Server is starting");
     zhttpd::StatsManager::getInstance();
-    int res = server->run(argc > 1 ? argv[1] : "doc/conf.xml");
+    int res = server->run(argc > 1 ? argv[1] : CONF_DIR "/" CONF_FILE);
 
 #ifdef ZHTTPD_DEBUG
     ZHTTPD_DEBUG_print_maps();
