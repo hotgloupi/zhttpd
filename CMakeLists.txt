@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 
 if(CMAKE_INSTALL_PREFIX)
     MESSAGE("Installation path is ${CMAKE_INSTALL_PREFIX}")
+    MESSAGE("${PREFIX}")
 endif(CMAKE_INSTALL_PREFIX)
 
 project(zhttpd)
@@ -14,6 +15,7 @@ configure_file("server/core/config.hpp.in" "${CMAKE_CURRENT_BINARY_DIR}/config.h
 
 set(MODULES_PATH "${CMAKE_INSTALL_PREFIX}/lib/zhttpd/modules/")
 set(WWW_ROOT "/var/www/")
+set(LOG_FILE "/var/log/zhttpd.log")
 configure_file("server/configuration/template.xml" "${CMAKE_CURRENT_BINARY_DIR}/${CONF_FILE}")
 
 set(EXECUTABLE_OUTPUT_PATH bin)
@@ -128,5 +130,7 @@ endif(WIN32)
 add_subdirectory(modules)
 
 install(TARGETS zhttpd RUNTIME DESTINATION bin)
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/default.xml"
-        DESTINATION ${CONF_DIR})
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/default.xml" DESTINATION ${CONF_DIR})
+install(FILES "htdocs/index.zhttpd.html" DESTINATION ${WWW_ROOT})
+
+
