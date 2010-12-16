@@ -129,7 +129,6 @@ void Request::setFilePath(std::string const& path)
 
 void Request::setRequestHeader(std::string const& key, std::string const& val)
 {
-    LOG_WARN("HEADER " + key + ": " + val);
     this->_request_headers[key] = val;
 }
 

@@ -161,7 +161,6 @@ namespace zhttpd
                 this->_free_blocks.clear();
             }
             StatsManager::getInstance()->addMemory(-count * sizeof(C));
-            LOG_DEBUG("Deleted " + Logger::toString(count) + " blocks.");
         }
 
     };

@@ -16,8 +16,6 @@ namespace zhttpd
     void StatsManager::addMemory(int bytes)
     {
         zhttpd::api::size_t res = Atomic::add(&this->_memory, static_cast<unsigned int>(bytes));
-        LOG_DEBUG(Logger::toString(this) +": Memory status (" + Logger::toString(bytes) + "): " +
-                  Logger::toString(res) + " bytes.");
     }
 
     unsigned int StatsManager::getMemory()
