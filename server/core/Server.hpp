@@ -68,7 +68,6 @@ namespace zhttpd
         void _loadListeners(Configuration* config);
         void _stopListeners();
         void _cleanListeners();
-        bool _loadDefaultConfiguration();
 
     public:
         Server();
