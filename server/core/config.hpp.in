@@ -1,0 +1,13 @@
+
+#ifndef __CONFIG_HPP__
+# define __CONFIG_HPP__
+
+# define VERSION_MAJOR @zhttpd_VERSION_MAJOR@
+# define VERSION_MINOR @zhttpd_VERSION_MINOR@
+# define VERSION "@zhttpd_VERSION_MAJOR@.@zhttpd_VERSION_MINOR@"
+# define ZHTTPD_FULLNAME "zhttp/@zhttpd_VERSION_MAJOR@.@zhttpd_VERSION_MINOR@"
+# define CONF_FILE "@CONF_FILE@"
+# define CONF_DIR "@CONF_DIR@"
+
+#endif /* !__CONFIG_HPP__ */
+
