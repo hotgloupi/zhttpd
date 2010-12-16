@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<configuration>
+    <server>
+        <modules-directory path="@MODULES_PATH@" />
+        <log file="@LOG_FILE@" />
+        <listen port="8080" />
+        <index-files>
+            <filename match="index.html" />
+            <filename match="index.zhttpd.html" />
+        </index-files>
+    </server>
+
+    <modules>
+        <module name="mod_dirlisting" />
+        <module name="mod_filereader" enabled="true">
+            <option key=".jpg" value="image/jpeg" />
+            <option key=".css" value="text/css" />
+            <option key=".js" value="text/javascript" />
+        </module>
+    </modules>
+
+    <vhosts>
+        <document-root path="@WWW_ROOT@" />
+    </vhosts>
+
+</configuration>
