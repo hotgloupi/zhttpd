@@ -66,7 +66,15 @@ char Lua::_urlDecode(std::string::const_iterator& it, std::string::const_iterato
         return *it;
     if (++it != itEnd)
     {
-#define TO_HEX(x) x >= '0' && x <= '9' ? x - '0' : x >= 'A' && x <= 'F' ? x - 'A' + 10 : x >= 'a' && x <= 'f' ? x - 'a' + 10 : x
+#define TO_HEX(x) (                                     \
+x >= '0' && x <= '9' ?                                  \
+    x - '0' : (                                         \
+        x >= 'A' && x <= 'F' ?                          \
+            x - 'A' + 10 : (                            \
+                x >= 'a' && x <= 'f' ? x - 'a' + 10 : x \
+            )                                           \
+        )                                               \
+)
         char digit = (TO_HEX(*it)) * 16;
         if (++it != itEnd)
         {
@@ -79,7 +87,8 @@ char Lua::_urlDecode(std::string::const_iterator& it, std::string::const_iterato
     return '%';
 }
 
-void Lua::_parsePost(zhttpd::api::IRequest* request)
+// TODO parse post !
+void Lua::_parsePost(zhttpd::api::IRequest*)
 {
 }
 
