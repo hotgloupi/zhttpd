@@ -1,5 +1,6 @@
+
 #ifndef __GZIPMANAGER_HPP__
-#define __GZIPMANAGER_HPP__
+# define __GZIPMANAGER_HPP__
 
 #include <string>
 
@@ -9,8 +10,6 @@
 
 class GzipManager : public zhttpd::mod::StatefullManager<Gzip>
 {
-    private:
-        std::string _name;
     public:
         GzipManager() :
             zhttpd::mod::StatefullManager<Gzip>("mod_gzip", zhttpd::api::category::COMPRESS)

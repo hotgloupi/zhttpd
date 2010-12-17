@@ -17,12 +17,10 @@ using namespace zhttpd;
 Server::Server() :
     _rcon(0)
 {
-
 }
 
 Server::~Server()
 {
-
 }
 
 void Server::_loadListeners(Configuration* config)
@@ -170,16 +168,17 @@ bool Server::reload()
 
 bool Server::_loadDefaultConfiguration()
 {
-    std::string str_conf = "<configuration>";
-    str_conf += "<server>";
-    str_conf += "<listen port=\"8080\" />";
-    str_conf += "<modules-directory path=\"modules/\" />";
-    str_conf += "</server>";
-    str_conf += "<modules />";
-    str_conf += "<vhosts>";
-    str_conf += "<vhost><document-root path=\".\" /></vhost>";
-    str_conf += "</vhosts>";
-    str_conf += "</configuration>";
+   static std::string const str_conf =
+       "<configuration>"
+                "<server>"
+                    "<listen port=\"8080\" />"
+                    "<modules-directory path=\"modules/\" />"
+                "</server>"
+                "<modules />"
+                "<vhosts>"
+                    "<vhost><document-root path=\".\" /></vhost>"
+                "</vhosts>"
+        "</configuration>";
     try
     {
         Configuration* conf = 0;
