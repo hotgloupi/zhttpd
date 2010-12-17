@@ -1,6 +1,11 @@
 
+#include <iostream>
+#include <fstream>
+#include <stdexcept>
+
 #include "api/types.hpp"
 #include "configuration/Configuration.hpp"
+#include "utils/Logger.hpp"
 
 #include "ServerParser.hpp"
 #include "ConfigurationParserException.hpp"
@@ -13,6 +18,7 @@ ServerParser::ServerParser()
     this->_confParsers["listen"] = &ServerParser::_parseListen;
     this->_confParsers["modules-directory"] = &ServerParser::_parseModuleDirectory;
     this->_confParsers["index-files"] = &ServerParser::_parseIndexFiles;
+    this->_confParsers["log"] = &ServerParser::_parseLogFile;
 }
 
 ServerParser::~ServerParser()
@@ -92,3 +98,29 @@ void ServerParser::_parseIndexFileName(ticpp::Node* node, Configuration* conf)
     }
 }
 
+void ServerParser::_parseLogFile(ticpp::Node* node, Configuration*)
+{
+    std::string match;
+    try
+    {
+        node->ToElement()->GetAttribute("file", &match);
+    }
+    catch (ticpp::Exception&)
+    {
+        throw ConfigurationParserException("Wrong file in log configuration. It should contain a 'file' attribute");
+    }
+    try
+    {
+        std::ofstream* o = new std::ofstream(match.c_str(), std::ios_base::out | std::ios_base::app);
+        if (o->fail())
+        {
+            delete o;
+            throw std::runtime_error("Cannot open log file '" + match + "'");
+        }
+        Logger::getInstance()->setOutput(*o);
+    }
+    catch (std::exception& e)
+    {
+        throw ConfigurationParserException("Cannot set log file: " + Logger::toString(e.what()));
+    }
+}

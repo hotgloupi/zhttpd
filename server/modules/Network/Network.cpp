@@ -64,7 +64,6 @@ bool Network::_processOnCanWrite(zhttpd::api::IRequest* request, zhttpd::api::IB
     assert(buffer != 0);
     assert(buffer->getSize() > 0);
     zhttpd::Socket& socket = reinterpret_cast<Request*>(request)->getServerSession().getServerSocket();
-    LOG_FATAL("Write '" + std::string(buffer->getRawData(), buffer->getSize()) + "'");
     zhttpd::api::size_t bytes_sent = socket.write(buffer->getRawData(), buffer->getSize());
     StatsManager::getInstance()->addSentBytes(buffer->getSize());
     if (bytes_sent < buffer->getSize())

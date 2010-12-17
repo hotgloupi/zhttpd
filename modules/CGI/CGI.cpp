@@ -31,7 +31,7 @@ CGI::action_t const CGI::_actions[zhttpd::api::event::ON_ERROR] = {
     0
 };
 
-CGI::CGI(zhttpd::mod::POLICIES::MapConfigurationPolicy* module_manager) :
+CGI::CGI(zhttpd::mod::policies::MapConfigurationPolicy* module_manager) :
         _module_manager(*module_manager)
 {
     this->_started = false;

@@ -7,7 +7,7 @@
 # include "api/IModuleManager.hpp"
 # include "CGI.hpp"
 
-typedef zhttpd::mod::StatefullManager<CGI, zhttpd::mod::POLICIES::MapConfigurationPolicy> ConfigurableStatefullManager;
+typedef zhttpd::mod::StatefullManager<CGI, zhttpd::mod::policies::MapConfigurationPolicy> ConfigurableStatefullManager;
 
 class CGIManager : public ConfigurableStatefullManager
 {

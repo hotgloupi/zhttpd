@@ -19,19 +19,12 @@ class LuaManager : public zhttpd::mod::StatefullManager<Lua>
 
         bool isRequired(zhttpd::api::IRequest const& request) const
         {
-            std::string ext;
-            std::string::const_reverse_iterator it = request.getFilePath().rbegin();
-            std::string::const_reverse_iterator itEnd = request.getFilePath().rend();
-            for (; it != itEnd; ++it)
-                if (*it == '.')
-                {
-                    if (ext == "lua")
-                        return true;
-                    return false;
-                }
-                else
-                    ext.insert(ext.begin(), *it);
-            return false;
+            char const* f = request.getFilePath().c_str();
+            zhttpd::api::size_t s = request.getFilePath().size();
+
+            if (s < 4 || f[s - 1] != 'a' || f[s - 2] != 'u' || f[s -3] != 'l' || f[s - 4] != '.')
+                return false;
+            return true;
         }
 };
 

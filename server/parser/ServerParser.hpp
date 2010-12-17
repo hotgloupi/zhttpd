@@ -18,16 +18,17 @@ namespace zhttpd
         private:
             std::map<std::string, parseConf> _confParsers;
 
+        public:
+            ServerParser();
+            virtual ~ServerParser();
+            void parseServerConfNode(ticpp::Node* node, Configuration* conf);
+
+        private:
             void _parseListen(ticpp::Node* node, Configuration* conf);
             void _parseModuleDirectory(ticpp::Node* node, Configuration* conf);
             void _parseIndexFiles(ticpp::Node* node, Configuration* conf);
             void _parseIndexFileName(ticpp::Node* node, Configuration* conf);
-
-        public:
-            ServerParser();
-            virtual ~ServerParser();
-
-            void parseServerConfNode(ticpp::Node* node, Configuration* conf);
+            void _parseLogFile(ticpp::Node* node, Configuration* conf);
         };
     }
 }

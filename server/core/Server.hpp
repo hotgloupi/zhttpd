@@ -63,7 +63,7 @@ namespace zhttpd
         Rcon* _rcon;
         std::string _configuration_path;
 
-    public:
+   public:
         Server();
         ~Server();
         int run(std::string const& configuration_path);
@@ -75,7 +75,6 @@ namespace zhttpd
         void _loadListeners(Configuration* config);
         void _stopListeners();
         void _cleanListeners();
-        bool _loadDefaultConfiguration();
     };
 }
 

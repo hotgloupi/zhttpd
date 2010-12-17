@@ -161,38 +161,6 @@ bool Server::reload()
     catch (std::exception& err)
     {
         LOG_ERROR("While loading config: " + err.what());
-        LOG_INFO("Loading default configuration");
-        return this->_loadDefaultConfiguration();
-    }
-}
-
-bool Server::_loadDefaultConfiguration()
-{
-   static std::string const str_conf =
-       "<configuration>"
-                "<server>"
-                    "<listen port=\"8080\" />"
-                    "<modules-directory path=\"modules/\" />"
-                "</server>"
-                "<modules />"
-                "<vhosts>"
-                    "<vhost><document-root path=\".\" /></vhost>"
-                "</vhosts>"
-        "</configuration>";
-    try
-    {
-        Configuration* conf = 0;
-        parser::ConfigurationParser parser;
-        parser.loadString(str_conf);
-        conf = parser.parse();
-        ConfigurationManager::getInstance()->setConfiguration(conf);
-        LOG_INFO("Default configuration loaded successfully");
-        this->_loadListeners(conf);
-        return true;
-    }
-    catch (std::exception& err)
-    {
-        LOG_FATAL("While loading default configuration: " + err.what());
         return false;
     }
 }
