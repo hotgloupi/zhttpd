@@ -16,6 +16,7 @@
 # include <errno.h>
 # include <fcntl.h>
 # include <stdio.h>
+# include <signal.h>
 
 # include "api/IRequest.hpp"
 # include "api/IBuffer.hpp"
@@ -44,6 +45,11 @@ UnixProcess::~UnixProcess()
 {
     ::close(this->_write_pipe[1]);
     ::close(this->_read_pipe[0]);
+    if (this->_status != PROCESS_STATUS::STARTED)
+    {
+        LOG_WARN("killing process " + zhttpd::Logger::toString(this->_pid));
+        kill(this->_pid, SIGKILL);
+    }
 }
 
 char* const* UnixProcess::_getArguments()
