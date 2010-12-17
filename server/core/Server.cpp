@@ -17,12 +17,10 @@ using namespace zhttpd;
 Server::Server() :
     _rcon(0)
 {
-
 }
 
 Server::~Server()
 {
-
 }
 
 void Server::_loadListeners(Configuration* config)

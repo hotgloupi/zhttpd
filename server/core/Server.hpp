@@ -56,7 +56,6 @@ namespace zhttpd
 
     class Server : private NonCopyable
     {
-
         typedef std::map<api::uint16_t, ListenerContainer*> listeners_t;
 
     private:
@@ -64,17 +63,18 @@ namespace zhttpd
         Rcon* _rcon;
         std::string _configuration_path;
 
-        void _cleanup();
-        void _loadListeners(Configuration* config);
-        void _stopListeners();
-        void _cleanListeners();
-
-    public:
+   public:
         Server();
         ~Server();
         int run(std::string const& configuration_path);
         void stop();
         bool reload();
+
+    private:
+        void _cleanup();
+        void _loadListeners(Configuration* config);
+        void _stopListeners();
+        void _cleanListeners();
     };
 }
 
