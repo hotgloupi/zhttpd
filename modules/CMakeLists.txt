@@ -77,4 +77,4 @@ else(UNIX)
 endif(UNIX)
 install(TARGETS mod_ssl LIBRARY DESTINATION ${MODULES_PATH})
 
-
+add_subdirectory(barbaz)

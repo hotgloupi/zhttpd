@@ -20,6 +20,7 @@ configure_file("server/configuration/template.xml" "${CMAKE_CURRENT_BINARY_DIR}/
 
 set(EXECUTABLE_OUTPUT_PATH bin)
 
+#set(CMAKE_CXX_COMPILER clang)
 
 if(UNIX)
     set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -DZHTTPD_DEBUG -DDEBUG -ggdb3")
