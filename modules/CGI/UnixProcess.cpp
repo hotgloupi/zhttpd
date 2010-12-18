@@ -16,6 +16,7 @@
 # include <errno.h>
 # include <fcntl.h>
 # include <stdio.h>
+# include <signal.h>
 
 # include "api/IRequest.hpp"
 # include "api/IBuffer.hpp"
@@ -44,6 +45,10 @@ UnixProcess::~UnixProcess()
 {
     ::close(this->_write_pipe[1]);
     ::close(this->_read_pipe[0]);
+    //kill(this->_pid, SIGKILL);
+    int status;
+    while (::waitpid(this->_pid, &status, 0) < 0 && errno == EINTR)
+        LOG_WARN("Waiting process " + zhttpd::Logger::toString(this->_pid));
 }
 
 char* const* UnixProcess::_getArguments()
@@ -194,12 +199,13 @@ zhttpd::api::size_t UnixProcess::read(char* buffer, zhttpd::api::size_t size)
         return (0);
 }
 
-PROCESS_STATUS::Type          UnixProcess::getStatus() const
+PROCESS_STATUS::Type UnixProcess::getStatus() const
 {
     if (this->_status != PROCESS_STATUS::FINISHED)
     {
         int status;
-        ::waitpid(this->_pid, &status, WNOHANG);
+        while (::waitpid(this->_pid, &status, WNOHANG) < 0 && errno == EINTR)
+            ;
         if (WIFEXITED(status))
             this->_status = PROCESS_STATUS::FINISHED;
     }

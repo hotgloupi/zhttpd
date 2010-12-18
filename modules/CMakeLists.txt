@@ -15,12 +15,11 @@ if(WIN32)
                        COMMAND copy \"$(TargetPath)\" .)
 endif(WIN32)
 
+
+#####################################################################
 # mod_lua
 file(GLOB mod_lua_src "Lua/*.[ch]pp")
 list(APPEND mod_lua_src ${api_hpp} ${server_utils_src})
-add_library(mod_lua MODULE ${mod_lua_src})
-
-INSTALL(TARGETS mod_lua LIBRARY DESTINATION ${MODULES_PATH})
 
 if(UNIX)
     find_package(PkgConfig)
@@ -32,8 +31,16 @@ if(UNIX)
 else(UNIX)
     target_link_libraries(mod_lua lua5.1 luabind ws2_32)
 endif(UNIX)
-target_link_libraries(mod_lua ${LUA_LIBRARIES} ${LUABIND_LIBRARIES})
 
+if(LUA)
+    add_library(mod_lua MODULE ${mod_lua_src})
+    target_link_libraries(mod_lua ${LUA_LIBRARIES} ${LUABIND_LIBRARIES})
+    install(TARGETS mod_lua LIBRARY DESTINATION ${MODULES_PATH})
+else(LUA)
+    message("Lua module won't be build")
+endif(LUA)
+
+######################################################################
 # mod_gzip
 file(GLOB mod_gzip_src "Gzip/*.[ch]pp")
 list(APPEND mod_gzip_src ${api_hpp} ${server_utils_src})

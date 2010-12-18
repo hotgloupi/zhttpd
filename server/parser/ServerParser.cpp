@@ -117,6 +117,7 @@ void ServerParser::_parseLogFile(ticpp::Node* node, Configuration*)
             delete o;
             throw std::runtime_error("Cannot open log file '" + match + "'");
         }
+        LOG_INFO("Set log file to '" + match + "'");
         Logger::getInstance()->setOutput(*o);
     }
     catch (std::exception& e)
