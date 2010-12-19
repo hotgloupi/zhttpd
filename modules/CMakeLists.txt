@@ -25,7 +25,6 @@ if(UNIX)
     find_package(PkgConfig)
     pkg_check_modules(LUA lua5.1)
     pkg_check_modules(LUABIND luabind)
-else(UNIX)
 endif(UNIX)
 
 if(LUA)
