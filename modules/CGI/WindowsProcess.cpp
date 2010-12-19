@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include <string>
+#include <cstdlib>
 
 #include "api/constants.hpp"
 #include "utils/Logger.hpp"
@@ -31,7 +32,7 @@ WindowsProcess::~WindowsProcess()
     }
 }
 
-bool WindowsProcess::create(std::string const & executable, std::list<std::string> const& arguments, Environment const& environment)
+bool WindowsProcess::create(std::string const & executable, std::list<std::string> const& arguments, Environment const& environment, char const* root_directory)
 {
     char commandLine[MAX_PATH];
     std::string tmp = "";
@@ -48,7 +49,8 @@ bool WindowsProcess::create(std::string const & executable, std::list<std::strin
     startInfo.dwFlags |= STARTF_USESTDHANDLES;
 
     
-    char *real_env = new char[8192];
+    int length = 8192;
+    char *real_env = static_cast<char *>(::malloc(length * sizeof(char)));
     const std::map<std::string, std::string>& env = environment.getEnvironmentList();
     std::map<std::string, std::string>::const_iterator itEnv = env.begin();
     std::map<std::string, std::string>::const_iterator iteEnv = env.end();
@@ -57,15 +59,18 @@ bool WindowsProcess::create(std::string const & executable, std::list<std::strin
     {
         const char *entryKey = itEnv->first.c_str();
         const char *entryValue = itEnv->second.c_str();
-        for (; *entryKey; real_env[i++] = *(entryKey++));
+        int total_len = itEnv->first.length() + itEnv->second.length() + 3;
+        if (total_len > length)
+            real_env = static_cast<char *>(::realloc(real_env, length + ((total_len % 8192) + 1) * 8192));
+        while (real_env[i++] = *(entryKey++));
         real_env[i++] = '=';
         while (real_env[i++] = *(entryValue++));
     }
     real_env[i] = 0;
 
-    if (!::CreateProcess(NULL, commandLine, NULL, NULL, true, 0, real_env, NULL, &startInfo, &this->_processInfos))
-        throw std::runtime_error(std::string("CreateProcess(): fail (") + ::GetLastError() + ")");
-    delete real_env;
+    if (!::CreateProcess(NULL, commandLine, NULL, NULL, true, 0, real_env, root_directory, &startInfo, &this->_processInfos))
+        throw std::runtime_error(std::string("CreateProcess(0, ") + commandLine + ", 0, 0, 1, 0, env, " + root_directory + ", info, info): fail (" + ::GetLastError() + ")");
+    ::free(real_env);
     CloseHandle(this->_processInfos.hThread);
     this->_stdin.CloseReadPipe();
     this->_stdout.CloseWritePipe();
@@ -83,16 +88,17 @@ zhttpd::api::size_t WindowsProcess::read(char* buffer, zhttpd::api::size_t lengt
     return this->_stdout.read(buffer, length);
 }
 
-Process::ProcessStatus WindowsProcess::getStatus() const
+PROCESS_STATUS::Type WindowsProcess::getStatus() const
 {
     if (this->_running)
     {
-        if (::GetProcessId(this->_processInfos.hProcess) == 0)
-            return Process::FINISHED;
-        return Process::RUN;
+        DWORD code;
+        if (::GetExitCodeProcess(this->_processInfos.hProcess, &code) == 0 || code != STILL_ACTIVE)
+            return PROCESS_STATUS::FINISHED;
+        return PROCESS_STATUS::RUN;
     }
     else
-        return Process::STARTED;
+        return PROCESS_STATUS::STARTED;
 }
 
 #endif  /* WIN32 */

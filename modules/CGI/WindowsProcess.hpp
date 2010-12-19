@@ -26,10 +26,10 @@ public:
     WindowsProcess();
     ~WindowsProcess();
 
-    bool create(std::string const & executable, std::list<std::string> const& arguments, Environment const& environment);
+    bool create(std::string const & executable, std::list<std::string> const& arguments, Environment const& environment, char const* root_directory);
     zhttpd::api::size_t write(char const* buffer, zhttpd::api::size_t length);
     zhttpd::api::size_t read(char* buffer, zhttpd::api::size_t length);
-    Process::ProcessStatus getStatus() const;
+    PROCESS_STATUS::Type getStatus() const;
 };
 
 typedef WindowsProcess CGIHandler;
