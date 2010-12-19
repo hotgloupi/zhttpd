@@ -1,6 +1,6 @@
 
 # mod_ssl
-file(GLOB mod_ssl_src "SSLNetwork/*.[ch]pp")
+file(GLOB mod_ssl_src "*.[ch]pp")
 list(APPEND mod_ssl_src ${api_hpp} ${server_utils_src})
 add_library(mod_ssl MODULE ${mod_ssl_src})
 if(UNIX)

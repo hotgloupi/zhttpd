@@ -1,6 +1,6 @@
 
 # mod_itworks
-file(GLOB mod_itworks_src "ItWorks/*.[ch]pp")
+file(GLOB mod_itworks_src "*.[ch]pp")
 list(APPEND mod_itworks_src ${api_hpp} ${server_utils_src})
 add_library(mod_itworks MODULE ${mod_itworks_src})
 

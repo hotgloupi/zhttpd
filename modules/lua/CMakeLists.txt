@@ -1,7 +1,7 @@
 
 #####################################################################
 # mod_lua
-file(GLOB mod_lua_src "Lua/*.[ch]pp")
+file(GLOB mod_lua_src "*.[ch]pp")
 list(APPEND mod_lua_src ${api_hpp} ${server_utils_src})
 
 if(UNIX)

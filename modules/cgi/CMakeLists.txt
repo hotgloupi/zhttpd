@@ -1,6 +1,6 @@
 
 # mod_cgi
-file(GLOB mod_cgi_src "CGI/*.[ch]pp")
+file(GLOB mod_cgi_src "*.[ch]pp")
 list(APPEND mod_cgi_src ${api_hpp} ${server_utils_src})
 add_library(mod_cgi MODULE ${mod_cgi_src})
 if(WIN32)

@@ -1,7 +1,7 @@
 
 ######################################################################
 # mod_gzip
-file(GLOB mod_gzip_src "Gzip/*.[ch]pp")
+file(GLOB mod_gzip_src "*.[ch]pp")
 list(APPEND mod_gzip_src ${api_hpp} ${server_utils_src})
 add_library(mod_gzip MODULE ${mod_gzip_src})
 install(TARGETS mod_gzip LIBRARY DESTINATION ${MODULES_PATH})
