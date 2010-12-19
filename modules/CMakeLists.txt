@@ -29,7 +29,7 @@ if(UNIX)
     link_directories(${LUA_LIBRARY_DIRS})
     target_link_libraries(mod_lua ${LUA_LIBRARIES})
 else(UNIX)
-    target_link_libraries(mod_lua lua5.1 luabind ws2_32)
+    #target_link_libraries(mod_lua lua5.1 luabind ws2_32)
 endif(UNIX)
 
 if(LUA)

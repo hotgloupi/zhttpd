@@ -62,7 +62,7 @@ void Parser::_parseLine(zhttpd::api::IRequest* request, std::string const& line)
     request->setRequestHeader(directive, params);
 }
 
-void Parser::_parseMethod(api::IRequest* request, std::string const& line) const
+void Parser::_parseMethod(zhttpd::api::IRequest* request, std::string const& line) const
 {
     bool gotMethod = false;
     std::string method;
@@ -131,7 +131,7 @@ zhttpd::api::size_t Parser::_parseRequest(zhttpd::api::IRequest* request) const
     return len;
 }
 
-void Parser::_giveData(api::IRequest* request, api::IBuffer* buffer)
+void Parser::_giveData(zhttpd::api::IRequest* request, zhttpd::api::IBuffer* buffer)
 {
     request->giveData(buffer);
     std::string s(buffer->getRawData(), buffer->getSize());
@@ -140,7 +140,7 @@ void Parser::_giveData(api::IRequest* request, api::IBuffer* buffer)
         request->raiseEnd();
 }
 
-bool Parser::processRequest(api::event::Type event, api::IRequest* request, api::IBuffer* buffer)
+bool Parser::processRequest(zhttpd::api::event::Type event, zhttpd::api::IRequest* request, zhttpd::api::IBuffer* buffer)
 {
     if (this->_request == 0)
         this->_request = request;

@@ -5,6 +5,10 @@
 
 #include "UrlGuideline.hpp"
 
+#ifdef _WIN32
+#undef min
+#endif // _WIN32
+
 using namespace zhttpd;
 
 UrlGuideline::UrlGuideline(std::string const& match_string, bool deny) :

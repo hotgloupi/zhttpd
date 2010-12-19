@@ -78,7 +78,9 @@ namespace zhttpd
                     return std::string("false");
             }
         };
-
+#ifdef _WIN32
+#undef DELETE
+#endif
         template<>
         struct Stringify<api::http_method::Type>
         {

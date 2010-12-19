@@ -7,6 +7,9 @@
 #include "configuration/VHost.hpp"
 #include "utils/Path.hpp"
 
+#ifdef _WIN32
+#undef min
+#endif // _WIN32
 
 using namespace zhttpd::mod;
 
