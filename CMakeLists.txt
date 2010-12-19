@@ -29,7 +29,7 @@ else(UNIX)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /D ZHTTPD_DEBUG")
 endif(UNIX)
 
-set(CMAKE_BUILD_TYPE "Release")
+set(CMAKE_BUILD_TYPE "Debug")
 
 include_directories(
     .
