@@ -9,11 +9,11 @@
 #ifndef __USERJSONVIEW_HPP__
 # define __USERJSONVIEW_HPP__
 
-# include "ViewAdapter.hpp"
+# include "ViewAdaptor.hpp"
 # include "IJsonView.hpp"
 # include "User.hpp"
 
-class UserJsonView : public ViewAdapter<IJsonView>
+class UserJsonView : public ViewAdaptor<IJsonView>
 {
 public:
     UserJsonView();

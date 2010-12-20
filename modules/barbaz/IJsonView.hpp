@@ -9,15 +9,15 @@
 #ifndef __IJSONVIEW_HPP__
 # define __IJSONVIEW_HPP__
 
-# include "ViewAdapter.hpp"
+# include "ViewAdaptor.hpp"
 
-class IJsonView : public MakeViewAdapter<IJsonView>
+class IJsonView : public MakeViewAdaptor<IJsonView>
 {
 public:
     virtual zhttpd::api::IBuffer* convert(IViewable const& obj,
                                           zhttpd::api::IBufferManager& manager) const
     {
-        if (IViewAdapter* view = this->getAdapter(obj.getViewableTypeId()))
+        if (IViewAdaptor* view = this->getAdaptor(obj.getViewableTypeId()))
             return view->convert(obj, manager);
         return manager.allocate("{\"error\": \"Cannot view this object in json\"}", 45);
     }

@@ -5,7 +5,7 @@
 
 static UserJsonView dummy; //registration at load time
 
-UserJsonView::UserJsonView() : ViewAdapter<IJsonView>(User()) {}
+UserJsonView::UserJsonView() : ViewAdaptor<IJsonView>(User()) {}
 
 
 zhttpd::api::IBuffer* UserJsonView::convert(IViewable const& object,
