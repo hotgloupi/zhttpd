@@ -1,5 +1,5 @@
 
-add_subdirectory(json_spirit)
+#add_subdirectory(json_spirit)
 
 file(GLOB mod_barbaz_src "*.[ch]pp")
 list(APPEND mod_barbaz_src ${api_hpp} ${server_utils_src})
