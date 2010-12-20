@@ -32,7 +32,10 @@ WindowsProcess::~WindowsProcess()
     }
 }
 
-bool WindowsProcess::create(std::string const & executable, std::list<std::string> const& arguments, Environment const& environment, char const* root_directory)
+bool WindowsProcess::create(std::string const & executable,
+                            std::list<std::string> const& arguments,
+                            Environment const& environment,
+                            char const* root_directory)
 {
     char commandLine[MAX_PATH];
     std::string tmp = "";
@@ -48,7 +51,7 @@ bool WindowsProcess::create(std::string const & executable, std::list<std::strin
     startInfo.hStdInput = this->_stdin.GetReadPipe();
     startInfo.dwFlags |= STARTF_USESTDHANDLES;
 
-    
+
     int length = 8192;
     char *real_env = static_cast<char *>(::malloc(length * sizeof(char)));
     const std::map<std::string, std::string>& env = environment.getEnvironmentList();
@@ -69,7 +72,9 @@ bool WindowsProcess::create(std::string const & executable, std::list<std::strin
     real_env[i] = 0;
 
     if (!::CreateProcess(NULL, commandLine, NULL, NULL, true, 0, real_env, root_directory, &startInfo, &this->_processInfos))
-        throw std::runtime_error(std::string("CreateProcess(0, ") + commandLine + ", 0, 0, 1, 0, env, " + root_directory + ", info, info): fail (" + ::GetLastError() + ")");
+        throw std::runtime_error(
+            std::string("CreateProcess() failure (") + ::GetLastError() + ")"
+        );
     ::free(real_env);
     CloseHandle(this->_processInfos.hThread);
     this->_stdin.CloseReadPipe();
