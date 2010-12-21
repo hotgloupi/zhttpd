@@ -44,7 +44,8 @@ namespace zhttpd
             buffer += " ";
             buffer += request->getResponseMessage();
             buffer += "\r\n";
-            if (request->getRequestHeader("Connection") != "close")
+            if (request->getRequestHeader("Connection") != "close" &&
+                request->getResponseHeader("Connection") == "")
             {
                 request->setResponseHeader("Connection", "Keep-Alive");
                 request->setResponseHeader("Keep-Alive", "timeout=3, max=50");

@@ -9,8 +9,6 @@ namespace zhttpd
 {
     namespace mod
     {
-        class ModErrorManager;
-
         class ModError : public zhttpd::api::IModule
         {
         public:
@@ -23,12 +21,13 @@ namespace zhttpd
                     request->getBufferManager().release(buffer);
                 if (event == zhttpd::api::event::ON_END)
                 {
+                    request->setResponseHeader("Connection", "close");
                     request->setResponseHeader("Content-Type", "text/html");
+                    //request->setResponseHeader("Date", "Tue, 21 Dec 2010 18:25:42 GMT");
+
+                    std::string msg = Logger::toString(request->getResponseCode())  + " - " + request->getResponseMessage();
                     zhttpd::api::IBuffer* b = request->getBufferManager().allocate(
-                        "<h1>" +
-                        Logger::toString(request->getResponseCode()) + " " +
-                        request->getResponseMessage() +
-                        "</h1>"
+                        "<html><head><title>" + msg + "</title></head><body><h1>" + msg + "</h1></body></html>\r\n"
                     );
                     request->setResponseHeader("Content-Length", Logger::toString(b->getSize()));
                     request->giveData(b);

@@ -85,7 +85,9 @@ api::size_t TaskManager::_giveWork()
             }
             else if (!tasks.hasPendingEvent())
             {
-                if (!tasks.hasError() && request->getRequestHeader("Connection") != "close")
+                if (!tasks.hasError() &&
+                    request->getRequestHeader("Connection") != "close" &&
+                    request->getResponseHeader("Connection") != "close")
                 {
                     Socket& s = request->getServerSession().popServerSocket();
                     SessionManager::getInstance()->handleNewSession(&s, request->getSession().getPort());
