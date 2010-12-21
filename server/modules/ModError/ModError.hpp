@@ -29,7 +29,18 @@ namespace zhttpd
                     zhttpd::api::IBuffer* b = request->getBufferManager().allocate(
                         "<html><head><title>" + msg + "</title></head><body><h1>" + msg + "</h1></body></html>\r\n"
                     );
-                    request->setResponseHeader("Content-Length", Logger::toString(b->getSize()));
+                    //request->setResponseHeader("Content-Length", Logger::toString(b->getSize()));
+                    if (b->getSize() < 512)
+                    {
+                        // Chrome and IE won't show the page if it's less than 512 bytes
+                        request->giveData(request->getBufferManager().allocate(
+"                                                                                                                      "
+"                                                                                                                      "
+"                                                                                                                      "
+"                                                                                                                      "
+"                                                                                                                      "
+                        ));
+                    }
                     request->giveData(b);
                     request->raiseEnd();
                     return true;
