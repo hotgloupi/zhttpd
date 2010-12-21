@@ -11,7 +11,7 @@
 
 # include "ViewAdaptor.hpp"
 # include "IJsonView.hpp"
-# include "User.hpp"
+# include "types/User.hpp"
 
 class UserJsonView : public ViewAdaptor<IJsonView>
 {

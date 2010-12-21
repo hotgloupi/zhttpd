@@ -11,30 +11,3 @@ extern "C"
     }
 }
 
-# include "UserJsonView.hpp"
-//
-//
-//IViewAdapter& findAdapter(int t, IView& v)
-//{
-//    return v.getAdapter(t);
-//}
-//
-//
-//view = AllViews[ext]; //IJsonView
-//
-//adapter = findAdapter(data.getType(), view) // data == User&
-//
-//return adapter.convert(data);
-
-
-
-
-
-
-
-
-
-
-
-
-

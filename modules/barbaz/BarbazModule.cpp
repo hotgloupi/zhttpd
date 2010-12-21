@@ -3,22 +3,15 @@
 
 #include "BarbazModuleManager.hpp"
 #include "BarbazModule.hpp"
-#include "UserJsonView.hpp"
+#include "types/User.hpp"
+#include "view/IJsonView.hpp"
+#include "view/IHTMLView.hpp"
 
 BarbazModule::BarbazModule(zhttpd::api::IModuleManager* manager) :
     _manager(reinterpret_cast<BarbazModuleManager*>(manager))
 {
     assert(this->_manager != 0);
 }
-
-struct pif : IViewable
-{
-
-    virtual viewable_types::Type getViewableTypeId() const
-    {
-        return (viewable_types::Type) 12;
-    }
-};
 
 bool BarbazModule::processRequest(zhttpd::api::event::Type event,
                                   zhttpd::api::IRequest* request,

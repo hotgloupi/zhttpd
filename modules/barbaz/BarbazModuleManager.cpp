@@ -12,5 +12,6 @@ BarbazModuleManager::~BarbazModuleManager()
 
 bool BarbazModuleManager::isRequired(zhttpd::api::IRequest const& request) const
 {
+    (void) request;
     return true;
 }

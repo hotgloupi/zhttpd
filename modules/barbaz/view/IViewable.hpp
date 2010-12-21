@@ -45,6 +45,7 @@ class IViewable
 {
 public:
     virtual viewable_types::Type getViewableTypeId() const = 0;
+    virtual ~IViewable() {}
 };
 
 
