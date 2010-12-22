@@ -13,23 +13,23 @@
 # include <ctime>
 
 # include "view/IViewable.hpp"
+# include "db/Item.hpp"
+# include "db/AttributesMacros.hpp"
+# include "db/Attributes.hpp"
 
-struct User : public IViewable
+class User : public db::Item<User>
 {
-    unsigned int id;
-    std::string email;
-    std::string fullname;
-    std::string password;
-    time_t inscription_date;
-    time_t last_login_date;
-    std::string role;
-    bool confirmed;
+    DECLARE_ATTRIBUTE_CLASS();
 
+    ATTR_GETSET(id, unsigned int);
+    ATTR_GETSET(email, std::string);
+    ATTR_GETSET(fullname, std::string);
+    ATTR_GETSET(password, std::string);
+    ATTR_GETSET(inscription_date, time_t);
+    ATTR_GETSET(last_login_date, time_t);
+    ATTR_GETSET(role, std::string);
+    ATTR_GETSET(confirmed, bool);
 
-    virtual viewable_types::Type getViewableTypeId() const
-    {
-        return viewable_types::USER;
-    }
 };
 
 #endif /* !__USER_HPP__ */

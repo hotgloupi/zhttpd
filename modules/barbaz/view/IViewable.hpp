@@ -15,7 +15,7 @@ namespace viewable_types
 {
     enum Type
     {
-        USER = 0,
+        DB_ITEM = 0,
         MAX_TYPES = 1,
     };
 }
@@ -31,8 +31,8 @@ namespace zhttpd
             {
                 switch (type)
                 {
-                case viewable_types::USER:
-                    return "User";
+                case viewable_types::DB_ITEM:
+                    return "db::Item";
                 default:
                     return "Unkown viewable type!";
                 }

@@ -20,7 +20,10 @@ bool BarbazModule::processRequest(zhttpd::api::event::Type event,
     if (event == zhttpd::api::event::ON_END)
     {
         User u;
-        u.id = 12;
+        User::iterator it = u.begin(), end = u.end();
+        for (; it != end; ++it)
+            std::cout << it.key() << std::endl;
+
         request->setResponseHeader("Content-Type", "text/html");
         request->setResponseCode(zhttpd::api::http_code::OK);
         zhttpd::api::IBuffer* str = IJsonView().convert(u, request->getBufferManager());
