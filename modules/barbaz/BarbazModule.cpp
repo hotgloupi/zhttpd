@@ -23,7 +23,8 @@ bool BarbazModule::processRequest(zhttpd::api::event::Type event,
         User::iterator it = u.begin(), end = u.end();
         for (; it != end; ++it)
             std::cout << it.key() << std::endl;
-
+        db::IConnection* conn = this->_manager->getNewDBConnection();
+        this->_manager->releaseDBConnection(conn);
         request->setResponseHeader("Content-Type", "text/html");
         request->setResponseCode(zhttpd::api::http_code::OK);
         zhttpd::api::IBuffer* str = IJsonView().convert(u, request->getBufferManager());

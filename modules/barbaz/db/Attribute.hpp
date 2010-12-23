@@ -33,6 +33,22 @@ namespace db
         {
         }
 
+        Attribute(Attribute const& attr) :
+            _name(attr._name), _get_val(attr._get_val), _set_val(attr._set_val)
+        {
+        }
+
+        Attribute& operator =(Attribute const& attr)
+        {
+            if (this != &attr)
+            {
+                this->_name = attr._name;
+                this->_get_val = attr._get_val;
+                this->_set_val = attr._get_val;
+            }
+            return *this;
+        }
+
         virtual std::string const& getName() const { return this->_name; }
 
         virtual typename pc_const_attr<T>::res getValue(IItem const& item) const
@@ -46,7 +62,6 @@ namespace db
             assert(this->_set_val != 0 && "Attribute setter is NULL");
             (item.*(this->_set_val))(value);
         }
-
     };
 }
 

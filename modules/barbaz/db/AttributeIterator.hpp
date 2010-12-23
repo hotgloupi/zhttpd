@@ -105,7 +105,7 @@ namespace db
         }
 
         template<typename FieldType>
-        AttributeIterator& operator =(FieldType val)//(typename pc_attr<FieldType>::res val)
+        AttributeIterator& operator =(FieldType val)
         {
             if (this->_attr == 0)
                 throw std::runtime_error(
