@@ -25,6 +25,7 @@ namespace sqlite
         Statement* _stmt;
         db::status::Type _status;
         db::IRow* _row;
+        unsigned int _count;
 
     public:
         Cursor(::sqlite3* db);

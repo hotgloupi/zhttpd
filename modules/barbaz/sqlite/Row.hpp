@@ -27,6 +27,7 @@ namespace sqlite
     public:
         Row(::sqlite3* db, ::sqlite3_stmt* stmt);
         virtual db::IValue& operator[](unsigned int column);
+        virtual void fillItem(db::IItem& item);
         virtual ~Row();
     };
 }

@@ -4,6 +4,8 @@
 
 #include "server/utils/Logger.hpp"
 #include "db/DatabaseError.hpp"
+#include "db/IVisitor.hpp"
+#include "db/Attributes.hpp"
 #include "Value.hpp"
 #include "Row.hpp"
 
@@ -39,6 +41,31 @@ db::IValue& Row::operator[](unsigned int column)
         this->_values[column] = new Value(this->_db, this->_stmt, column);
     }
     return *this->_values[column];
+}
+
+struct RowVisitor : public db::IVisitor
+{
+    unsigned int index;
+    Row& row;
+
+    RowVisitor(Row& row) : index(0), row(row) {}
+    void visitInt(db::AttributeInt const& attr, db::IItem& i)       { attr.setValue(i, row[this->index++].getInt()); }
+    void visitInt64(db::AttributeInt64 const& attr, db::IItem& i)   { attr.setValue(i, row[this->index++].getInt64()); }
+    void visitUint64(db::AttributeUint64 const& attr, db::IItem& i) { attr.setValue(i, row[this->index++].getInt64()); }
+    void visitDouble(db::AttributeDouble const& attr, db::IItem& i) { attr.setValue(i, row[this->index++].getDouble()); }
+    void visitFloat(db::AttributeFloat const& attr, db::IItem& i)   { attr.setValue(i, row[this->index++].getDouble()); }
+    void visitBool(db::AttributeBool const& attr, db::IItem& i)     { attr.setValue(i, row[this->index++].getInt()); }
+    void visitString(db::AttributeString const& attr, db::IItem& i)
+    {
+        std::string s = row[this->index++].getString();
+        attr.setValue(i, s);
+    }
+};
+
+void Row::fillItem(db::IItem& item)
+{
+    RowVisitor v(*this);
+    item.visitAll(v);
 }
 
 Row::~Row()
