@@ -22,12 +22,8 @@ bool Builder::processRequest(zhttpd::api::event::Type event,
     bool error = false;
     if (!this->_builded)
     {
-#ifdef ZHTTPD_DEBUG
-        Request* req = dynamic_cast<Request*>(request);
-        assert(req != 0);
-#else
         Request* req = reinterpret_cast<Request*>(request);
-#endif
+        assert(req != 0);
         SmartPtr<Configuration> config = req->getConfiguration();
         VHost* vhost = config->getVHost().match(*request);
         if (vhost != 0)
@@ -93,7 +89,7 @@ void Builder::_addModule(zhttpd::api::category::Type category, zhttpd::Configura
                 assert(mod_manager != 0);
                 if (mod_manager->isRequired(*request))
                 {
-                    Request* r = reinterpret_cast<Request*>(request);
+                    Request* r = dynamic_cast<Request*>(request);
                     r->insertAfter(*mod_manager, *mod_manager->getInstance());
                     LOG_DEBUG("Adding module " + mod_manager->getName() + " in chain");
                     return ;
@@ -111,7 +107,7 @@ void Builder::_addModule(zhttpd::api::category::Type category, zhttpd::Configura
             assert(mod_manager != 0);
             if (mod_manager->isRequired(*request))
             {
-                Request* r = reinterpret_cast<Request*>(request);
+                Request* r = dynamic_cast<Request*>(request);
                 r->insertAfter(*mod_manager, *mod_manager->getInstance());
                 LOG_DEBUG("Adding module " + mod_manager->getName() + " in chain");
                 return ;
@@ -145,7 +141,7 @@ void Builder::_setPath(zhttpd::api::IRequest* request, zhttpd::Configuration* co
             }
         }
     }
-    Request* r = reinterpret_cast<Request*>(request);
+    Request* r = dynamic_cast<Request*>(request);
     r->setFilePath(path.getAbsolutePath());
     LOG_DEBUG("Request file path = " + request->getFilePath());
 }

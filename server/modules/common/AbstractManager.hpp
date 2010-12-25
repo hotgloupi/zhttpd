@@ -67,7 +67,7 @@ namespace zhttpd
                         this->_memory_mutex.lock();
                         zhttpd::api::IModule* module = this->_memory_pool.allocate(this);
 #ifdef ZHTTPD_DEBUG
-                        this->_allocated_modules.insert(static_cast<zhttpd::api::IModule*>(module));
+                        this->_allocated_modules.insert(module);
 #endif
                         this->_memory_mutex.unlock();
                         return module;
@@ -75,8 +75,10 @@ namespace zhttpd
                     virtual void releaseInstance(zhttpd::api::IModule* module)
                     {
                         this->_memory_mutex.lock();
-                        this->_memory_pool.release(reinterpret_cast<ManagedClass*>(module));
+                        this->_memory_pool.release(dynamic_cast<ManagedClass*>(module));
 #ifdef ZHTTPD_DEBUG
+                        assert(this->_allocated_modules.find(module) != this->_allocated_modules.end() &&
+                               "module instance not found, not allocated here !");
                         this->_allocated_modules.erase(module);
 #endif
                         this->_memory_mutex.unlock();
@@ -93,7 +95,7 @@ namespace zhttpd
                                                                    end = this->_allocated_modules.end();
                             for (; it != end; ++it)
                             {
-                                this->_memory_pool.release(reinterpret_cast<ManagedClass*>(*it));
+                                this->_memory_pool.release(dynamic_cast<ManagedClass*>(*it));
                             }
                         }
                     }

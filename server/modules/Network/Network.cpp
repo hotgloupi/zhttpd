@@ -45,7 +45,7 @@ bool Network::processRequest(zhttpd::api::event::Type event, zhttpd::api::IReque
 
 bool Network::_processOnCanRead(zhttpd::api::IRequest* request, zhttpd::api::IBuffer* buf)
 {
-    zhttpd::Socket& socket = reinterpret_cast<Request*>(request)->getServerSession().getServerSocket();
+    zhttpd::Socket& socket = dynamic_cast<Request*>(request)->getServerSession().getServerSocket();
     assert(buf == 0);
     zhttpd::api::IBuffer* buffer = request->getBufferManager().allocate(Network::BUFFER_SIZE);
     zhttpd::api::size_t bytes_read = socket.read(buffer->getRawData(), Network::BUFFER_SIZE);
@@ -63,7 +63,7 @@ bool Network::_processOnCanWrite(zhttpd::api::IRequest* request, zhttpd::api::IB
 {
     assert(buffer != 0);
     assert(buffer->getSize() > 0);
-    zhttpd::Socket& socket = reinterpret_cast<Request*>(request)->getServerSession().getServerSocket();
+    zhttpd::Socket& socket = dynamic_cast<Request*>(request)->getServerSession().getServerSocket();
     zhttpd::api::size_t bytes_sent = socket.write(buffer->getRawData(), buffer->getSize());
     StatsManager::getInstance()->addSentBytes(buffer->getSize());
     if (bytes_sent < buffer->getSize())

@@ -64,7 +64,7 @@ namespace zhttpd
                 assert(b != 0);
                 this->_pool.release(b);
 #else
-                this->_pool.release(reinterpret_cast<buffer_t*>(buffer));
+                this->_pool.release(dynamic_cast<buffer_t*>(buffer));
 #endif
                 ZHTTPD_ASSERT_UNLOCK(this->_mutex);
             }

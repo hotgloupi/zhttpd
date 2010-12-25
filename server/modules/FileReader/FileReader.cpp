@@ -1,6 +1,7 @@
+
+#include <cassert>
 #include <istream>
 #include <sstream>
-
 #include <iostream>
 
 #include "api/constants.hpp"
@@ -19,12 +20,13 @@ namespace zhttpd
     {
 
         FileReader::FileReader(api::IModuleManager* manager) :
-            _manager(reinterpret_cast<FileReaderManager*>(manager))
+            _manager(dynamic_cast<FileReaderManager*>(manager))
 #ifdef ZHTTPD_DEBUG
             , _total_bytes(0)
 #endif
             , _file_size(0), _range_begin(0), _range_end(0)
         {
+            assert(this->_manager != 0);
         }
 
         FileReader::~FileReader()

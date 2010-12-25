@@ -127,7 +127,7 @@ namespace zhttpd
             ZHTTPD_ASSERT_LOCK(this->_mutex);
 #ifdef ZHTTPD_DEBUG
             if (this->_debug.count(obj) == 0)
-                LOG_ERROR("Releasing unknown object.");
+                LOG_ERROR("Releasing unknown object at " + zhttpd::Logger::toString(obj));
             else
                 this->_debug.erase(obj);
 #endif

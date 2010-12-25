@@ -1,4 +1,5 @@
 
+#include <cassert>
 #include <sstream>
 #include <string>
 
@@ -17,7 +18,7 @@
 using namespace zhttpd::mod;
 
 Parser::Parser(zhttpd::api::IModuleManager* manager) :
-    _manager(reinterpret_cast<ParserManager*>(manager)),
+    _manager(dynamic_cast<ParserManager*>(manager)),
     _separator(0),
     _completed(false),
     _content_length(0),
@@ -25,6 +26,7 @@ Parser::Parser(zhttpd::api::IModuleManager* manager) :
     _header_length(0),
     _request(0)
 {
+    assert(this->_manager != 0 && "Given manager instance is not a ParserManager");
 }
 
 Parser::~Parser()
@@ -176,7 +178,9 @@ bool Parser::processRequest(zhttpd::api::event::Type event, zhttpd::api::IReques
         }
         if (!this->_completed)
         {
-            reinterpret_cast<Request*>(request)->getRequestTasks().needRead();
+            Request* req = dynamic_cast<Request*>(request);
+            assert(req != 0);
+            req->getRequestTasks().needRead();
         }
         this->_buffers.push_back(buffer);
         this->_header_length += buffer->getSize();
