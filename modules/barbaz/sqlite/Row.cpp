@@ -1,6 +1,7 @@
 
 #include <stdlib.h>
 #include <cassert>
+#include <map>
 
 #include "server/utils/Logger.hpp"
 #include "db/DatabaseError.hpp"
@@ -43,28 +44,81 @@ db::IValue& Row::operator[](unsigned int column)
     return *this->_values[column];
 }
 
-struct RowVisitor : public db::IVisitor
+struct Visitor : public db::IVisitor
 {
-    unsigned int index;
-    Row& row;
+    typedef std::map<std::string, Value*> map_t;
+    map_t& values;
 
-    RowVisitor(Row& row) : index(0), row(row) {}
-    void visitInt(db::AttributeInt const& attr, db::IItem& i)       { attr.setValue(i, row[this->index++].getInt()); }
-    void visitInt64(db::AttributeInt64 const& attr, db::IItem& i)   { attr.setValue(i, row[this->index++].getInt64()); }
-    void visitUint64(db::AttributeUint64 const& attr, db::IItem& i) { attr.setValue(i, row[this->index++].getInt64()); }
-    void visitDouble(db::AttributeDouble const& attr, db::IItem& i) { attr.setValue(i, row[this->index++].getDouble()); }
-    void visitFloat(db::AttributeFloat const& attr, db::IItem& i)   { attr.setValue(i, row[this->index++].getDouble()); }
-    void visitBool(db::AttributeBool const& attr, db::IItem& i)     { attr.setValue(i, row[this->index++].getInt()); }
+    Visitor(map_t& values) : values(values)
+    {
+    }
+
+    void visitInt(db::AttributeInt const& attr, db::IItem& i)
+    {
+        map_t::iterator it = this->values.find(attr.getName());
+        if (it != this->values.end())
+            attr.setValue(i, it->second->getInt());
+    }
+
+    void visitInt64(db::AttributeInt64 const& attr, db::IItem& i)
+    {
+        map_t::iterator it = this->values.find(attr.getName());
+        if (it != this->values.end())
+            attr.setValue(i, it->second->getInt64());
+    }
+
+    void visitUint64(db::AttributeUint64 const& attr, db::IItem& i)
+    {
+        map_t::iterator it = this->values.find(attr.getName());
+        if (it != this->values.end())
+            attr.setValue(i, it->second->getInt64());
+    }
+
+    void visitDouble(db::AttributeDouble const& attr, db::IItem& i)
+    {
+        map_t::iterator it = this->values.find(attr.getName());
+        if (it != this->values.end())
+            attr.setValue(i, it->second->getDouble());
+    }
+
+    void visitFloat(db::AttributeFloat const& attr, db::IItem& i)
+    {
+        map_t::iterator it = this->values.find(attr.getName());
+        if (it != this->values.end())
+            attr.setValue(i, it->second->getFloat());
+    }
+
+    void visitBool(db::AttributeBool const& attr, db::IItem& i)
+    {
+        map_t::iterator it = this->values.find(attr.getName());
+        if (it != this->values.end())
+            attr.setValue(i, it->second->getBool());
+    }
+
     void visitString(db::AttributeString const& attr, db::IItem& i)
     {
-        std::string s = row[this->index++].getString();
-        attr.setValue(i, s);
+        map_t::iterator it = this->values.find(attr.getName());
+        if (it != this->values.end())
+        {
+            std::string s = it->second->getString();
+            attr.setValue(i, s);
+        }
     }
 };
 
 void Row::fillItem(db::IItem& item)
 {
-    RowVisitor v(*this);
+    std::map<std::string, Value*> values;
+    for (unsigned int i = 0; i < this->_column_count; ++i)
+    {
+        const char* name = ::sqlite3_column_name(this->_stmt, i);
+        if (name != 0)
+        {
+            values[name] = dynamic_cast<Value*>(&(*this)[i]);
+            assert(values[name] != 0 && "Not valid value ?! Huu ?!");
+        }
+    }
+    Visitor v(values);
     item.visitAll(v);
 }
 

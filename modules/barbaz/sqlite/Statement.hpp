@@ -31,6 +31,11 @@ namespace sqlite
             assert(this->_stmt != 0 && "Statement is NULL");
         }
 
+        virtual ~Statement()
+        {
+            ::sqlite3_finalize(this->_stmt);
+        }
+
         virtual IStatement& bind(int val)
         {
             int res = ::sqlite3_bind_int(this->_stmt, this->_index, val);

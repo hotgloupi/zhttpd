@@ -31,6 +31,7 @@ namespace sqlite
         Cursor(::sqlite3* db);
         Cursor(Cursor const& curs);
         Cursor& operator =(Cursor const& curs);
+        virtual ~Cursor();
         virtual db::IStatement& execute(char const* req);
         virtual db::IStatement* prepare(char const* req);
         virtual db::IRow& fetchone();

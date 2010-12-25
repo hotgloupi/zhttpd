@@ -29,6 +29,12 @@ Cursor& Cursor::operator =(Cursor const& curs)
     return *this;
 }
 
+Cursor::~Cursor()
+{
+    delete this->_stmt;
+    this->_stmt = 0;
+}
+
 db::IStatement* Cursor::prepare(char const* req)
 {
     assert(req != 0 && "Given request is null !");
@@ -63,27 +69,10 @@ db::IRow& Cursor::fetchone()
 {
     if (this->_stmt == 0)
         throw db::DatabaseError("Cursor cannot fetch without any call to execute()");
-    if (this->_status == db::status::UNDEFINED)
-        this->_status = this->_stmt->step();
-    switch (this->_status)
-    {
-    case db::status::UNDEFINED:
-        throw db::DatabaseError("fetchone() called while database status is undefined");
-    case db::status::READY:
-        this->_status = db::status::UNDEFINED;
-        return *this->_row;
-    case db::status::DONE:
+    if (!this->hasData())
         throw db::DatabaseError("No more data is available (use hasData() before calling fetch())");
-    case db::status::BUSY:
-        throw db::DatabaseError("Database is busy");
-    default:
-        throw db::DatabaseError(
-            "Unknown status code '" +
-            zhttpd::Logger::toString<int>(this->_status) +
-            "'"
-        );
-    }
-
+    this->_status = db::status::UNDEFINED;
+    return *this->_row;
 }
 
 bool Cursor::hasData()
@@ -96,7 +85,7 @@ bool Cursor::hasData()
     case db::status::READY:
         return true;
     case db::status::DONE:
-        return false;
+        break;
     case db::status::BUSY:
         throw db::DatabaseError("Database is busy");
     default:
@@ -106,6 +95,9 @@ bool Cursor::hasData()
             "'"
         );
     }
+    delete this->_stmt;
+    this->_stmt = 0;
+    return false;
 }
 
 db::RowIterator Cursor::fetchall()

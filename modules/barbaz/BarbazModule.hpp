@@ -10,11 +10,11 @@
 # define __BARBAZMODULE_HPP__
 
 # include "api/IModuleManager.hpp"
-# include "api/IModule.hpp"
+# include "server/modules/common/AbstractProcessingModule.hpp"
 
 class BarbazModuleManager;
 
-class BarbazModule : public zhttpd::api::IModule
+class BarbazModule : public zhttpd::mod::AbstractProcessingModule<true>
 {
 private:
     BarbazModuleManager* _manager;
@@ -22,9 +22,8 @@ private:
 public:
     BarbazModule(zhttpd::api::IModuleManager* manager);
     virtual ~BarbazModule() {}
-    bool processRequest(zhttpd::api::event::Type event,
-                        zhttpd::api::IRequest* request,
-                        zhttpd::api::IBuffer* buffer);
+    virtual bool processOnRequestReady(zhttpd::api::IRequest& request,
+                                       zhttpd::mod::PostData* post_data);
 };
 
 #endif /* !__BARBAZMODULE_HPP__ */
