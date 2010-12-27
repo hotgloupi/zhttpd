@@ -32,4 +32,14 @@ inline std::string operator +(void* nbr, std::string const& str)
     return ss.str();
 }
 
+inline std::list<std::string> operator /(std::string const& s, char delim)
+{
+    std::list<std::string> elements;
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim))
+        elements.push_back(item);
+    return elements;
+}
+
 #endif // !__STRING_HPP__
