@@ -11,7 +11,7 @@ namespace zhttpd
         NonCopyable& operator =(NonCopyable const& ref);
     protected:
         NonCopyable() {}
-        ~NonCopyable() {}
+        virtual ~NonCopyable() {}
     };
 }
 
