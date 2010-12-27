@@ -110,16 +110,13 @@ namespace zhttpd
         private:
             void clear()
             {
-                if (this->_post_data.size() > 0)
+                buflist_t::iterator it = this->_post_data.begin(),
+                    end = this->_post_data.end();
+                for (; it != end; ++it)
                 {
-                    buflist_t::iterator it = this->_post_data.begin(),
-                                        end = this->_post_data.end();
-                    for (; it != end; ++it)
-                    {
-                        this->_request.getBufferManager().release(*it);
-                    }
-                    this->_post_data.clear();
+                    this->_request.getBufferManager().release(*it);
                 }
+                this->_post_data.clear();
             }
 
             unsigned int _readChar(std::string& s, char const* data, unsigned int i, unsigned int size)
