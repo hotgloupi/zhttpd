@@ -44,12 +44,12 @@ db::IValue& Row::operator[](unsigned int column)
     return *this->_values[column];
 }
 
-struct Visitor : public db::IVisitor
+struct FillItemVisitor : public db::IVisitor
 {
     typedef std::map<std::string, Value*> map_t;
     map_t& values;
 
-    Visitor(map_t& values) : values(values)
+    FillItemVisitor(map_t& values) : values(values)
     {
     }
 
@@ -117,13 +117,16 @@ void Row::fillItem(db::IItem& item)
             values[name] = dynamic_cast<Value*>(&(*this)[i]);
             assert(values[name] != 0 && "Not valid value ?! Huu ?!");
         }
+        else
+            throw db::DatabaseError("Column " + zhttpd::Logger::toString(i) + " with no name");
     }
-    Visitor v(values);
+    FillItemVisitor v(values);
     item.visitAll(v);
 }
 
 Row::~Row()
 {
+    LOG_INFO("Delete ROW");
     for (unsigned int i = 0; i < this->_column_count; ++i)
     {
         delete this->_values[i];

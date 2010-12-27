@@ -9,6 +9,7 @@
 #ifndef __CONNECTION_HPP__
 # define __CONNECTION_HPP__
 
+# include <list>
 # include <cassert>
 # include <sqlite3.h>
 
@@ -20,12 +21,15 @@ namespace sqlite
     {
     private:
         ::sqlite3* _db;
+        std::list<db::ICursor*> _cursors;
+
     public:
         Connection(const char* filename);
         Connection(Connection const& conn);
         Connection& operator =(Connection const& conn);
+        virtual ~Connection();
         virtual void close();
-        virtual db::ICursor* cursor();
+        virtual db::ICursor& cursor();
         virtual void commit();
     };
 

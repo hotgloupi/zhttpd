@@ -8,13 +8,13 @@
 using namespace sqlite;
 
 Cursor::Cursor(::sqlite3* db) :
-    _db(db), _stmt(0), _status(db::status::UNDEFINED)
+    _db(db), _stmt(0), _status(db::status::UNDEFINED), _row(0)
 {
     assert(db != 0 && "Database pointer is NULL");
 }
 
 Cursor::Cursor(Cursor const& curs) :
-    _db(curs._db), _stmt(0), _status(curs._status)
+    _db(curs._db), _stmt(0), _status(curs._status), _row(0)
 {
 }
 
@@ -25,12 +25,16 @@ Cursor& Cursor::operator =(Cursor const& curs)
         this->_db = curs._db;
         this->_stmt = curs._stmt;
         this->_status = curs._status;
+        delete this->_row;
+        this->_row = 0;
     }
     return *this;
 }
 
 Cursor::~Cursor()
 {
+    delete this->_row;
+    this->_row = 0;
     delete this->_stmt;
     this->_stmt = 0;
 }
@@ -58,7 +62,12 @@ db::IStatement* Cursor::prepare(char const* req)
 db::IStatement& Cursor::execute(char const* req)
 {
     if (this->_stmt != 0)
-        throw db::DatabaseError("Cursor is reused without closing it first");
+    {
+        delete this->_stmt;
+        this->_stmt = 0;
+        delete this->_row;
+        this->_row = 0;
+    }
     this->_stmt = dynamic_cast<Statement*>(this->prepare(req));
     assert(this->_stmt != 0 && "Are you programming with your feet ??");
     this->_row = new Row(this->_db, this->_stmt->getSqlite3Stmt());

@@ -12,6 +12,8 @@
 # include "IRow.hpp"
 # include "RowIterator.hpp"
 # include "IStatement.hpp"
+# include "ItemList.hpp"
+# include "IItemCreator.hpp"
 
 namespace db
 {
@@ -23,6 +25,15 @@ namespace db
         virtual IRow& fetchone() = 0;
         virtual RowIterator fetchall() = 0;
         virtual bool hasData() = 0;
+        virtual void fillItems(ItemList& items, IItemCreator const& creator)
+        {
+            while (this->hasData())
+            {
+                db::IItem* item = creator.create();
+                this->fetchone().fillItem(*item);
+                items.push_back(*item);
+            }
+        }
         virtual ~ICursor() {}
     };
 }

@@ -16,7 +16,8 @@ namespace viewable_types
     enum Type
     {
         DB_ITEM = 0,
-        MAX_TYPES = 1,
+        DB_ITEMS = 1,
+        MAX_TYPES = 2,
     };
 }
 
@@ -33,6 +34,8 @@ namespace zhttpd
                 {
                 case viewable_types::DB_ITEM:
                     return "db::Item";
+                case viewable_types::DB_ITEMS:
+                    return "db::ItemList";
                 default:
                     return "Unkown viewable type!";
                 }
@@ -41,13 +44,15 @@ namespace zhttpd
     }
 }
 
-class IViewable
+namespace view
 {
-public:
-    virtual viewable_types::Type getViewableTypeId() const = 0;
-    virtual ~IViewable() {}
-};
-
+    class IViewable
+    {
+    public:
+        virtual viewable_types::Type getViewableTypeId() const = 0;
+        virtual ~IViewable() {}
+    };
+}
 
 #endif /* !__IVIEWABLE_HPP__ */
 

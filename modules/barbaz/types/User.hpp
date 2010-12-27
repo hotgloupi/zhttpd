@@ -17,20 +17,22 @@
 # include "db/AttributesMacros.hpp"
 # include "db/Attributes.hpp"
 
-class User : public db::Item<User>
+namespace types
 {
-    DECLARE_ATTRIBUTE_CLASS();
+    class User : public db::Item<User>
+    {
+        DECLARE_ATTRIBUTE_CLASS();
 
-    ATTR_GETSET(id, unsigned int);
-    ATTR_GETSET(email, std::string);
-    ATTR_GETSET(fullname, std::string);
-    ATTR_GETSET(password, std::string);
-    ATTR_GETSET(inscription_date, time_t);
-    ATTR_GETSET(last_login_date, time_t);
-    ATTR_GETSET(role, std::string);
-    ATTR_GETSET(confirmed, bool);
-
-};
+        ATTR_GETSET(id, unsigned int);
+        ATTR_GETSET(email, std::string);
+        ATTR_GETSET(full_name, std::string);
+        ATTR_GETSET(password, std::string);
+        ATTR_GETSET(inscription_date, time_t);
+        ATTR_GETSET(last_login_date, time_t);
+        ATTR_GETSET(role, std::string);
+        ATTR_GETSET(confirmed, bool);
+    };
+}
 
 #endif /* !__USER_HPP__ */
 

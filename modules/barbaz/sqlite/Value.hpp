@@ -22,11 +22,10 @@ namespace sqlite
         ::sqlite3* _db;
         ::sqlite3_stmt* _stmt;
         unsigned int _index;
-        void* _data;
 
     public:
         Value(::sqlite3* db, ::sqlite3_stmt* stmt, unsigned int index) :
-            _db(db), _stmt(stmt), _index(index), _data(0)
+            _db(db), _stmt(stmt), _index(index)
         {
         }
 

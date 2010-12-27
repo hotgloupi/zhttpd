@@ -17,7 +17,7 @@ namespace db
 {
     class IVisitor;
 
-    class IItem : public IViewable
+    class IItem : public view::IViewable
     {
     public:
         virtual void visitAll(IVisitor&) {throw std::runtime_error("Not implemented"); };

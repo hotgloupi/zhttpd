@@ -17,7 +17,7 @@ namespace db
     {
     public:
         virtual void close() = 0;
-        virtual ICursor* cursor() = 0;
+        virtual ICursor& cursor() = 0;
         virtual void commit() = 0;
         virtual ~IConnection() {}
     };

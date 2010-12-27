@@ -33,6 +33,7 @@ namespace sqlite
 
         virtual ~Statement()
         {
+            LOG_INFO("DELETE STATEMENT");
             ::sqlite3_finalize(this->_stmt);
         }
 

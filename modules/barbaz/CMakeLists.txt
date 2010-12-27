@@ -9,6 +9,7 @@ file(GLOB view_src "view/*.[ch]pp")
 file(GLOB types_src "types/*.[ch]pp")
 file(GLOB db_src "db/*.[ch]pp")
 file(GLOB sqlite3_src "sqlite/*.[ch]pp")
+file(GLOB traversal_src "traversal/*.[ch]pp")
 
 
 list(APPEND mod_barbaz_src
@@ -18,6 +19,7 @@ list(APPEND mod_barbaz_src
     ${types_src}
     ${db_src}
     ${sqlite3_src}
+    ${traversal_src}
 )
 add_library(mod_barbaz MODULE ${mod_barbaz_src})
 include_directories(json_spirit .)

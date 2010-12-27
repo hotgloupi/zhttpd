@@ -13,12 +13,18 @@
 # include "api/IBufferManager.hpp"
 # include "IViewable.hpp"
 
-class IViewAdaptor
+namespace view
 {
-public:
-    virtual zhttpd::api::IBuffer* convert(IViewable const& object,
-                                          zhttpd::api::IBufferManager& manager) const = 0;
-};
+
+    class IViewAdaptor
+    {
+    public:
+        virtual zhttpd::api::IBuffer* convert(IViewable const& object,
+                                              zhttpd::api::IBufferManager& manager) const = 0;
+        virtual std::string const& getContentType() const = 0;
+        virtual ~IViewAdaptor() {}
+    };
+}
 
 #endif /* !__IVIEWADAPTOR_HPP__ */
 

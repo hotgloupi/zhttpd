@@ -1,28 +1,27 @@
 /**
- * @file DbItemJsonView.hpp
- * @author <raphael.londeix@gmail.com> Raphaël Londeix
+ * @file ItemListJsonView.hpp
+ * @author <@> @NAME@
  *
  * @section DESCRIPTION
  * @FIXME@
  */
 
-#ifndef __DBITEMJSONVIEW_HPP__
-# define __DBITEMJSONVIEW_HPP__
+#ifndef __ITEMLISTJSONVIEW_HPP__
+# define __ITEMLISTJSONVIEW_HPP__
 
 # include "ViewAdaptor.hpp"
 # include "IJsonView.hpp"
-# include "db/IItem.hpp"
 
 namespace view
 {
-    class DbItemJsonView : public ViewAdaptor<IJsonView>
+    class ItemListJsonView : public ViewAdaptor<IJsonView>
     {
     public:
-        DbItemJsonView();
+        ItemListJsonView();
         virtual zhttpd::api::IBuffer* convert(IViewable const& object,
                                               zhttpd::api::IBufferManager& manager) const;
     };
 }
 
-#endif /* !__DBITEMJSONVIEW_HPP__ */
+#endif /* !__ITEMLISTJSONVIEW_HPP__ */
 

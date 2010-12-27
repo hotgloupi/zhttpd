@@ -23,7 +23,7 @@ public:
     BarbazModule(zhttpd::api::IModuleManager* manager);
     virtual ~BarbazModule() {}
     virtual bool processOnRequestReady(zhttpd::api::IRequest& request,
-                                       zhttpd::mod::PostData* post_data);
+                                       zhttpd::mod::PostData& post_data);
 };
 
 #endif /* !__BARBAZMODULE_HPP__ */

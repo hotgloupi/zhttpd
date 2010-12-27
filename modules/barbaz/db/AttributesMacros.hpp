@@ -53,6 +53,17 @@ namespace db
         typedef typename attr_type<typename cast_attr<T>::res>::res res;
     };
 
+    template<typename T>
+    struct ItemFieldsDeallocator
+    {
+        ~ItemFieldsDeallocator()
+        {
+            for (unsigned int i = 0; i < T::__fields_len__; ++i)
+            {
+                delete T::__fields__[i];
+            }
+        }
+    };
 }
 
 # define DECLARE_ATTRIBUTE_CLASS()\
@@ -64,7 +75,8 @@ namespace db
 # define DEFINE_ATTRIBUTE_CLASS(name, ...)\
 db::IAttribute const* const name::__fields__[] = {__VA_ARGS__};\
 unsigned int const name::__fields_len__ = sizeof(name::__fields__) / sizeof(*name::__fields__);\
-char const* const name::__name__ = #name;
+char const* const name::__name__ = #name;\
+static db::ItemFieldsDeallocator<name> _item_fiels_destructor_for_##name;
 
 # define ATTR_GETSET(field, type)\
     public:\
@@ -76,7 +88,7 @@ char const* const name::__name__ = #name;
         {\
             this->_##field = value;\
         }\
-    private:\
+    protected:\
         type _##field
 
 # define NEW_FIELD(cls, name, type)\

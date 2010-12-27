@@ -10,19 +10,33 @@
 # define __MODULEMANAGER_HPP__
 
 # include "server/modules/common/AbstractManager.hpp"
-# include "BarbazModule.hpp"
 # include "db/IConnection.hpp"
+# include "traversal/ITraversal.hpp"
+# include "view/IViewAdaptor.hpp"
+# include "BarbazModule.hpp"
 
 typedef zhttpd::mod::StatefullManager<BarbazModule, zhttpd::mod::policies::MapConfigurationPolicy> manager_base_t;
 
 class BarbazModuleManager : public manager_base_t
 {
 public:
+    typedef std::map<std::string, traversal::ITraversal*> traversals_t;
+private:
+    typedef std::map<std::string, view::IViewAdaptor*> views_t;
+
+private:
+    traversals_t _traversals;
+    views_t _views;
+    view::IViewAdaptor* _default_view;
+
+public:
     BarbazModuleManager();
     virtual ~BarbazModuleManager();
     virtual bool isRequired(zhttpd::api::IRequest const& request) const;
     db::IConnection* getNewDBConnection();
     void releaseDBConnection(db::IConnection* conn);
+    traversals_t const& getTraversals() const;
+    view::IViewAdaptor const& getViewAdaptor(zhttpd::api::IRequest const&) const;
 };
 
 #endif /* !__MODULEMANAGER_HPP__ */
