@@ -11,15 +11,23 @@ namespace zhttpd
 {
     namespace mod
     {
-        class IAbstractProcessingModule
+        class IAbstractProcessingModuleWithPostData
         {
         public:
             virtual bool processOnRequestReady(zhttpd::api::IRequest& request,
-                                               zhttpd::mod::PostData* post_data) = 0;
+                                               zhttpd::mod::PostData& post_data) = 0;
+        };
+
+        class IAbstractProcessingModuleWithoutPostData
+        {
+        public:
+            virtual bool processOnRequestReady(zhttpd::api::IRequest& request) = 0;
         };
 
         template<bool handle_post_data>
-        class AbstractProcessingModule : public IAbstractProcessingModule, public AbstractModule
+        class AbstractProcessingModule :
+            public IAbstractProcessingModuleWithPostData,
+            public AbstractModule
         {
         private:
             PostData* _post_data;
@@ -46,11 +54,15 @@ namespace zhttpd
             {
                 if (this->_post_data != 0)
                     this->_post_data->prepare(request);
-                return this->processOnRequestReady(request, this->_post_data);
+                else
+                    this->_post_data = new PostData(request);
+                return this->processOnRequestReady(request, *this->_post_data);
             }
         };
 
-        template<> class AbstractProcessingModule<false> : public IAbstractProcessingModule, public AbstractModule
+        template<> class AbstractProcessingModule<false> :
+            public IAbstractProcessingModuleWithoutPostData,
+            public AbstractModule
         {
         protected:
             virtual bool _processOnRequestData(zhttpd::api::IRequest&,
@@ -62,7 +74,7 @@ namespace zhttpd
 
             virtual bool _processOnEnd(zhttpd::api::IRequest& request)
             {
-                return this->processOnRequestReady(request, 0);
+                return this->processOnRequestReady(request);
             }
         };
     }
