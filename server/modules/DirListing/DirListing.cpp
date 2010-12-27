@@ -33,7 +33,7 @@ bool DirListing::processRequest(api::event::Type event, api::IRequest* request, 
         if (path == "/")
             slash.clear();
         std::string out =
-            "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n"
+            "<!DOCTYPE html>\n"
             "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"fr\">\n"
                 "<head>\n"
                     "<title>Index of " + path + "</title>\n"
