@@ -72,3 +72,17 @@ zhttpd::api::uint64_t UsersBroker::getUserIdFromHash(db::IConnection& conn, std:
         return 0;
     return curs.fetchone()[0].getUint64();
 }
+
+types::User* UsersBroker::getUserFromHash(db::IConnection& conn, std::string const& hash)
+{
+    zhttpd::api::uint64_t user_id = UsersBroker::getUserIdFromHash(conn, hash);
+    if (user_id == 0)
+        return 0;
+    db::ICursor& curs = conn.cursor();
+    curs.execute("SELECT * FROM users WHERE id = ?").bind(user_id);
+    if (!curs.hasData())
+        return 0;
+    types::User* user = new types::User();
+    curs.fetchone().fillItem(*user);
+    return user;
+}

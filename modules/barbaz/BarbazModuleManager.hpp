@@ -16,6 +16,7 @@
 # include "traversal/ITraversal.hpp"
 # include "view/IViewAdaptor.hpp"
 # include "BarbazModule.hpp"
+# include "types/User.hpp"
 
 typedef zhttpd::mod::StatefullManager<BarbazModule, zhttpd::mod::policies::MapConfigurationPolicy> manager_base_t;
 
@@ -35,9 +36,10 @@ public:
     BarbazModuleManager();
     virtual ~BarbazModuleManager();
     virtual bool isRequired(zhttpd::api::IRequest const& request) const;
-    std::auto_ptr<db::IConnection> getNewDBConnection();
+    std::auto_ptr<db::IConnection> getNewDBConnection() const;
     traversals_t const& getTraversals() const;
     view::IViewAdaptor const& getViewAdaptor(zhttpd::api::IRequest const&) const;
+    std::auto_ptr<types::User> getUser(zhttpd::api::IRequest& req) const;
 };
 
 #endif /* !__MODULEMANAGER_HPP__ */

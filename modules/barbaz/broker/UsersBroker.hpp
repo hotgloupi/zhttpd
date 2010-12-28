@@ -20,6 +20,7 @@ namespace broker
                                                   std::string const& password);
         static std::string renewSessionHash(db::IConnection& conn, zhttpd::api::uint64_t user_id);
         static zhttpd::api::uint64_t getUserIdFromHash(db::IConnection& conn, std::string const& hash);
+        static types::User* getUserFromHash(db::IConnection& conn, std::string const& hash);
     };
 }
 

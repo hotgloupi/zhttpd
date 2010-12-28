@@ -24,7 +24,6 @@ bool BarbazModule::processOnRequestReady(zhttpd::api::IRequest& request,
     std::list<std::string> parts = request.getRequestQuery() / '/';
     while (parts.front() == "" || parts.front() == "api")
         parts.pop_front();
-    std::cout << "Search for " << parts.front() << std::endl;
     BarbazModuleManager::traversals_t::const_iterator it = traversals.find(parts.front());
     if (it == traversals.end())
     {
@@ -42,8 +41,9 @@ bool BarbazModule::processOnRequestReady(zhttpd::api::IRequest& request,
         delete res;
         if (buf != 0)
         {
-            request.giveData(buf);
             request.setResponseHeader("Content-Type", adaptor.getContentType());
+            request.setResponseHeader("Content-Length", zhttpd::Logger::toString(buf->getSize()));
+            request.giveData(buf);
             request.raiseEnd();
             return true;
         }
@@ -53,23 +53,5 @@ bool BarbazModule::processOnRequestReady(zhttpd::api::IRequest& request,
     else
         LOG_ERROR("Traversal returns nothing");
     request.raiseError(zhttpd::api::http_code::NOT_FOUND);
-    return true;
-/*
-    db::IConnection* conn = this->_manager->getNewDBConnection();
-    db::ICursor& curs = conn->cursor();
-    curs.execute("SELECT * FROM users");
-    db::ItemList list;
-    curs.fillItems(list, db::ItemCreator<types::User>());
-    std::cout << "Result size : " << list.size() << std::endl;
-    for (unsigned int i = 0; i < list.size(); ++i)
-    {
-        types::User& user = dynamic_cast<types::User&>(list[i]);
-        std::cout << "\t* " << i << ": " << user.get_full_name() << std::endl;
-    }
-    this->_manager->releaseDBConnection(conn);
-    request.setResponseHeader("Content-Type", "text/html");
-    request.setResponseCode(zhttpd::api::http_code::OK);
-    request.giveData(request.getBufferManager().allocate("Hello you"));
-    */
     return true;
 }
