@@ -32,7 +32,7 @@ struct JsonVisitor : public db::IVisitor
     void visitBool(db::AttributeBool const& attr, db::IItem const& i)
     { this->map.push_back(json_spirit::Pair(attr.getName(), attr.getValue(i))); }
 };
-}
+} // end anonymous namespace
 
 zhttpd::api::IBuffer* ItemListJsonView::convert(IViewable const& object,
                                               zhttpd::api::IBufferManager& manager) const

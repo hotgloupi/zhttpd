@@ -26,6 +26,8 @@ namespace sqlite
         db::status::Type _status;
         db::IRow* _row;
         unsigned int _count;
+        zhttpd::api::uint64_t _last_rowid;
+        bool _pending;
 
     public:
         Cursor(::sqlite3* db);
@@ -35,6 +37,7 @@ namespace sqlite
         virtual db::IStatement& execute(char const* req);
         virtual db::IStatement* prepare(char const* req);
         virtual db::IRow& fetchone();
+        virtual zhttpd::api::uint64_t lastrowid();
         virtual db::RowIterator fetchall();
         virtual bool hasData();
     };

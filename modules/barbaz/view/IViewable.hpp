@@ -17,7 +17,8 @@ namespace viewable_types
     {
         DB_ITEM = 0,
         DB_ITEMS = 1,
-        MAX_TYPES = 2,
+        RESPONSE = 2,
+        MAX_TYPES = 3,
     };
 }
 
@@ -36,6 +37,8 @@ namespace zhttpd
                     return "db::Item";
                 case viewable_types::DB_ITEMS:
                     return "db::ItemList";
+                case viewable_types::RESPONSE:
+                    return "types::Response";
                 default:
                     return "Unkown viewable type!";
                 }

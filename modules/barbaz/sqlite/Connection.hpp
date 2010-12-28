@@ -1,10 +1,3 @@
-/**
- * @file Connection.hpp
- * @author <@> @NAME@
- *
- * @section DESCRIPTION
- * @FIXME@
- */
 
 #ifndef __CONNECTION_HPP__
 # define __CONNECTION_HPP__

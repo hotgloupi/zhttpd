@@ -52,7 +52,8 @@ bool BarbazModule::processOnRequestReady(zhttpd::api::IRequest& request,
     }
     else
         LOG_ERROR("Traversal returns nothing");
-    return false;
+    request.raiseError(zhttpd::api::http_code::NOT_FOUND);
+    return true;
 /*
     db::IConnection* conn = this->_manager->getNewDBConnection();
     db::ICursor& curs = conn->cursor();

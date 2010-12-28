@@ -22,6 +22,7 @@ namespace db
         virtual std::string const& getName() const = 0;
         virtual void visit(IVisitor& v, IItem& i) const = 0;
         virtual void visit(IVisitor& v, IItem const& i) const = 0;
+        virtual void setDefaultValue(IItem& item) const = 0;
         virtual ~IAttribute() {}
     };
 }

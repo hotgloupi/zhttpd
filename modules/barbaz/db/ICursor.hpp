@@ -25,6 +25,7 @@ namespace db
         virtual IRow& fetchone() = 0;
         virtual RowIterator fetchall() = 0;
         virtual bool hasData() = 0;
+        virtual zhttpd::api::uint64_t lastrowid() = 0;
         virtual void fillItems(ItemList& items, IItemCreator const& creator)
         {
             while (this->hasData())

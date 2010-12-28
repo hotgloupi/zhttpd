@@ -1,20 +1,20 @@
 
-#ifndef __ITEMLISTJSONVIEW_HPP__
-# define __ITEMLISTJSONVIEW_HPP__
+#ifndef __RESPONSEJSONVIEW_HPP__
+# define __RESPONSEJSONVIEW_HPP__
 
 # include "ViewAdaptor.hpp"
 # include "IJsonView.hpp"
 
 namespace view
 {
-    class ItemListJsonView : public ViewAdaptor<IJsonView>
+    class ResponseJsonView : public ViewAdaptor<IJsonView>
     {
     public:
-        ItemListJsonView();
+        ResponseJsonView();
         virtual zhttpd::api::IBuffer* convert(IViewable const& object,
                                               zhttpd::api::IBufferManager& manager) const;
     };
 }
 
-#endif /* !__ITEMLISTJSONVIEW_HPP__ */
+#endif /* !__RESPONSEJSONVIEW_HPP__ */
 

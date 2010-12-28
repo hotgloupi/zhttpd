@@ -8,13 +8,13 @@
 using namespace sqlite;
 
 Cursor::Cursor(::sqlite3* db) :
-    _db(db), _stmt(0), _status(db::status::UNDEFINED), _row(0)
+    _db(db), _stmt(0), _status(db::status::UNDEFINED), _row(0), _last_rowid(0), _pending(false)
 {
     assert(db != 0 && "Database pointer is NULL");
 }
 
 Cursor::Cursor(Cursor const& curs) :
-    _db(curs._db), _stmt(0), _status(curs._status), _row(0)
+    _db(curs._db), _stmt(0), _status(curs._status), _row(0), _last_rowid(0), _pending(false)
 {
 }
 
@@ -27,12 +27,19 @@ Cursor& Cursor::operator =(Cursor const& curs)
         this->_status = curs._status;
         delete this->_row;
         this->_row = 0;
+        this->_last_rowid = 0;
+        this->_pending = false;
     }
     return *this;
 }
 
 Cursor::~Cursor()
 {
+    if (this->_pending)
+    {
+        this->_status = this->_stmt->step();
+        this->_pending = false;
+    }
     delete this->_row;
     this->_row = 0;
     delete this->_stmt;
@@ -63,15 +70,32 @@ db::IStatement& Cursor::execute(char const* req)
 {
     if (this->_stmt != 0)
     {
+        if (this->_pending)
+        {
+            this->_stmt->step();
+            this->_pending = false;
+        }
         delete this->_stmt;
         this->_stmt = 0;
         delete this->_row;
         this->_row = 0;
+        this->_last_rowid = 0;
     }
     this->_stmt = dynamic_cast<Statement*>(this->prepare(req));
     assert(this->_stmt != 0 && "Are you programming with your feet ??");
-    this->_row = new Row(this->_db, this->_stmt->getSqlite3Stmt());
+    this->_pending = true;
     return *this->_stmt;
+}
+
+zhttpd::api::uint64_t Cursor::lastrowid()
+{
+    if (this->_pending)
+    {
+        this->_status = this->_stmt->step();
+        this->_last_rowid = ::sqlite3_last_insert_rowid(this->_db);
+        this->_pending = false;
+    }
+    return this->_last_rowid;
 }
 
 db::IRow& Cursor::fetchone()
@@ -81,6 +105,8 @@ db::IRow& Cursor::fetchone()
     if (!this->hasData())
         throw db::DatabaseError("No more data is available (use hasData() before calling fetch())");
     this->_status = db::status::UNDEFINED;
+    if (this->_row == 0)
+        this->_row = new Row(this->_db, this->_stmt->getSqlite3Stmt());
     return *this->_row;
 }
 
@@ -88,7 +114,11 @@ bool Cursor::hasData()
 {
     if (this->_status == db::status::UNDEFINED)
         this->_status = this->_stmt->step();
-
+    if (this->_pending)
+    {
+        this->_pending = false;
+        this->_last_rowid = ::sqlite3_last_insert_rowid(this->_db);
+    }
     switch (this->_status)
     {
     case db::status::READY:

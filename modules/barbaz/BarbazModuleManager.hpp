@@ -9,6 +9,8 @@
 #ifndef __MODULEMANAGER_HPP__
 # define __MODULEMANAGER_HPP__
 
+# include <memory>
+
 # include "server/modules/common/AbstractManager.hpp"
 # include "db/IConnection.hpp"
 # include "traversal/ITraversal.hpp"
@@ -33,8 +35,7 @@ public:
     BarbazModuleManager();
     virtual ~BarbazModuleManager();
     virtual bool isRequired(zhttpd::api::IRequest const& request) const;
-    db::IConnection* getNewDBConnection();
-    void releaseDBConnection(db::IConnection* conn);
+    std::auto_ptr<db::IConnection> getNewDBConnection();
     traversals_t const& getTraversals() const;
     view::IViewAdaptor const& getViewAdaptor(zhttpd::api::IRequest const&) const;
 };

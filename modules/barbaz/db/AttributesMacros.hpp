@@ -66,8 +66,9 @@ namespace db
     };
 }
 
-# define DECLARE_ATTRIBUTE_CLASS()\
+# define DECLARE_ATTRIBUTE_CLASS(name)\
     public:\
+        name();\
         static db::IAttribute const* const __fields__[];\
         static unsigned int const __fields_len__;\
         static char const* const __name__
@@ -76,7 +77,13 @@ namespace db
 db::IAttribute const* const name::__fields__[] = {__VA_ARGS__};\
 unsigned int const name::__fields_len__ = sizeof(name::__fields__) / sizeof(*name::__fields__);\
 char const* const name::__name__ = #name;\
-static db::ItemFieldsDeallocator<name> _item_fiels_destructor_for_##name;
+name::name()\
+{\
+     for (unsigned int i = 0; i < name::__fields_len__; ++i)\
+         name::__fields__[i]->setDefaultValue(*this);\
+}\
+static db::ItemFieldsDeallocator<name> _item_fiels_destructor_for_##name
+
 
 # define ATTR_GETSET(field, type)\
     public:\

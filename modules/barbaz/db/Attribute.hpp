@@ -62,6 +62,12 @@ namespace db
             assert(this->_set_val != 0 && "Attribute setter is NULL");
             (item.*(this->_set_val))(value);
         }
+
+        virtual void setDefaultValue(IItem& item) const
+        {
+            T val = T();
+            (item.*(this->_set_val))(val);
+        }
     };
 }
 
