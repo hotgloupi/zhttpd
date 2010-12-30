@@ -4,9 +4,10 @@
 #include "traversal/Subscribe.hpp"
 #include "traversal/Login.hpp"
 #include "traversal/User.hpp"
+#include "traversal/Sources.hpp"
 #include "view/IJsonView.hpp"
 #include "view/IHTMLView.hpp"
-#include "broker/UsersBroker.hpp"
+#include "broker/Users.hpp"
 
 BarbazModuleManager::BarbazModuleManager() :
     manager_base_t("mod_barbaz", zhttpd::api::category::PROCESSING)
@@ -14,6 +15,7 @@ BarbazModuleManager::BarbazModuleManager() :
     this->_traversals["subscribe"] = new traversal::Subscribe(*this);
     this->_traversals["login"] = new traversal::Login(*this);
     this->_traversals["user"] = new traversal::User(*this);
+    this->_traversals["source"] = new traversal::Sources(*this);
     this->_default_view = new view::IHTMLView();
     this->_views["html"] = this->_default_view;
     this->_views["json"] = new view::IJsonView();
@@ -68,7 +70,7 @@ std::auto_ptr<types::User> BarbazModuleManager::getUser(zhttpd::api::IRequest& r
     hash = cookie.substr(start + 5, end - start - 5);
     if (hash.size() == 0)
         return std::auto_ptr<types::User>(0);
-    types::User* user = broker::UsersBroker::getUserFromHash(*this->getNewDBConnection(), hash);
+    types::User* user = broker::Users::getUserFromHash(*this->getNewDBConnection(), hash);
     return std::auto_ptr<types::User>(user);
 }
 

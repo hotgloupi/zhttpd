@@ -1,18 +1,18 @@
 
 #include "md5/md5.hpp"
 #include "db/DatabaseError.hpp"
-#include "UsersBroker.hpp"
+#include "Users.hpp"
 
 using namespace broker;
 
-bool UsersBroker::isUserExists(db::IConnection& conn, std::string const& email)
+bool Users::isUserExists(db::IConnection& conn, std::string const& email)
 {
     db::ICursor& curs = conn.cursor();
     curs.execute("SELECT 1 FROM users WHERE email = ?").bind(email);
     return curs.hasData();
 }
 
-bool UsersBroker::registerUser(db::IConnection& conn,
+bool Users::registerUser(db::IConnection& conn,
                                types::User& user,
                                std::string const& password,
                                std::string const& auth_type)
@@ -39,7 +39,7 @@ bool UsersBroker::registerUser(db::IConnection& conn,
         throw db::DatabaseError("Unknown authentication type '" + auth_type + "'");
     return true;
 }
-zhttpd::api::uint64_t UsersBroker::authenticate(db::IConnection& conn,
+zhttpd::api::uint64_t Users::authenticate(db::IConnection& conn,
                                                 std::string const& email,
                                                 std::string const& password)
 {
@@ -53,7 +53,7 @@ zhttpd::api::uint64_t UsersBroker::authenticate(db::IConnection& conn,
         return 0;
     return id;
 }
-std::string UsersBroker::renewSessionHash(db::IConnection& conn, zhttpd::api::uint64_t user_id)
+std::string Users::renewSessionHash(db::IConnection& conn, zhttpd::api::uint64_t user_id)
 {
     db::ICursor& curs = conn.cursor();
     curs.execute("DELETE FROM sessions WHERE user_id = ?").bind(user_id);
@@ -64,7 +64,7 @@ std::string UsersBroker::renewSessionHash(db::IConnection& conn, zhttpd::api::ui
     return hash;
 }
 
-zhttpd::api::uint64_t UsersBroker::getUserIdFromHash(db::IConnection& conn, std::string const& hash)
+zhttpd::api::uint64_t Users::getUserIdFromHash(db::IConnection& conn, std::string const& hash)
 {
     db::ICursor& curs = conn.cursor();
     curs.execute("SELECT user_id FROM sessions WHERE hash = ?").bind(hash);
@@ -73,9 +73,9 @@ zhttpd::api::uint64_t UsersBroker::getUserIdFromHash(db::IConnection& conn, std:
     return curs.fetchone()[0].getUint64();
 }
 
-types::User* UsersBroker::getUserFromHash(db::IConnection& conn, std::string const& hash)
+types::User* Users::getUserFromHash(db::IConnection& conn, std::string const& hash)
 {
-    zhttpd::api::uint64_t user_id = UsersBroker::getUserIdFromHash(conn, hash);
+    zhttpd::api::uint64_t user_id = Users::getUserIdFromHash(conn, hash);
     if (user_id == 0)
         return 0;
     db::ICursor& curs = conn.cursor();
@@ -85,4 +85,11 @@ types::User* UsersBroker::getUserFromHash(db::IConnection& conn, std::string con
     types::User* user = new types::User();
     curs.fetchone().fillItem(*user);
     return user;
+}
+
+void Users::deleteSession(db::IConnection& conn, zhttpd::api::uint64_t user_id)
+{
+    assert(user_id != 0);
+    db::ICursor& curs = conn.cursor();
+    curs.execute("DELETE FROM sessions WHERE user_id = ?").bind(user_id);
 }

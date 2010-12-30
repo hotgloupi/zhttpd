@@ -3,7 +3,7 @@
 #include "Subscribe.hpp"
 #include "types/Response.hpp"
 #include "types/User.hpp"
-#include "broker/UsersBroker.hpp"
+#include "broker/Users.hpp"
 #include "md5/md5.hpp"
 
 using namespace traversal;
@@ -80,7 +80,7 @@ view::IViewable* Subscribe::new_account(zhttpd::api::IRequest&, zhttpd::mod::Pos
         user.set_email(data.fields["email"].front());
         if (!isvalid_email(user.get_email().c_str()))
             response->addDetail("email", "Given email is not valid");
-        else if (broker::UsersBroker::isUserExists(*conn, user.get_email()))
+        else if (broker::Users::isUserExists(*conn, user.get_email()))
             response->addDetail("email", "This email is already registered");
     }
 
@@ -99,7 +99,7 @@ view::IViewable* Subscribe::new_account(zhttpd::api::IRequest&, zhttpd::mod::Pos
     else
     {
         password = md5(password).hexdigest();
-        if (broker::UsersBroker::registerUser(*conn, user, password, "local"))
+        if (broker::Users::registerUser(*conn, user, password, "local"))
             response->addField("success", "true");
         else
             response->addField("error", "true");

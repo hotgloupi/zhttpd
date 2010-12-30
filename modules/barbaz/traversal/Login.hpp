@@ -14,11 +14,21 @@ namespace traversal
 
     public:
         Login(BarbazModuleManager& manager);
-        virtual view::IViewable* index(std::list<std::string>&, zhttpd::api::IRequest&, zhttpd::mod::PostData&)
+        virtual view::IViewable* index(std::list<std::string>&, zhttpd::api::IRequest& request, zhttpd::mod::PostData&)
         {
+            if (this->_manager.getUser(request).get() != 0)
+            {
+                request.setResponseHeader("Location", "/app.html");
+                request.setResponseCode(zhttpd::api::http_code::FOUND);
+            }
+            else
+            {
+                request.raiseError(zhttpd::api::http_code::NOT_FOUND);
+            }
             return 0;
         }
         view::IViewable* login(zhttpd::api::IRequest&, zhttpd::mod::PostData&);
+        view::IViewable* logout(zhttpd::api::IRequest&, zhttpd::mod::PostData&);
         view::IViewable* loginWithHash(zhttpd::api::IRequest&, zhttpd::mod::PostData&);
     };
 }

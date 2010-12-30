@@ -7,9 +7,8 @@
 
 namespace broker
 {
-    struct UsersBroker
+    struct Users
     {
-    public:
         static bool isUserExists(db::IConnection& conn, std::string const& email);
         static bool registerUser(db::IConnection& conn,
                                  types::User& user,
@@ -21,6 +20,7 @@ namespace broker
         static std::string renewSessionHash(db::IConnection& conn, zhttpd::api::uint64_t user_id);
         static zhttpd::api::uint64_t getUserIdFromHash(db::IConnection& conn, std::string const& hash);
         static types::User* getUserFromHash(db::IConnection& conn, std::string const& hash);
+        static void deleteSession(db::IConnection& conn, zhttpd::api::uint64_t user_id);
     };
 }
 

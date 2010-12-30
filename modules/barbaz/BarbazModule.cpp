@@ -22,8 +22,13 @@ bool BarbazModule::processOnRequestReady(zhttpd::api::IRequest& request,
 {
     BarbazModuleManager::traversals_t const& traversals = this->_manager->getTraversals();
     std::list<std::string> parts = request.getRequestQuery() / '/';
-    while (parts.front() == "" || parts.front() == "api")
+    while (parts.size() > 0 && (parts.front() == "" || parts.front() == "api"))
         parts.pop_front();
+    if (parts.size() == 0)
+    {
+        request.raiseError(zhttpd::api::http_code::FORBIDDEN);
+        return true;
+    }
     BarbazModuleManager::traversals_t::const_iterator it = traversals.find(parts.front());
     if (it == traversals.end())
     {
@@ -44,14 +49,17 @@ bool BarbazModule::processOnRequestReady(zhttpd::api::IRequest& request,
             request.setResponseHeader("Content-Type", adaptor.getContentType());
             request.setResponseHeader("Content-Length", zhttpd::Logger::toString(buf->getSize()));
             request.giveData(buf);
-            request.raiseEnd();
-            return true;
         }
-        else
-            LOG_ERROR("Adaptor returns nothing");
+        request.raiseEnd();
+        return true;
     }
     else
+    {
         LOG_ERROR("Traversal returns nothing");
-    request.raiseError(zhttpd::api::http_code::NOT_FOUND);
+        if (request.getResponseCode() == zhttpd::api::http_code::OK)
+            request.raiseError(zhttpd::api::http_code::NOT_FOUND);
+        else
+            request.raiseEnd();
+    }
     return true;
 }
