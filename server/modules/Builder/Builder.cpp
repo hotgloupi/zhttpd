@@ -54,7 +54,6 @@ bool Builder::processRequest(zhttpd::api::event::Type event,
 
 void Builder::_findModules(zhttpd::api::IRequest* request, zhttpd::Configuration* config, zhttpd::VHost* vhost)
 {
-    LOG_DEBUG("creating modules chain");
     this->_addModule(zhttpd::api::category::PREOUTPUT, config, vhost, request);
     this->_addModule(zhttpd::api::category::POSTRESPONSEFILTER, config, vhost, request);
     this->_addModule(zhttpd::api::category::COMPRESS, config, vhost, request);
@@ -69,6 +68,7 @@ void Builder::_findModules(zhttpd::api::IRequest* request, zhttpd::Configuration
 
 void Builder::_addModule(zhttpd::api::category::Type category, zhttpd::Configuration* config, zhttpd::VHost* vhost, zhttpd::api::IRequest* request)
 {
+    Request* r = dynamic_cast<Request*>(request);
     zhttpd::Configuration::available_modules_t const& mods = config->getAvailableModules();
     zhttpd::Configuration::available_modules_t::const_iterator cat_mods = mods.find(category);
     if (cat_mods != mods.end())
@@ -77,22 +77,19 @@ void Builder::_addModule(zhttpd::api::category::Type category, zhttpd::Configura
         std::list<std::string>::const_iterator ite = (cat_mods->second).end();
         while (it != ite)
         {
-            if (*it == "mod_filereader")
+            if (*it != "mod_filereader")
             {
-                ++it;
-                continue;
-            }
-            ModuleConfiguration& mod_conf = vhost->getModuleConfiguration(*it);
-            if (mod_conf.isEnabled())
-            {
-                zhttpd::api::IModuleManager* mod_manager = mod_conf.getModuleManager();
-                assert(mod_manager != 0);
-                if (mod_manager->isRequired(*request))
+                ModuleConfiguration& mod_conf = vhost->getModuleConfiguration(*it);
+                if (mod_conf.isEnabled())
                 {
-                    Request* r = dynamic_cast<Request*>(request);
-                    r->insertAfter(*mod_manager, *mod_manager->getInstance());
-                    LOG_DEBUG("Adding module " + mod_manager->getName() + " in chain");
-                    return ;
+                    zhttpd::api::IModuleManager* mod_manager = mod_conf.getModuleManager();
+                    assert(mod_manager != 0);
+                    if (mod_manager->isRequired(*request))
+                    {
+                        r->insertAfter(*mod_manager, *mod_manager->getInstance());
+                        LOG_DEBUG("Adding module " + mod_manager->getName() + " in chain");
+                        return ;
+                    }
                 }
             }
             ++it;
@@ -107,7 +104,6 @@ void Builder::_addModule(zhttpd::api::category::Type category, zhttpd::Configura
             assert(mod_manager != 0);
             if (mod_manager->isRequired(*request))
             {
-                Request* r = dynamic_cast<Request*>(request);
                 r->insertAfter(*mod_manager, *mod_manager->getInstance());
                 LOG_DEBUG("Adding module " + mod_manager->getName() + " in chain");
                 return ;
