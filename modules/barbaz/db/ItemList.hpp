@@ -40,6 +40,14 @@ namespace db
         {
             this->_items.push_back(&i);
         }
+
+        template<typename T>
+        void push_back(T const& i)
+        {
+            db::IItem* item = new T(i);
+            this->_items.push_back(item);
+        }
+
         virtual ~ItemList()
         {
             if (this->_items.size() > 0)

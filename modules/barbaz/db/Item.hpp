@@ -26,16 +26,30 @@ namespace db
     public:
         typedef AttributeIterator<SelfClass> iterator;
 
+    public:
         IAttribute const* const* const _fields;
-    private:
-        Item(Item const&);
-        Item& operator=(Item const&);
     public:
         Item() : _fields(SelfClass::__fields__) {}
+        template<typename OtherClass>
+        Item(Item const& item)
+        {
+# ifdef ZHTTP_DEBUG
+//            assert(::strcmp(SelfClass::__name__, OtherClass::__name__) == 0 &&
+//                   "Wrong item copy");
+# endif
+            unsigned int i = 0;
+            while (i < SelfClass::__fields_len__)
+            {
+//                this->fields[i]->visit(
+
+                ++i;
+            }
+        }
+        Item& operator=(Item const&);
         void visitAll(IVisitor& visitor)
         {
             unsigned int i = 0;
-            while (i != SelfClass::__fields_len__)
+            while (i < SelfClass::__fields_len__)
             {
                 this->_fields[i]->visit(visitor, *this);
                 ++i;
