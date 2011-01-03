@@ -14,10 +14,6 @@ namespace traversal
 
     public:
         Sources(BarbazModuleManager& manager);
-        virtual view::IViewable* index(std::list<std::string>&, zhttpd::api::IRequest&, zhttpd::mod::PostData&)
-        {
-            return 0;
-        }
         view::IViewable* mine(zhttpd::api::IRequest&, zhttpd::mod::PostData&);
     };
 }

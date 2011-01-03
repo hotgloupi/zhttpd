@@ -6,6 +6,7 @@
 
 using namespace traversal;
 
+
 User::User(BarbazModuleManager& manager) : ATraversal<User>(this), _manager(manager)
 {
     this->registerMethod("actions", &User::getActions);
@@ -13,10 +14,6 @@ User::User(BarbazModuleManager& manager) : ATraversal<User>(this), _manager(mana
     this->registerMethod("me", &User::me);
 }
 
-view::IViewable* User::index(std::list<std::string>& path, zhttpd::api::IRequest& req, zhttpd::mod::PostData& data)
-{
-    return 0;
-}
 
 view::IViewable* User::getActions(zhttpd::api::IRequest& req, zhttpd::mod::PostData&)
 {
@@ -26,7 +23,7 @@ view::IViewable* User::getActions(zhttpd::api::IRequest& req, zhttpd::mod::PostD
     db::ItemList* res = new db::ItemList;
     if (user->get_role() == "manager" || user->get_role() == "admin")
     {
-        res->push_back(static_cast<db::IItem const&>(types::UserAction("Manage users", "manage_users.frag.html")));
+        res->push_back(types::UserAction("Manage users", "manage_users.frag.html"));
         res->push_back(types::UserAction("Manage sources", "manage_sources.frag.html"));
     }
     return res;

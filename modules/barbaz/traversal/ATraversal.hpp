@@ -19,7 +19,6 @@ namespace traversal
 
     private:
         typedef typename std::map<std::string, method_t> views_t;
-
     private:
         views_t _views;
         SelfClass* _self;
@@ -30,9 +29,13 @@ namespace traversal
             assert(this->_self != 0 && "Where am I ?!");
         }
         virtual ~ATraversal() {}
-        virtual view::IViewable* index(std::list<std::string>& path,
+        virtual view::IViewable* index(std::list<std::string>&,
                                        zhttpd::api::IRequest&,
-                                       zhttpd::mod::PostData&) = 0;
+                                       zhttpd::mod::PostData&)
+        {
+            return 0;
+        }
+
         virtual view::IViewable* traverse(std::list<std::string>& path,
                                           zhttpd::api::IRequest& r,
                                           zhttpd::mod::PostData& d)

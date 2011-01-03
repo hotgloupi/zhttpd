@@ -58,11 +58,6 @@ Subscribe::Subscribe(BarbazModuleManager& manager) : ATraversal<Subscribe>(this)
     this->registerMethod("new_account", &Subscribe::new_account);
 }
 
-view::IViewable* Subscribe::index(std::list<std::string>& path, zhttpd::api::IRequest&, zhttpd::mod::PostData&)
-{
-    return 0;
-}
-
 view::IViewable* Subscribe::new_account(zhttpd::api::IRequest&, zhttpd::mod::PostData& data)
 {
     types::User user;

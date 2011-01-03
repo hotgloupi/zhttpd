@@ -11,6 +11,7 @@
 
 # include <vector>
 
+# include "server/utils/static_assert.hpp"
 # include "view/IViewable.hpp"
 # include "IItem.hpp"
 
@@ -23,64 +24,32 @@ namespace db
         typedef items_t::iterator iterator;
         typedef items_t::const_iterator const_iterator;
 
+    private:
+        template<typename T> struct IsIItem {static const bool res = false;};
+
     protected:
         items_t _items;
 
     public:
-        virtual IItem& operator[](unsigned int i)
+        virtual IItem& operator[](unsigned int i);
+        virtual zhttpd::api::size_t size() const;
+        void push_back(IItem& i);
+        template<typename T> void push_back(T const& i)
         {
-            return *this->_items[i];
-        }
-
-        virtual zhttpd::api::size_t size() const
-        {
-            return this->_items.size();
-        }
-        virtual void push_back(IItem& i)
-        {
-            this->_items.push_back(&i);
-        }
-
-        template<typename T>
-        void push_back(T const& i)
-        {
-            db::IItem* item = new T(i);
+            static_assert(IsIItem<T>::res == false);
+            T* item = new T(i);
             this->_items.push_back(item);
         }
-
-        virtual ~ItemList()
-        {
-            if (this->_items.size() > 0)
-            {
-                items_t::iterator it = this->_items.begin(),
-                                  end = this->_items.end();
-                for (; it != end; ++it)
-                    delete (*it);
-                this->_items.clear();
-            }
-        }
-        virtual iterator begin()
-        {
-            return this->_items.begin();
-        }
-        virtual const_iterator begin() const
-        {
-            return this->_items.begin();
-        }
-        virtual iterator end()
-        {
-            return this->_items.end();
-        }
-        virtual const_iterator end() const
-        {
-            return this->_items.end();
-        }
-
-        virtual viewable_types::Type getViewableTypeId() const
-        {
-            return viewable_types::DB_ITEMS;
-        }
+        virtual ~ItemList();
+        virtual iterator begin();
+        virtual const_iterator begin() const;
+        virtual iterator end();
+        virtual const_iterator end() const;
+        virtual viewable_types::Type getViewableTypeId() const;
     };
+
+    template<> struct ItemList::IsIItem<IItem>{static const bool res = true;};
+
 }
 
 #endif /* !__ITEMLIST_HPP__ */

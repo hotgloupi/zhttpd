@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 #endif
               << std::endl;
 #ifndef ZHTTPD_DEBUG
-     zhttpd::Logger::getInstance()->setLevel(zhttpd::Logger::LVL_INFO);
+ //    zhttpd::Logger::getInstance()->setLevel(zhttpd::Logger::LVL_DEBUG);
 #endif
     server = new zhttpd::Server();
 #ifndef WIN32

@@ -31,20 +31,52 @@ namespace db
     public:
         Item() : _fields(SelfClass::__fields__) {}
         template<typename OtherClass>
-        Item(Item const& item)
+        Item(OtherClass const& item) : _fields(OtherClass::__fields__)
         {
 # ifdef ZHTTP_DEBUG
-//            assert(::strcmp(SelfClass::__name__, OtherClass::__name__) == 0 &&
-//                   "Wrong item copy");
+            assert(::strcmp(SelfClass::__name__, OtherClass::__name__) == 0 &&
+                   "Wrong item copy");
 # endif
-            unsigned int i = 0;
-            while (i < SelfClass::__fields_len__)
+            LOG_DEBUG("Copy " + std::string(SelfClass::__name__));
+            OtherClass& self = dynamic_cast<OtherClass&>(*this);
+            struct Visitor : public db::IVisitor
             {
-//                this->fields[i]->visit(
+                OtherClass& self;
 
-                ++i;
-            }
+                Visitor(OtherClass& self, IAttribute& self_attr) : self(self) {}
+                void visitInt(db::AttributeInt const& attr, db::IItem const& i)
+                {
+                    attr.setValue(self, attr.getValue(i));
+                }
+                void visitInt64(db::AttributeInt64 const& attr, db::IItem const& i)
+                {
+                    attr.setValue(self, attr.getValue(i));
+                }
+                void visitUint64(db::AttributeUint64 const& attr, db::IItem const& i)
+                {
+                    attr.setValue(self, attr.getValue(i));
+                }
+                void visitDouble(db::AttributeDouble const& attr, db::IItem const& i)
+                {
+                    attr.setValue(self, attr.getValue(i));
+                }
+                void visitFloat(db::AttributeFloat const& attr, db::IItem const& i)
+                {
+                    attr.setValue(self, attr.getValue(i));
+                }
+                void visitString(db::AttributeString const& attr, db::IItem const& i)
+                {
+                    attr.setValue(self, attr.getValue(i));
+                }
+                void visitBool(db::AttributeBool const& attr, db::IItem const& i)
+                {
+                    attr.setValue(self, attr.getValue(i));
+                }
+            };
+
+            item.visitAll(Visitor(self));
         }
+
         Item& operator=(Item const&);
         void visitAll(IVisitor& visitor)
         {

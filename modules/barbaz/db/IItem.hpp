@@ -19,14 +19,16 @@ namespace db
 
     class IItem : public view::IViewable
     {
+    protected:
+        IItem(IItem const& other);
+        IItem& operator =(IItem const& other);
+
     public:
-        virtual void visitAll(IVisitor&) {throw std::runtime_error("Not implemented"); };
-        virtual void visitAll(IVisitor&) const {throw std::runtime_error("Not implemented"); };
-        virtual ~IItem() {}
-        viewable_types::Type getViewableTypeId() const
-        {
-            return viewable_types::DB_ITEM;
-        }
+        IItem();
+        virtual void visitAll(IVisitor&);
+        virtual void visitAll(IVisitor&) const;
+        virtual ~IItem();
+        virtual viewable_types::Type getViewableTypeId() const;
     };
 }
 
