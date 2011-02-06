@@ -272,7 +272,7 @@ void RequestTasks::_register()
             !this->_has_error)
         {
             this->_registered = true;
-            RequestManager::getInstance()->monitorSocketEvent(this->_request);
+//            RequestManager::getInstance()->monitorSocketEvent(this->_request);
         }
     }
 }
@@ -286,7 +286,7 @@ void RequestTasks::_unregister()
             || this->_has_error)
         {
             this->_registered = false;
-            RequestManager::getInstance()->ignoreSocketEvent(this->_request);
+//            RequestManager::getInstance()->ignoreSocketEvent(this->_request);
         }
     }
 }

@@ -2,7 +2,7 @@
 #ifndef __SESSIONMANAGER_HPP__
 # define __SESSIONMANAGER_HPP__
 
-# include "utils/Singleton.hpp"
+# include <boost/noncopyable.hpp>
 
 # include "Session.hpp"
 # include "Request.hpp"
@@ -11,51 +11,51 @@
 
 namespace zhttpd
 {
-    template<typename SessionAllocator>
-    class _SessionManager : public Singleton< _SessionManager<SessionAllocator> >, public SessionAllocator
+
+# ifndef ZHTTPD_SESSION_ALLOCATOR
+#  ifdef ZHTTPD_DEBUG
+#   include "utils/SafeAllocator.hpp"
+#   define ZHTTPD_SESSION_ALLOCATOR SafeAllocator
+#  else
+#   include "utils/LockedAllocator.hpp"
+#   define ZHTTPD_SESSION_ALLOCATOR LockedAllocator
+#  endif
+# endif
+
+    template< template <class> class SessionAllocator = ZHTTPD_SESSION_ALLOCATOR >
+    class SessionManager :
+        public SessionAllocator<Session>,
+        private boost::noncopyable
     {
-        friend class Singleton<_SessionManager>;
-
     private:
-        RequestManager* _request_manager;
+        RequestManager _request_manager;
 
-    protected:
-        _SessionManager()
+    public:
+        SessionManager() : _request_manager()
         {
-            this->_request_manager = RequestManager::getInstance();
         }
 
-        virtual ~_SessionManager()
+        virtual ~SessionManager()
         {
         }
 
     public:
-        void handleNewSession(Socket* socket, api::uint16_t port)
+        void onNewSession(Session& new_session, api::uint16_t)
         {
-            Session* session = SessionAllocator::allocate(socket, port);
-            this->_request_manager->handleNewRequest(*session);
+            this->_request_manager.handleNewRequest(new_session);
         }
 
         void endSession(Session& session)
         {
-            SessionAllocator::release(&session);
+            SessionAllocator<Session>::release(&session);
+        }
+        boost::asio::io_service& getIOService()
+        {
+            return this->_request_manager.getIOService();
         }
     };
 }
 
-# ifdef ZHTTPD_DEBUG
-#  include "utils/SafeAllocator.hpp"
-# else
-#  include "utils/LockedAllocator.hpp"
-# endif
-namespace zhttpd
-{
-# ifdef ZHTTPD_DEBUG
-    typedef _SessionManager<SafeAllocator<Session> > SessionManager;
-# else
-    typedef _SessionManager<LockedAllocator<Session> > SessionManager;
-# endif
-}
 
 #endif /* !__SESSIONMANAGER_HPP__ */
 

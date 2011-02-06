@@ -3,6 +3,7 @@
 #include "utils/macros.hpp"
 #include "core/Server.hpp"
 #include "utils/StatsManager.hpp"
+#include "core/ServerState.hpp"
 
 #include "Rcon.hpp"
 

@@ -1,108 +1,66 @@
 
+#include <boost/bind.hpp>
+
 #include <stdexcept>
+
 
 #include "parser/ConfigurationParser.hpp"
 #include "library/Library.hpp"
 #include "socket/SelfConnector.hpp"
+# include "thread/Thread.hpp"
 
+#include "core/Server.hpp"
+#include "core/Session.hpp"
+#include "core/SessionManager.hpp"
+#include "core/Listener.hpp"
+#include "core/Rcon.hpp"
+#include "configuration/Configuration.hpp"
+#include "utils/macros.hpp"
+
+#include "core/SessionManager.hpp"
 #include "RequestManager.hpp"
 #include "ConfigurationManager.hpp"
 #include "BufferManagerStack.hpp"
 #include "TaskManager.hpp"
 #include "ServerState.hpp"
-#include "Server.hpp"
 
 using namespace zhttpd;
 
 Server::Server() :
-    _rcon(0)
+    _session_manager(new SessionManager<>()),
+    _io_service(new boost::asio::io_service()),
+    _listener(0),
+    _rcon(0),
+    _configuration_path()
 {
 }
 
 Server::~Server()
 {
+    ZHTTPD_DELETE(this->_io_service);
+    ZHTTPD_DELETE(this->_session_manager);
 }
 
-void Server::_loadListeners(Configuration* config)
+void Server::_loadListener(Configuration* config)
 {
     typedef std::map<api::uint16_t, std::string> ports_t;
     ports_t const& ports = config->getListenPorts();
-    ports_t::const_iterator it = ports.begin();
-    ports_t::const_iterator ite = ports.end();
-    api::size_t errors = 0;
-    while (it != ite)
+    ports_t::const_iterator it = ports.begin(), end = ports.end();
+    if (this->_listener != 0)
     {
-        try
-        {
-            if (this->_listeners.find(it->first) == this->_listeners.end())
-                this->_listeners[it->first] = new ListenerContainer(it->first);
-        }
-        catch (std::exception& e)
-        {
-            LOG_ERROR("Cannot listen on " + Logger::toString(it->first) + ": " + e.what());
-            this->_listeners[it->first] = 0;
-            ++errors;
-        }
-        ++it;
+        this->_listener->stop();
+        ZHTTPD_DELETE(this->_listener);
     }
-    if (this->_listeners.size() > 0)
+    this->_listener = new Listener(
+        boost::bind(&SessionManager<>::onNewSession, this->_session_manager, _1, _2),
+        boost::bind(&Server::_getIOService, this)
+    );
+    for (; it != end; ++it)
     {
-        std::list<api::uint16_t> to_delete;
-
-        listeners_t::iterator it = this->_listeners.begin();
-        listeners_t::iterator end = this->_listeners.end();
-        for (; it != end; ++it)
-        {
-            if (ports.find(it->first) == ports.end())
-            {
-                LOG_INFO("Close port " + Logger::toString(it->first));
-                delete it->second;
-                to_delete.push_back(it->first);
-            }
-        }
-
-        std::list<api::uint16_t>::iterator it_del = to_delete.begin();
-        for (; it_del != to_delete.end(); ++it_del)
-        {
-            this->_listeners.erase(*it_del);
-        }
-    }
-    if (errors == ports.size())
-    {
-        LOG_FATAL("Nothing is listening");
-        this->stop();
-    }
-}
-
-void Server::_stopListeners()
-{
-    listeners_t::iterator it = this->_listeners.begin();
-    listeners_t::iterator ite = this->_listeners.end();
-    while (it != ite)
-    {
-        if (it->second != 0)
-        {
-            LOG_INFO("Stopping listener on port " + Logger::toString(it->first));
-            delete it->second;
-            LOG_INFO("Listener Stopped");
-        }
-        ++it;
-    }
-    this->_listeners.clear();
-}
-
-void Server::_cleanListeners()
-{
-    listeners_t::iterator it = this->_listeners.begin();
-    listeners_t::iterator ite = this->_listeners.end();
-    while (it != ite)
-    {
-        if (it->second != 0)
-        {
-            LOG_INFO("Delete listener on port " + Logger::toString(it->first));
-            ZHTTPD_DELETE(it->second);
-        }
-        ++it;
+        this->_listener->bind(
+            boost::asio::ip::address::from_string(it->second),
+            it->first
+        );
     }
 }
 
@@ -122,15 +80,16 @@ int Server::run(std::string const& configuration_path)
 
         LOG_INFO("Server stopping");
 
-        this->_stopListeners();
+        if (this->_listener != 0)
+        {
+            this->_listener->stop();
+            ZHTTPD_DELETE(this->_listener);
+        }
 
         LOG_INFO("Wait for TaskManager...");
         task_manager.join();
 
-        this->_cleanListeners();
         TaskManager::delInstance();
-        RequestManager::delInstance();
-        SessionManager::delInstance();
         BufferManagerStack::delInstance();
         ConfigurationManager::delInstance();
         ServerState::delInstance();
@@ -155,7 +114,7 @@ bool Server::reload()
         conf = parser.parse();
         ConfigurationManager::getInstance()->setConfiguration(conf);
         LOG_INFO("New configuration loaded successfully");
-        this->_loadListeners(conf);
+        this->_loadListener(conf);
         return true;
     }
     catch (std::exception& err)
@@ -165,3 +124,7 @@ bool Server::reload()
     }
 }
 
+boost::asio::io_service& Server::_getIOService()
+{
+    return this->_session_manager->getIOService();
+}

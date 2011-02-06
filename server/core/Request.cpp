@@ -43,7 +43,7 @@ Request::~Request()
 {
     ZHTTPD_DELETE(this->_tasks);
     ZHTTPD_DELETE(this->_modules);
-    SessionManager::getInstance()->endSession(this->_session);
+   // SessionManager::getInstance()->endSession(this->_session);
 }
 
 void Request::callLater(api::uint32_t delay)

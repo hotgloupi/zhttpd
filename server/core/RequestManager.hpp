@@ -4,6 +4,7 @@
 
 # include <cassert>
 # include <map>
+# include <boost/asio/io_service.hpp>
 
 # include "utils/Singleton.hpp"
 # include "utils/macros.hpp"
@@ -23,9 +24,10 @@
 
 namespace zhttpd
 {
+
+
     template<typename Allocator>
     class _RequestManager :
-        public Singleton<_RequestManager<Allocator> >,
         public Allocator
     {
         friend class Singleton<_RequestManager<Allocator> >;
@@ -36,10 +38,11 @@ namespace zhttpd
         mod::ParserManager*             _parser_manager;
         mod::BuilderManager*            _builder_manager;
         mod::PreOutputBuilderManager*   _preoutputbuilder_manager;
-        zhttpd::SocketPool*                _socket_pool;
+        zhttpd::SocketPool*             _socket_pool;
         Thread*                         _socket_pool_thread;
+        boost::asio::io_service         _io_service;
 
-    private:
+    public:
         _RequestManager() :
             _configuration_manager(0), _parser_manager(0)
         {
@@ -113,6 +116,11 @@ namespace zhttpd
             if (request->getServerSession().getServerSocketPtr() != 0)
                 this->_socket_pool->destroyHandler(request->getSession().getSocket());
             Allocator::release(request);
+        }
+
+        boost::asio::io_service& getIOService()
+        {
+            return this->_io_service;
         }
     };
 }
