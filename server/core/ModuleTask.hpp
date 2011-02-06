@@ -45,11 +45,9 @@ namespace zhttpd
 
         void run()
         {
+            std::string name = this->_module.getModuleManager().getName();
             try
             {
-#ifdef DEBUG
-                std::string name = this->_module.getModuleManager().getName();
-#endif
                 ZHTTPD_MOD_START
                 this->_request.processTask(this->_event, &this->_module, this->_buffer);
                 ZHTTPD_MOD_END(name);
@@ -57,7 +55,7 @@ namespace zhttpd
                 this->_triggered = true;
             } catch (std::exception& e)
             {
-                LOG_ERROR("ModuleTask error handled: " + std::string(e.what()));
+                LOG_ERROR("ModuleTask error handled in '" + name + "': " + std::string(e.what()));
                 this->_request.getRequestTasks().notifyHasError();
                 TaskManager::getInstance()->notifyEndTask(this->_request);
             }

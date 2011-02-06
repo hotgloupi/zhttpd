@@ -126,7 +126,6 @@ void Row::fillItem(db::IItem& item)
 
 Row::~Row()
 {
-    LOG_INFO("Delete ROW");
     for (unsigned int i = 0; i < this->_column_count; ++i)
     {
         delete this->_values[i];

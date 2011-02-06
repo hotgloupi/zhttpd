@@ -27,20 +27,9 @@ namespace db
         items_t _items;
 
     public:
-        virtual IItem& operator[](unsigned int i)
-        {
-            return *this->_items[i];
-        }
-
-        virtual zhttpd::api::size_t size() const
-        {
-            return this->_items.size();
-        }
-        virtual void push_back(IItem& i)
-        {
-            this->_items.push_back(&i);
-        }
-
+        virtual IItem& operator[](unsigned int i);
+        virtual zhttpd::api::size_t size() const;
+        virtual void push_back(IItem& i);
         template<typename T>
         void push_back(T const& i)
         {
@@ -48,38 +37,12 @@ namespace db
             this->_items.push_back(item);
         }
 
-        virtual ~ItemList()
-        {
-            if (this->_items.size() > 0)
-            {
-                items_t::iterator it = this->_items.begin(),
-                                  end = this->_items.end();
-                for (; it != end; ++it)
-                    delete (*it);
-                this->_items.clear();
-            }
-        }
-        virtual iterator begin()
-        {
-            return this->_items.begin();
-        }
-        virtual const_iterator begin() const
-        {
-            return this->_items.begin();
-        }
-        virtual iterator end()
-        {
-            return this->_items.end();
-        }
-        virtual const_iterator end() const
-        {
-            return this->_items.end();
-        }
-
-        virtual viewable_types::Type getViewableTypeId() const
-        {
-            return viewable_types::DB_ITEMS;
-        }
+        virtual ~ItemList();
+        virtual iterator begin();
+        virtual const_iterator begin() const;
+        virtual iterator end();
+        virtual const_iterator end() const;
+        virtual viewable_types::Type getViewableTypeId() const;
     };
 }
 
