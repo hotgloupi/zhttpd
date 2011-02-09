@@ -11,8 +11,17 @@
 
 # include <string>
 # include <boost/noncopyable.hpp>
+# include <boost/shared_ptr.hpp>
 
 # include "core/SessionManager.hpp"
+
+# ifdef ZHTTPD_DEBUG
+#  include "utils/SafeAllocator.hpp"
+#  define ZHTTPD_DEFAULT_ALLOCATOR zhttpd::SafeAllocator
+# else
+#  include "utils/LockedAllocator.hpp"
+#  define ZHTTPD_DEFAULT_ALLOCATOR zhttpd::LockedAllocator
+# endif
 
 namespace boost { namespace asio { class io_service; } }
 
@@ -26,7 +35,10 @@ namespace zhttpd
     class Server : private boost::noncopyable
     {
     private:
-        SessionManager<>*           _session_manager;
+        typedef SessionManager<ZHTTPD_DEFAULT_ALLOCATOR> SessionManagerType;
+
+    private:
+        SessionManagerType*         _session_manager;
         boost::asio::io_service*    _io_service;
         Listener*                   _listener;
         Rcon*                       _rcon;
@@ -41,7 +53,7 @@ namespace zhttpd
 
     private:
         void _loadListener(Configuration* config);
-        void _onNewConnection(std::auto_ptr<Listener::socket_t>& socket, api::uint16_t port);
+        void _onNewConnection(boost::shared_ptr<Session::socket_t> socket, api::uint16_t port);
         boost::asio::io_service& _getIOService();
     };
 }

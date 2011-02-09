@@ -6,12 +6,8 @@
 
 # include "api/constants.hpp"
 # include "api/IBuffer.hpp"
-# include "utils/SmartPtr.hpp"
 # include "utils/Timer.hpp"
-# include "thread/Mutex.hpp"
-# include "socket/ISocketEventHandler.hpp"
-
-# include "ModuleWrapper.hpp"
+# include "core/ModuleWrapper.hpp"
 
 namespace zhttpd
 {
@@ -20,9 +16,13 @@ namespace zhttpd
 
     class RequestTasks : public ISocketEventHandler
     {
+    public:
+        typedef boost::function<bool(api::event::Type, Request&, ModuleWrapper&, api::IBuffer*)> task_t;
+
     private:
-        typedef std::list<ModuleTask*> tasks_t;
+        typedef std::list<task_t> tasks_t;
         typedef std::list<api::IBuffer*> buffers_t;
+
 
     private:
         Request&        _request;
@@ -41,13 +41,6 @@ namespace zhttpd
         Timer           _timer;
         Mutex           _mutex;
 
-        void _register();
-        void _unregister();
-
-        void _addTask(api::event::Type event,
-                     Request& request,
-                     ModuleWrapper& module,
-                     api::IBuffer* buffer);
     public:
         RequestTasks(Request& request);
         ~RequestTasks();
@@ -70,6 +63,15 @@ namespace zhttpd
         void handleSocketEvent(socket_event::Type evt);
         void addEndTask(Request& request, ModuleWrapper& module);
         void addCallLaterTask(Request& request, ModuleWrapper& module, api::uint32_t delay);
+
+    private:
+        void _register();
+        void _unregister();
+
+        void _addTask(api::event::Type event,
+                     Request& request,
+                     ModuleWrapper& module,
+                     api::IBuffer* buffer);
     };
 }
 

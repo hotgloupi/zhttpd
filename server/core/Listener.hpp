@@ -21,7 +21,6 @@ namespace zhttpd
     /**
      * Listening for new connections and call given callback
      */
-    template<typename Allocator>
     class Listener :
         public boost::asio::io_service,
         private boost::noncopyable

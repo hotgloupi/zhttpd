@@ -5,17 +5,13 @@
 # include <list>
 # include <set>
 
-# include "thread/ThreadPool.hpp"
-# include "thread/Mutex.hpp"
-# include "thread/ITask.hpp"
-# include "utils/Singleton.hpp"
-
-# include "Request.hpp"
+# include "core/Request.hpp"
 
 namespace zhttpd
 {
-    class RequestManager;
+    template<template <class> class Allocator> class RequestManager;
 
+    template<template <class> class Allocator>
     class TaskManager
     {
     public:
@@ -23,21 +19,20 @@ namespace zhttpd
         typedef std::set<Request*> request_set_t;
 
     private:
-        request_set_t   _requests;
-        request_set_t   _pending_add_requests;
-        Mutex           _pending_add_requests_mutex;
-        request_set_t   _pending_del_requests;
-        RequestManager& _request_manager;
+        request_set_t               _requests;
+        request_set_t               _pending_add_requests;
+        request_set_t               _pending_del_requests;
+        RequestManager<Allocator>&  _request_manager;
 
     public:
+        TaskManager(RequestManager<Allocator>& request_manager);
+        virtual ~TaskManager();
         void notifyEndTask(Request& request);
         void startRequest(Request& request);
         void stopRequest(Request& request);
         virtual void run();
 
     private:
-        TaskManager(RequestManager& request_manager);
-        virtual ~TaskManager();
         api::size_t _giveWork();
         api::size_t _addPendingRequests();
         api::size_t _delPendingRequests();

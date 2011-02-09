@@ -4,31 +4,18 @@
 
 # include <boost/noncopyable.hpp>
 
+# include "RequestManager.hpp"
 # include "Session.hpp"
 # include "Request.hpp"
 # include "BufferManagerStack.hpp"
-# include "RequestManager.hpp"
 
 namespace zhttpd
 {
-
-# ifndef ZHTTPD_SESSION_ALLOCATOR
-#  ifdef ZHTTPD_DEBUG
-#   include "utils/SafeAllocator.hpp"
-#   define ZHTTPD_SESSION_ALLOCATOR SafeAllocator
-#  else
-#   include "utils/LockedAllocator.hpp"
-#   define ZHTTPD_SESSION_ALLOCATOR LockedAllocator
-#  endif
-# endif
-
-    template< template <class> class Allocator = ZHTTPD_SESSION_ALLOCATOR >
-    class SessionManager :
-        public Allocator<Session>,
-        private boost::noncopyable
+    template<template <class> class Allocator>
+    class SessionManager : private boost::noncopyable
     {
     private:
-        RequestManager _request_manager;
+        RequestManager<Allocator> _request_manager;
 
     public:
         SessionManager() : _request_manager()
@@ -40,7 +27,7 @@ namespace zhttpd
         }
 
     public:
-        void onNewSession(std::auto_ptr<Listener::socket_t>& socket, api::uint16_t port)
+        void onNewSession(boost::shared_ptr<Session::socket_t>& socket, api::uint16_t port)
         {
 
             Allocator<Session>::allocate(socket, port);
@@ -51,6 +38,7 @@ namespace zhttpd
         {
             Allocator<Session>::release(&session);
         }
+
         boost::asio::io_service& getIOService()
         {
             return this->_request_manager.getIOService();
