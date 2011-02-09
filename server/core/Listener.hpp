@@ -21,6 +21,7 @@ namespace zhttpd
     /**
      * Listening for new connections and call given callback
      */
+    template<typename Allocator>
     class Listener : private boost::noncopyable
     {
     public:
@@ -28,7 +29,7 @@ namespace zhttpd
         typedef boost::asio::ip::tcp::endpoint endpoint_t;
         typedef boost::asio::ip::tcp::acceptor acceptor_t;
         typedef boost::asio::ip::tcp::socket socket_t;
-        typedef boost::function<void(Session& new_session, api::uint16_t port)> callback_t;
+        typedef boost::function<void(std::auto_ptr<socket_t>, api::uint16_t)> callback_t;
         typedef boost::function<boost::asio::io_service&(void)> obtain_service_t;
 
     private:

@@ -26,11 +26,9 @@ namespace zhttpd
 {
 
 
-    template<typename Allocator>
-    class _RequestManager :
-        public Allocator
+    template<typename Allocator> class RequestManager : public Allocator
     {
-        friend class Singleton<_RequestManager<Allocator> >;
+    public:
         typedef std::map<Socket*, Request*> requests_t;
 
     private:
@@ -113,8 +111,8 @@ namespace zhttpd
             buffer_manager = &safe_buffer_manager->getBufferManager();
 #endif
             BufferManagerStack::getInstance()->push(buffer_manager);
-            if (request->getServerSession().getServerSocketPtr() != 0)
-                this->_socket_pool->destroyHandler(request->getSession().getSocket());
+//            if (request->getServerSession().getServerSocketPtr() != 0)
+//                this->_socket_pool->destroyHandler(request->getSession().getSocket());
             Allocator::release(request);
         }
 

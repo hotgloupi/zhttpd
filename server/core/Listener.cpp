@@ -59,7 +59,7 @@ void Listener::bind(Listener::address_t const& address, api::uint16_t port)
 
 void Listener::_connectAcceptor(Listener::acceptor_t& acceptor)
 {
-    boost::shared_ptr<Listener::socket_t> new_connection(
+    std::auto_ptr<Listener::socket_t> new_connection(
         new Listener::socket_t(this->_get_io_service(), acceptor.local_endpoint())
     );
     acceptor.async_accept(
@@ -76,10 +76,10 @@ void Listener::run()
 
 
 void Listener::_onNewConnection(acceptor_t& acceptor,
-                                boost::shared_ptr<socket_t> socket,
+                                std::auto_ptr<socket_t> socket,
                                 boost::system::error_code const& e)
 {
-    this->_on_new_connection(*(new Session(socket, acceptor.local_endpoint().port())));
+    this->_on_new_connection(socket.release(), acceptor.local_endpoint().port());
     this->_connectAcceptor(acceptor);
 }
 
