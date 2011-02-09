@@ -21,19 +21,22 @@ namespace zhttpd
     /**
      * Listening for new connections and call given callback
      */
-    class Listener : private boost::noncopyable
+    class Listener :
+        public boost::asio::io_service,
+        private boost::noncopyable
     {
     public:
         typedef boost::asio::ip::address address_t;
         typedef boost::asio::ip::tcp::endpoint endpoint_t;
         typedef boost::asio::ip::tcp::acceptor acceptor_t;
+        typedef boost::shared_ptr<acceptor_t> acceptor_ptr_t;
         typedef boost::asio::ip::tcp::socket socket_t;
-        typedef boost::function<void(Session& new_session, api::uint16_t port)> callback_t;
+        typedef boost::shared_ptr<socket_t> socket_ptr_t;
+        typedef boost::function<void(socket_ptr_t, api::uint16_t)> callback_t;
         typedef boost::function<boost::asio::io_service&(void)> obtain_service_t;
 
     private:
-        boost::asio::io_service     _io_service;
-        std::list<acceptor_t*>      _acceptors;
+        std::list<acceptor_ptr_t>   _acceptors;
         callback_t                  _on_new_connection;
         obtain_service_t            _get_io_service;
         volatile bool               _is_running;
@@ -47,14 +50,12 @@ namespace zhttpd
          * Bind an address and a port, callable multiple times
          */
         void bind(address_t const& address, api::uint16_t port);
-        void run();
-        void stop();
 
     private:
-        void _onNewConnection(acceptor_t& acceptor,
-                              boost::shared_ptr<socket_t> socket,
+        void _onNewConnection(acceptor_ptr_t acceptor,
+                              socket_ptr_t socket,
                               boost::system::error_code const& e);
-        void _connectAcceptor(acceptor_t& acceptor);
+        void _connectAcceptor(acceptor_ptr_t& acceptor);
     };
 }
 
