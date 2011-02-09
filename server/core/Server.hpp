@@ -41,6 +41,7 @@ namespace zhttpd
 
     private:
         void _loadListener(Configuration* config);
+        void _onNewConnection(std::auto_ptr<Listener::socket_t>& socket, api::uint16_t port);
         boost::asio::io_service& _getIOService();
     };
 }

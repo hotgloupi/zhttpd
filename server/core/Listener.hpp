@@ -21,9 +21,11 @@ namespace zhttpd
     /**
      * Listening for new connections and call given callback
      */
+    template<typename Allocator>
     class Listener :
         public boost::asio::io_service,
         private boost::noncopyable
+    class Listener : private boost::noncopyable
     {
     public:
         typedef boost::asio::ip::address address_t;

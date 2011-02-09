@@ -22,9 +22,9 @@ namespace zhttpd
 #  endif
 # endif
 
-    template< template <class> class SessionAllocator = ZHTTPD_SESSION_ALLOCATOR >
+    template< template <class> class Allocator = ZHTTPD_SESSION_ALLOCATOR >
     class SessionManager :
-        public SessionAllocator<Session>,
+        public Allocator<Session>,
         private boost::noncopyable
     {
     private:
@@ -40,14 +40,16 @@ namespace zhttpd
         }
 
     public:
-        void onNewSession(Session& new_session, api::uint16_t)
+        void onNewSession(std::auto_ptr<Listener::socket_t>& socket, api::uint16_t port)
         {
-            this->_request_manager.handleNewRequest(new_session);
+
+            Allocator<Session>::allocate(socket, port);
+            this->_request_manager.handleNewRequest();
         }
 
         void endSession(Session& session)
         {
-            SessionAllocator<Session>::release(&session);
+            Allocator<Session>::release(&session);
         }
         boost::asio::io_service& getIOService()
         {

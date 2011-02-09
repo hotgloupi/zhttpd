@@ -12,15 +12,20 @@
 
 using namespace zhttpd;
 
-TaskManager::TaskManager() : _thread_pool(4)
+TaskManager::TaskManager(RequestManager& request_manager) :
+    _requests(),
+    _pending_add_requests(),
+    _pending_add_requests_mutex(),
+    _pending_del_requests(),
+    _request_manager(request_manager),
 {
 }
 
 TaskManager::~TaskManager()
 {
-    LOG_INFO("Pending add: " +Logger::toString(this->_pending_add_requests.size()));
-    LOG_INFO("Pending del: " +Logger::toString(this->_pending_del_requests.size()));
-    LOG_INFO("Current: " +Logger::toString(this->_requests.size()));
+    LOG_INFO("Pending add: " + Logger::toString(this->_pending_add_requests.size()));
+    LOG_INFO("Pending del: " + Logger::toString(this->_pending_del_requests.size()));
+    LOG_INFO("Current: " + Logger::toString(this->_requests.size()));
     unsigned int attempts = 0;
     while (true)
     {
@@ -45,7 +50,7 @@ TaskManager::~TaskManager()
     request_set_t::iterator end = this->_requests.end();
 
     for (; it != end; ++it)
-        RequestManager::getInstance()->endRequest(*it);
+        this->_request_managerendRequest(*it);
 }
 
 void TaskManager::notifyEndTask(Request& request)
@@ -121,7 +126,7 @@ api::size_t TaskManager::_delPendingRequests()
     for (; it != end; ++it)
     {
         this->_requests.erase(*it);
-        RequestManager::getInstance()->endRequest(*it);
+        this->_request_managerendRequest(*it);
     }
     this->_pending_del_requests.clear();
     return count;

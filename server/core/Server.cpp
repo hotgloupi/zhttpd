@@ -52,7 +52,7 @@ void Server::_loadListener(Configuration* config)
         ZHTTPD_DELETE(this->_listener);
     }
     this->_listener = new Listener(
-        boost::bind(&SessionManager<>::onNewSession, this->_session_manager, _1, _2),
+        boost::bind(&Server::_onNewConnection, this, _1, _2),
         boost::bind(&Server::_getIOService, this)
     );
     for (; it != end; ++it)
@@ -127,4 +127,10 @@ bool Server::reload()
 boost::asio::io_service& Server::_getIOService()
 {
     return this->_session_manager->getIOService();
+}
+
+
+void Server::_onNewConnection(std::auto_ptr<Listener::socket_t>& socket, api::uint16_t port)
+{
+    this->_session_manager->onNewConne
 }

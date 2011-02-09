@@ -14,20 +14,20 @@
 
 namespace zhttpd
 {
-    class TaskManager :
-        public Singleton<TaskManager>,
-        public ITask
+    class RequestManager;
+
+    class TaskManager
     {
-        friend class Singleton<TaskManager>;
+    public:
         typedef std::list<Request*> request_list_t;
         typedef std::set<Request*> request_set_t;
 
     private:
-        ThreadPool      _thread_pool;
         request_set_t   _requests;
         request_set_t   _pending_add_requests;
         Mutex           _pending_add_requests_mutex;
         request_set_t   _pending_del_requests;
+        RequestManager& _request_manager;
 
     public:
         void notifyEndTask(Request& request);
@@ -36,7 +36,7 @@ namespace zhttpd
         virtual void run();
 
     private:
-        TaskManager();
+        TaskManager(RequestManager& request_manager);
         virtual ~TaskManager();
         api::size_t _giveWork();
         api::size_t _addPendingRequests();
